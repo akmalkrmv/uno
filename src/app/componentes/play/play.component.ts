@@ -10,7 +10,7 @@ import { ChatService } from "src/app/services/chat.service";
 import { map, filter } from "rxjs/operators";
 
 const vgaConstraints: MediaStreamConstraints = {
-  audio: false,
+  audio: true,
   video: { width: { exact: 320 }, height: { exact: 240 } },
 };
 
