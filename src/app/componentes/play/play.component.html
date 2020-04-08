@@ -1,9 +1,22 @@
-<div class="flex-wrapper" #container></div>
+<div class="users-container" #container>
+  <div *ngFor="let user of connections" class="user-details">
+    <video
+      *ngIf="user.stream"
+      [srcObject]="user.stream"
+      autoplay
+      controls
+      muted
+    ></video>
+  </div>
+</div>
 
-<ng-template>
-  <video muted controls></video>
-</ng-template>
-
-<button (click)="start()">start</button>
-<button (click)="call()">call</button>
-<button (click)="hangup()">hang up</button>
+<div class="buttons-container">
+  <div class="buttons">
+    <button mat-fab color="accent" (click)="call()">
+      <i class="fa fa-phone"></i>
+    </button>
+    <button mat-fab color="warn" (click)="hangup()">
+      <i class="fa fa-phone fa-phone-hangup"></i>
+    </button>
+  </div>
+</div>

@@ -1,10 +1,31 @@
-.flex-wrapper {
+.users-container {
+  padding: 10px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
   align-items: center;
 
-  .video {
-    border: 1px solid grey;
+  .user-details {
+    margin: 10px;
+  }
+}
+
+.buttons-container {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+      // min-width: 140px;
+      margin: 0 10px;
+    }
   }
 }
