@@ -3,7 +3,7 @@ import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { WebsocketService } from "./websocket.service";
 
-const CHAT_URL = "ws://echo.websocket.org/";
+const CHAT_URL = "wss://echo.websocket.org/";
 
 export interface Message {
   type: "offer" | "answer" | "other";
