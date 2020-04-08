@@ -69,7 +69,7 @@ export class PlayComponent implements OnInit {
       });
     });
 
-    this.answer$.subscribe(async (answer: RTCSessionDescriptionInit) => {
+    this.answer$.subscribe((answer: RTCSessionDescriptionInit) => {
       console.log("answer$", answer);
       this.localConnection.setRemoteDescription(answer);
     });
