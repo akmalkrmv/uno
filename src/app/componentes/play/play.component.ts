@@ -74,10 +74,7 @@ export class PlayComponent implements OnInit, OnDestroy {
     this.user.stream = stream;
     this.connections.push(this.user);
 
-    setTimeout(
-      () => (document.getElementsByTagName("video")[0].muted = true),
-      100
-    );
+    this.muteAllVideos();
   }
 
   public async call() {
@@ -98,6 +95,15 @@ export class PlayComponent implements OnInit, OnDestroy {
       user.connection.close();
       user.connceted = false;
     });
+  }
+
+  public muteAllVideos() {
+    setTimeout(() => {
+      const videos = Array.from(document.getElementsByTagName("video"));
+      for (const video of videos) {
+        video.muted = true;
+      }
+    }, 100);
   }
 
   private handleRouteParams() {
@@ -125,22 +131,6 @@ export class PlayComponent implements OnInit, OnDestroy {
     };
 
     return user;
-  }
-
-  private createConnection(): RTCPeerConnection {
-    // TODO: create higher level constant
-    const configuration = {};
-
-    // Creating connection object
-    const connection = new RTCPeerConnection(configuration);
-
-    // Rendering stream
-    connection.ontrack = (event: RTCTrackEvent) => {
-      console.log("ontrack", event.streams);
-      // this.appendVideo(event.streams[0]);
-    };
-
-    return connection;
   }
 
   private onMessage(message) {
@@ -184,17 +174,6 @@ export class PlayComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  // UI
-  private appendVideo(stream: MediaStream) {
-    const video = document.createElement("video");
-    video.srcObject = stream;
-    video.muted = true;
-    video.controls = true;
-    video.play();
-
-    this.container.nativeElement.appendChild(video);
   }
 
   // TODO: Improve id generator
