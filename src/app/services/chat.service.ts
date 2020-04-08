@@ -3,7 +3,8 @@ import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { WebsocketService } from "./websocket.service";
 
-const CHAT_URL = "wss://arcane-refuge-42132.herokuapp.com/";
+const CHAT_URL = "ws://[2a00:1370:8131:740c:79fe:5c94:ee97:5364]:3000/";
+// const CHAT_URL = "wss://arcane-refuge-42132.herokuapp.com/";
 // const CHAT_URL = "ws://localhost:3000/";
 
 export interface Message {
