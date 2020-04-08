@@ -6,10 +6,10 @@
     "start": "ng serve",
     "start:ssl": "ng serve --ssl --ssl-key d:\\certificates\\localhost.key  --ssl-cert d:\\certificates\\localhost.crt",
     "build": "ng build",
+    "build:prod": "ng build --prod --base-href https://github.com/akmalkrmv/uno/ --output-path docs",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "publish": "ng build --prod --output-path docs --base-href https://github.com/akmalkrmv/uno"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
