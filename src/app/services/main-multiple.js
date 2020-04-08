@@ -103,7 +103,7 @@ function gotDescription1Local(desc) {
   // Since the 'remote' side has no media stream we need
   // to pass in the right constraints in order for it to
   // accept the incoming offer of audio and video.
-  pc1Remote.createAnswer().then( , onCreateSessionDescriptionError);
+  pc1Remote.createAnswer().then(gotDescription1Remote, onCreateSessionDescriptionError);
 }
 
 function gotDescription1Remote(desc) {
@@ -116,6 +116,9 @@ function gotDescription2Local(desc) {
   pc2Local.setLocalDescription(desc);
   console.log(`Offer from pc2Local\n${desc.sdp}`);
   pc2Remote.setRemoteDescription(desc);
+  // Since the 'remote' side has no media stream we need
+  // to pass in the right constraints in order for it to
+  // accept the incoming offer of audio and video.
   pc2Remote.createAnswer().then(gotDescription2Remote, onCreateSessionDescriptionError);
 }
 
