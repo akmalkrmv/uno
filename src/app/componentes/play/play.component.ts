@@ -28,6 +28,7 @@ export class PlayComponent implements OnInit, OnDestroy {
   public user: UserConnection;
   public connections: UserConnection[] = [];
 
+  private localStream: MediaStream;
   private offer$ = new EventEmitter<RTCSessionDescriptionInit>();
   private answer$ = new EventEmitter<RTCSessionDescriptionInit>();
 
@@ -71,6 +72,7 @@ export class PlayComponent implements OnInit, OnDestroy {
       this.user.connection.addTrack(track, stream);
     }
 
+    this.localStream = stream;
     this.user.stream = stream;
     this.connections.push(this.user);
 
@@ -94,6 +96,7 @@ export class PlayComponent implements OnInit, OnDestroy {
     this.connections.forEach((user) => {
       user.connection.close();
       user.connceted = false;
+      user.stream = this.localStream;
     });
   }
 
