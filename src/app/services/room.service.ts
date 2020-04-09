@@ -36,12 +36,12 @@ export class RoomService {
   }
 
   public async joinRoom(roomId: string): Promise<string> {
-    const reference = await this.firestore
+    const created = await this.firestore
       .collection(`rooms/${roomId}/users`)
       .add({});
 
-    await reference.set({ id: reference.id });
-    return reference.id;
+    await created.update({ id: created.id });
+    return created.id;
   }
 
   public userJoined(roomId: string): Observable<any> {
@@ -71,13 +71,13 @@ export class RoomService {
 
   public async createOffer(offer: Offer): Promise<string> {
     const created = await this.offerCollection.add(offer);
-    await created.set({ id: created.id });
+    await created.update({ id: created.id });
     return created.id;
   }
 
   public async createAnswer(answer: Answer): Promise<string> {
     const created = await this.answerCollection.add(answer);
-    await created.set({ id: created.id });
+    await created.update({ id: created.id });
     return created.id;
   }
 }
