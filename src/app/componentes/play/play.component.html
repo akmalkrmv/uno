@@ -1,4 +1,15 @@
 <div class="users-container" #container>
+  <div class="user-details">
+    <video
+      *ngIf="localStream"
+      [srcObject]="localStream"
+      autoplay
+      controls
+      muted
+    ></video>
+    <p *ngIf="user">{{ user.name || user.id }}</p>
+  </div>
+
   <div *ngFor="let user of connections" class="user-details">
     <video
       *ngIf="user.stream"

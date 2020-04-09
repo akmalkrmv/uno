@@ -1,0 +1,45 @@
+<div class="room-container">
+  <div class="online-users">
+    <ul>
+      <li *ngFor="let user of onlineUsers$ | async">
+        {{ user.name || user.id }}
+      </li>
+    </ul>
+  </div>
+  <div class="videos-contanier">
+    <div class="users-container" *ngIf="user">
+      <div class="user-details">
+        <video
+          *ngIf="user.stream"
+          [srcObject]="user.stream"
+          autoplay
+          controls
+          muted
+        ></video>
+        <p>{{ user.name || user.id }}</p>
+      </div>
+
+      <div *ngFor="let connection of user.connections" class="user-details">
+        <video
+          *ngIf="user.stream"
+          [srcObject]="user.stream"
+          autoplay
+          controls
+          muted
+        ></video>
+        <p>{{ connection.userId }}</p>
+      </div>
+    </div>
+
+    <div class="buttons-container">
+      <div class="buttons">
+        <button mat-fab color="accent" (click)="call()">
+          <i class="fa fa-phone"></i>
+        </button>
+        <button mat-fab color="warn" (click)="hangup()">
+          <i class="fa fa-phone fa-phone-hangup"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

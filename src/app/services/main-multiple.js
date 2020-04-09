@@ -17,14 +17,14 @@ startButton.onclick = start;
 callButton.onclick = call;
 hangupButton.onclick = hangup;
 
-const video1 = document.querySelector('video#video1');
-const video2 = document.querySelector('video#video2');
-const video3 = document.querySelector('video#video3');
+const video_me_ = document.querySelector('video#video1');
+const video_alice_ = document.querySelector('video#video2');
+const video_bob_ = document.querySelector('video#video3');
 
-let pc1Local;
-let pc1Remote;
-let pc2Local;
-let pc2Remote;
+let _alice_Local;
+let _alice_Remote;
+let _bob_Local;
+let _bob_Remote;
 const offerOptions = {
   offerToReceiveAudio: 1,
   offerToReceiveVideo: 1
@@ -32,7 +32,7 @@ const offerOptions = {
 
 function gotStream(stream) {
   console.log('Received local stream');
-  video1.srcObject = stream;
+  video_me_.srcObject = stream;
   window.localStream = stream;
   callButton.disabled = false;
 }
@@ -66,108 +66,108 @@ function call() {
   
   // Create an RTCPeerConnection via the polyfill.
   const servers = null;
-  pc1Local = new RTCPeerConnection(servers);
-  pc1Remote = new RTCPeerConnection(servers);
-  pc1Remote.ontrack = gotRemoteStream1;
-  pc1Local.onicecandidate = iceCallback1Local;
-  pc1Remote.onicecandidate = iceCallback1Remote;
+  _alice_Local = new RTCPeerConnection(servers);
+  _alice_Remote = new RTCPeerConnection(servers);
+  _alice_Remote.ontrack = gotRemoteStream_alice_;
+  _alice_Local.onicecandidate = iceCallback1Local;
+  _alice_Remote.onicecandidate = iceCallback1Remote;
   console.log('pc1: created local and remote peer connection objects');
 
-  pc2Local = new RTCPeerConnection(servers);
-  pc2Remote = new RTCPeerConnection(servers);
-  pc2Remote.ontrack = gotRemoteStream2;
-  pc2Local.onicecandidate = iceCallback2Local;
-  pc2Remote.onicecandidate = iceCallback2Remote;
+  _bob_Local = new RTCPeerConnection(servers);
+  _bob_Remote = new RTCPeerConnection(servers);
+  _bob_Remote.ontrack = gotRemoteStream_bob_;
+  _bob_Local.onicecandidate = iceCallback2Local;
+  _bob_Remote.onicecandidate = iceCallback2Remote;
   console.log('pc2: created local and remote peer connection objects');
 
-  window.localStream.getTracks().forEach(track => pc1Local.addTrack(track, window.localStream));
+  window.localStream.getTracks().forEach(track => _alice_Local.addTrack(track, window.localStream));
   console.log('Adding local stream to pc1Local');
-  pc1Local
+  _alice_Local
       .createOffer(offerOptions)
-      .then(gotDescription1Local, onCreateSessionDescriptionError);
+      .then(gotDescription_alice_Local, onCreateSessionDescriptionError);
 
-  window.localStream.getTracks().forEach(track => pc2Local.addTrack(track, window.localStream));
+  window.localStream.getTracks().forEach(track => _bob_Local.addTrack(track, window.localStream));
   console.log('Adding local stream to pc2Local');
-  pc2Local.createOffer(offerOptions)
-      .then(gotDescription2Local, onCreateSessionDescriptionError);
+  _bob_Local.createOffer(offerOptions)
+      .then(gotDescription_bob_Local, onCreateSessionDescriptionError);
 }
 
 function onCreateSessionDescriptionError(error) {
   console.log(`Failed to create session description: ${error.toString()}`);
 }
 
-function gotDescription1Local(desc) {
-  pc1Local.setLocalDescription(desc);
+function gotDescription_alice_Local(desc) {
+  _alice_Local.setLocalDescription(desc);
   console.log(`Offer from pc1Local\n${desc.sdp}`);
-  pc1Remote.setRemoteDescription(desc);
+  _alice_Remote.setRemoteDescription(desc);
   // Since the 'remote' side has no media stream we need
   // to pass in the right constraints in order for it to
   // accept the incoming offer of audio and video.
-  pc1Remote.createAnswer().then(gotDescription1Remote, onCreateSessionDescriptionError);
+  _alice_Remote.createAnswer().then(gotDescription_alice_Remote, onCreateSessionDescriptionError);
 }
 
-function gotDescription1Remote(desc) {
-  pc1Remote.setLocalDescription(desc);
+function gotDescription_alice_Remote(desc) {
+  _alice_Remote.setLocalDescription(desc);
   console.log(`Answer from pc1Remote\n${desc.sdp}`);
-  pc1Local.setRemoteDescription(desc);
+  _alice_Local.setRemoteDescription(desc);
 }
 
-function gotDescription2Local(desc) {
-  pc2Local.setLocalDescription(desc);
+function gotDescription_bob_Local(desc) {
+  _bob_Local.setLocalDescription(desc);
   console.log(`Offer from pc2Local\n${desc.sdp}`);
-  pc2Remote.setRemoteDescription(desc);
+  _bob_Remote.setRemoteDescription(desc);
   // Since the 'remote' side has no media stream we need
   // to pass in the right constraints in order for it to
   // accept the incoming offer of audio and video.
-  pc2Remote.createAnswer().then(gotDescription2Remote, onCreateSessionDescriptionError);
+  _bob_Remote.createAnswer().then(gotDescription_bob_Remote, onCreateSessionDescriptionError);
 }
 
-function gotDescription2Remote(desc) {
-  pc2Remote.setLocalDescription(desc);
+function gotDescription_bob_Remote(desc) {
+  _bob_Remote.setLocalDescription(desc);
   console.log(`Answer from pc2Remote\n${desc.sdp}`);
-  pc2Local.setRemoteDescription(desc);
+  _bob_Local.setRemoteDescription(desc);
 }
 
 function hangup() {
   console.log('Ending calls');
-  pc1Local.close();
-  pc1Remote.close();
-  pc2Local.close();
-  pc2Remote.close();
-  pc1Local = pc1Remote = null;
-  pc2Local = pc2Remote = null;
+  _alice_Local.close();
+  _alice_Remote.close();
+  _bob_Local.close();
+  _bob_Remote.close();
+  _alice_Local = _alice_Remote = null;
+  _bob_Local = _bob_Remote = null;
   hangupButton.disabled = true;
   callButton.disabled = false;
 }
 
-function gotRemoteStream1(e) {
-  if (video2.srcObject !== e.streams[0]) {
-    video2.srcObject = e.streams[0];
+function gotRemoteStream_alice_(e) {
+  if (video_alice_.srcObject !== e.streams[0]) {
+    video_alice_.srcObject = e.streams[0];
     console.log('pc1: received remote stream');
   }
 }
 
-function gotRemoteStream2(e) {
-  if (video3.srcObject !== e.streams[0]) {
-    video3.srcObject = e.streams[0];
+function gotRemoteStream_bob_(e) {
+  if (video_bob_.srcObject !== e.streams[0]) {
+    video_bob_.srcObject = e.streams[0];
     console.log('pc2: received remote stream');
   }
 }
 
 function iceCallback1Local(event) {
-  handleCandidate(event.candidate, pc1Remote, 'pc1: ', 'local');
+  handleCandidate(event.candidate, _alice_Remote, 'pc1: ', 'local');
 }
 
 function iceCallback1Remote(event) {
-  handleCandidate(event.candidate, pc1Local, 'pc1: ', 'remote');
+  handleCandidate(event.candidate, _alice_Local, 'pc1: ', 'remote');
 }
 
 function iceCallback2Local(event) {
-  handleCandidate(event.candidate, pc2Remote, 'pc2: ', 'local');
+  handleCandidate(event.candidate, _bob_Remote, 'pc2: ', 'local');
 }
 
 function iceCallback2Remote(event) {
-  handleCandidate(event.candidate, pc2Local, 'pc2: ', 'remote');
+  handleCandidate(event.candidate, _bob_Local, 'pc2: ', 'remote');
 }
 
 function handleCandidate(candidate, dest, prefix, type) {

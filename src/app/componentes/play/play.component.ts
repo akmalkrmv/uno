@@ -8,13 +8,14 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { untilDestroyed } from "ngx-take-until-destroy";
+import { Observable } from "rxjs";
 
-import { ChatService } from "src/app/services/chat.service";
-import { UserConnection } from "../../models/user-connection";
 import {
   vgaConstraints,
   rtcConfiguration,
 } from "src/app/constants/rts-configurations";
+import { User } from "../../models/user";
+import { RoomService } from "../../services/room.service";
 
 @Component({
   selector: "app-play",
@@ -25,23 +26,51 @@ export class PlayComponent implements OnInit, OnDestroy {
   @ViewChild("container") container: ElementRef<HTMLElement>;
 
   public roomId: string;
-  public user: UserConnection;
-  public connections: UserConnection[] = [];
+  public userId: string;
+  public user: User;
+  public connections: User[] = [];
+  public users: Observable<any>;
 
-  private localStream: MediaStream;
+  public localStream: MediaStream;
   private offer$ = new EventEmitter<RTCSessionDescriptionInit>();
   private answer$ = new EventEmitter<RTCSessionDescriptionInit>();
 
-  constructor(
-    private router: Router,
-    private activeRoute: ActivatedRoute,
-    private chatService: ChatService
-  ) {}
+  constructor(private roomService: RoomService) {}
 
   ngOnDestroy() {}
 
   async ngOnInit() {
-    this.handleRouteParams();
+    await this.fetchUserId();
+    await this.start();
+
+  
+    // this.roomService
+    //   .roomOffers(this.roomId)
+    //   .pipe(untilDestroyed(this))
+    //   .subscribe((offers) => {
+    //     console.log("offers", offers);
+
+    //     offers = offers.filter((offer) => offer.senderId !== this.userId);
+    //     const lastOffer = offers[offers.length - 1];
+
+    //     if (lastOffer) {
+    //       this.handleOffer(lastOffer.description);
+    //     }
+    //   });
+
+    // this.roomService
+    //   .roomAnswers(this.roomId)
+    //   .pipe(untilDestroyed(this))
+    //   .subscribe((answers) => {
+    //     console.log("answers", answers);
+
+    //     answers = answers.filter((answer) => answer.senderId !== this.userId);
+    //     const lastAnswer = answers[answers.length - 1];
+
+    //     if (lastAnswer) {
+    //       this.handleAnswer(lastAnswer.description);
+    //     }
+    //   });
 
     this.offer$
       .pipe(untilDestroyed(this))
@@ -55,11 +84,18 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.handleAnswer(answer)
       );
 
-    this.chatService.messages
-      .pipe(untilDestroyed(this))
-      .subscribe((message) => this.onMessage(message));
+    // this.chatService.messages
+    //   .pipe(untilDestroyed(this))
+    //   .subscribe((message) => this.onMessage(message));
+  }
 
-    await this.start();
+  public async fetchUserId() {
+    if (localStorage.getItem("uno-client-id")) {
+      this.userId = localStorage.getItem("uno-client-id");
+    } else {
+      this.userId = await this.roomService.joinRoom(this.roomId);
+      localStorage.setItem("uno-client-id", this.userId);
+    }
   }
 
   public async start() {
@@ -73,9 +109,6 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
 
     this.localStream = stream;
-    this.user.stream = stream;
-    this.connections.push(this.user);
-
     this.muteAllVideos();
   }
 
@@ -83,11 +116,13 @@ export class PlayComponent implements OnInit, OnDestroy {
     const offer = await this.user.connection.createOffer();
     await this.user.connection.setLocalDescription(offer);
 
-    this.chatService.messages.next({
-      type: "offer",
-      senderId: this.user.id,
-      data: this.user.connection.localDescription,
-    });
+    // this.chatService.messages.next({
+    //   type: "offer",
+    //   senderId: this.user.id,
+    //   data: this.user.connection.localDescription,
+    // });
+
+    // this.roomService.createOffer(this.roomId, this.user);
   }
 
   public hangup() {
@@ -96,7 +131,6 @@ export class PlayComponent implements OnInit, OnDestroy {
     this.connections.forEach((user) => {
       user.connection.close();
       user.connceted = false;
-      user.stream = this.localStream;
     });
   }
 
@@ -109,20 +143,8 @@ export class PlayComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  private handleRouteParams() {
-    this.activeRoute.paramMap
-      .pipe(untilDestroyed(this))
-      .subscribe((paramMap: ParamMap) => {
-        if (paramMap.has("id")) {
-          this.roomId = paramMap.get("id");
-        } else {
-          this.router.navigate([this.newid()]);
-        }
-      });
-  }
-
-  private createUser(): UserConnection {
-    const user = new UserConnection(this.newid());
+  private createUser(): User {
+    const user = new User(this.userId);
 
     // Creating connection object
     user.connection = new RTCPeerConnection(rtcConfiguration);
@@ -160,11 +182,13 @@ export class PlayComponent implements OnInit, OnDestroy {
       const answer = await this.user.connection.createAnswer();
       await this.user.connection.setLocalDescription(answer);
 
-      this.chatService.messages.next({
-        type: "answer",
-        senderId: this.user.id,
-        data: this.user.connection.localDescription,
-      });
+      // this.chatService.messages.next({
+      //   type: "answer",
+      //   senderId: this.user.id,
+      //   data: this.user.connection.localDescription,
+      // });
+
+      // this.roomService.createAnswer(this.roomId, this.user);
     } catch (error) {
       console.log(error);
     }
@@ -177,10 +201,5 @@ export class PlayComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  // TODO: Improve id generator
-  private newid(): string {
-    return Math.floor(Math.random() * 1000000 + 1000000).toString();
   }
 }

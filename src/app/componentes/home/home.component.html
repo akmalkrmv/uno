@@ -1,0 +1,32 @@
+<div class="container">
+  <form class="form">
+    <mat-form-field appearance="standard">
+      <input
+        matInput
+        [(ngModel)]="roomId"
+        placeholder="Номер комнаты"
+        autocomplete="off"
+        name="roomId"
+      />
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      type="button"
+      color="primary"
+      [disabled]="!roomId"
+      (click)="joinRoom()"
+    >
+      Присоеденится
+    </button>
+
+    <button
+      mat-raised-button
+      type="button"
+      color="primary"
+      (click)="createRoom()"
+    >
+      Создать
+    </button>
+  </form>
+</div>

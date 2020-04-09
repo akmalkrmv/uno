@@ -1,0 +1,27 @@
+body {
+  background-image: "url(/back.jpg)";
+}
+
+.container {
+  width: 200px;
+  margin: 0 auto;
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    input {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    button {
+      margin-bottom: 6px;
+    }
+  }
+}
