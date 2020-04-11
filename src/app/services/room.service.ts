@@ -36,12 +36,9 @@ export class RoomService {
   }
 
   public async joinRoom(roomId: string): Promise<string> {
-    const created = await this.firestore
-      .collection(`rooms/${roomId}/users`)
-      .add({});
-
-    await created.update({ id: created.id });
-    return created.id;
+    const id = this.firestore.createId();
+    await this.firestore.collection(`rooms/${roomId}/users`).add({ id });
+    return id;
   }
 
   public userJoined(roomId: string): Observable<any> {
@@ -86,9 +83,9 @@ export class RoomService {
       return;
     }
 
-    const created = await this.offerCollection.add(offer);
-    await created.update({ id: created.id });
-    return created.id;
+    const id = this.firestore.createId();
+    await this.offerCollection.add({ ...offer, id });
+    return id;
   }
 
   public async createAnswer(answer: Answer): Promise<string> {
@@ -108,16 +105,13 @@ export class RoomService {
       return;
     }
 
-    const created = await this.answerCollection.add(answer);
-    await created.update({ id: created.id });
-    return created.id;
+    const id = this.firestore.createId();
+    await this.answerCollection.add({ ...answer, id });
+    return id;
   }
 
   public async clearConnections() {
-    const offers = await this.offerCollection.get().toPromise();
-    const answers = await this.answerCollection.get().toPromise();
-
-    offers.forEach(async (offer) => await offer.ref.delete());
-    answers.forEach(async (answer) => await answer.ref.delete());
+    const room = await this.room.ref.get();
+    await this.room.update({ ...room.data(), offers: [], answers: [] });
   }
 }

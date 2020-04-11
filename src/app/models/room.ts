@@ -16,6 +16,6 @@ export interface Room {
   id?: string;
   users?: any[];
   offers?: Offer[];
-  answer?: Answer[];
+  answers?: Answer[];
 }
 
