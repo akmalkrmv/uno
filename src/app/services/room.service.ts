@@ -112,4 +112,12 @@ export class RoomService {
     await created.update({ id: created.id });
     return created.id;
   }
+
+  public async clearConnections() {
+    const offers = await this.offerCollection.get().toPromise();
+    const answers = await this.answerCollection.get().toPromise();
+
+    offers.forEach(async (offer) => await offer.ref.delete());
+    answers.forEach(async (answer) => await answer.ref.delete());
+  }
 }

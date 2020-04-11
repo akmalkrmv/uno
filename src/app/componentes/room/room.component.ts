@@ -7,7 +7,7 @@ import { vgaConstraints } from "src/app/constants/rts-configurations";
 import { User } from "../../models/user";
 import { RoomService } from "../../services/room.service";
 import { Offer, Answer } from "src/app/models/room";
-import { delimeter } from 'src/app/constants/logging';
+import { delimeter } from "src/app/constants/logging";
 
 @Component({
   selector: "app-room",
@@ -74,11 +74,13 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
   }
 
-  public hangup() {
+  public async hangup() {
     for (const connection of this.user.connections) {
-      connection.stream = null;
       connection.remote.close();
     }
+
+    this.user.connections = [];
+    await this.roomService.clearConnections();
   }
 
   public async createOfferToUser(from: string, to: string) {
