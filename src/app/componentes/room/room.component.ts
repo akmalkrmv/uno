@@ -34,7 +34,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     const userId = await this.fetchUserId();
     this.user = new User(userId);
-    await this.start();
+    await this.startSelfStream();
 
     this.roomService
       .userOffers(userId)
@@ -57,7 +57,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
   }
 
-  public async start() {
+  public async startSelfStream() {
     const stream = await navigator.mediaDevices.getUserMedia(vgaConstraints);
     this.user.stream = stream;
     this.muteAllVideos();
@@ -76,6 +76,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public hangup() {
     for (const connection of this.user.connections) {
+      connection.stream = null;
       connection.remote.close();
     }
   }

@@ -93,7 +93,7 @@ export class RoomService {
 
   public async createAnswer(answer: Answer): Promise<string> {
     const existing = await this.room
-      .collection<Offer>(
+      .collection<Answer>(
         "answers",
         (ref) =>
           ref.where("from", "==", answer.from) &&
