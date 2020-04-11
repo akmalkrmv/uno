@@ -24,7 +24,9 @@ export class RoomComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute
   ) {}
 
-  ngOnDestroy() {}
+  async ngOnDestroy() {
+    await this.hangup();
+  }
 
   async ngOnInit() {
     this.roomId = this.activeRoute.snapshot.paramMap.get("id");
@@ -75,12 +77,16 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public async hangup() {
-    for (const connection of this.user.connections) {
-      connection.remote.close();
-    }
+    console.log("Deleting offers");
 
-    this.user.connections = [];
-    await this.roomService.clearConnections();
+    this.roomService.clearConnections().subscribe((result) => {
+      for (const connection of this.user.connections) {
+        connection.remote.close();
+      }
+
+      this.user.connections = [];
+      console.log(result, delimeter);
+    });
   }
 
   public async createOfferToUser(from: string, to: string) {
@@ -99,6 +105,8 @@ export class RoomComponent implements OnInit, OnDestroy {
         to,
         description: connection.localDescription.toJSON(),
       });
+
+      console.log("Done creating offer", delimeter);
     } catch (error) {
       console.log(error, delimeter);
     }
@@ -118,11 +126,13 @@ export class RoomComponent implements OnInit, OnDestroy {
       const answer = await connection.createAnswer();
       await connection.setLocalDescription(answer);
 
-      this.roomService.createAnswer({
+      await this.roomService.createAnswer({
         to: offer.from,
         from: this.user.id,
         description: connection.localDescription.toJSON(),
       });
+
+      console.log("Done creating answer", delimeter);
     } catch (error) {
       console.log(error, delimeter);
     }
