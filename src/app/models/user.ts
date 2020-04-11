@@ -1,5 +1,7 @@
 import { rtcConfiguration } from "../constants/rts-configurations";
 
+const delimeter = "\r\n--------------------\r\n";
+
 export class Connection {
   public remote: RTCPeerConnection;
   public stream?: MediaStream;
@@ -9,7 +11,7 @@ export class Connection {
 
     // Registering remote stream
     this.remote.ontrack = (event: RTCTrackEvent) => {
-      console.log("ontrack", userId, event.streams);
+      console.log("ontrack", userId, event.streams, delimeter);
       this.stream = event.streams[0];
     };
   }
@@ -27,6 +29,15 @@ export class User {
     const connection = this.connections.find(
       (item) => item.userId == remoteUserId
     );
+
+    console.log("Looking for existing connection", remoteUserId);
+    console.log(
+      connection
+        ? "Connection exists"
+        : "Connection doesn't exists, creating new connection",
+      delimeter
+    );
+
     return connection || this.createConnection(remoteUserId);
   }
 
@@ -37,6 +48,8 @@ export class User {
   }
 
   public addTracks(connection: RTCPeerConnection) {
+    console.log("Adding tracks", delimeter);
+
     this.stream
       .getTracks()
       .forEach((track) => connection.addTrack(track, this.stream));
