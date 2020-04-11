@@ -9,6 +9,7 @@ import {
 } from "src/app/constants/rts-configurations";
 import { User } from "../../models/user";
 import { RoomService } from "../../services/room.service";
+import { map } from "rxjs/operators";
 
 @Component({
   selector: "app-room",
@@ -36,7 +37,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomId = this.activeRoute.snapshot.paramMap.get("id");
     this.roomService.init(this.roomId);
     this.onlineUsers$ = this.roomService.users$;
-    this.enableLogging();
+    this.logging();
 
     const userId = await this.fetchUserId();
     this.user = new User(userId);
@@ -44,7 +45,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     this.roomService
       .userOffers(userId)
-      .pipe(untilDestroyed(this))
+      .pipe(
+        untilDestroyed(this),
+        map((offers) => offers.filter((offer) => offer.from != this.user.id))
+      )
       .subscribe(async (offers) => {
         for (const offer of offers) {
           const connection = this.user.getConnection(offer.from).remote;
@@ -52,6 +56,9 @@ export class RoomComponent implements OnInit, OnDestroy {
 
           const answer = await connection.createAnswer();
           await connection.setLocalDescription(answer);
+
+          console.log(this.user.id, `got offer from ${offer.from}`, offer.description);
+          console.log(this.user.id, `creating answer`, connection.localDescription, connection.localDescription.toJSON());
 
           this.roomService.createAnswer({
             to: offer.from,
@@ -69,22 +76,29 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public async call() {
-    this.onlineUsers$.pipe(untilDestroyed(this)).subscribe(async (users) => {
-      const otherUsers = users.filter((user) => user.id != this.userId);
+    this.onlineUsers$
+      .pipe(
+        untilDestroyed(this),
+        map((users) => users.filter((user) => user.id != this.user.id))
+      )
+      .subscribe(async (users) => {
+        for (const otherUser of users) {
 
-      for (const otherUser of otherUsers) {
-        const connection = this.user.getConnection(otherUser.id).remote;
-        const offer = await connection.createOffer();
+          const connection = this.user.getConnection(otherUser.id).remote;
+          this.user.addTracks(connection);
 
-        connection.setLocalDescription(offer);
+          const offer = await connection.createOffer();
+          connection.setLocalDescription(offer);
 
-        await this.roomService.createOffer({
-          from: this.user.id,
-          to: otherUser.id,
-          description: connection.localDescription.toJSON(),
-        });
-      }
-    });
+          console.log(this.user.id, `creating offer to ${otherUser.id}`);
+
+          await this.roomService.createOffer({
+            from: this.user.id,
+            to: otherUser.id,
+            description: connection.localDescription.toJSON(),
+          });
+        }
+      });
 
     // const id = await this.roomService.joinRoom(this.roomId);
     // const bob = new User(id);
@@ -132,7 +146,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     return userId;
   }
 
-  private enableLogging() {
+  private logging() {
     this.roomService.users$.pipe(untilDestroyed(this)).subscribe((items) => {
       console.log("users", items);
     });

@@ -21,8 +21,8 @@
 
       <div *ngFor="let connection of user.connections" class="user-details">
         <video
-          *ngIf="user.stream"
-          [srcObject]="user.stream"
+          *ngIf="connection.stream"
+          [srcObject]="connection.stream"
           autoplay
           controls
           muted

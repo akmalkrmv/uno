@@ -130,7 +130,7 @@ export class PlayComponent implements OnInit, OnDestroy {
 
     this.connections.forEach((user) => {
       user.connection.close();
-      user.connceted = false;
+      // user.connceted = false;
     });
   }
 

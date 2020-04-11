@@ -9,7 +9,7 @@ export class Connection {
 
     // Registering remote stream
     this.remote.ontrack = (event: RTCTrackEvent) => {
-      // console.log("ontrack", event.streams);
+      console.log("ontrack", userId, event.streams);
       this.stream = event.streams[0];
     };
   }
@@ -20,12 +20,13 @@ export class User {
   public stream?: MediaStream;
   public connection?: RTCPeerConnection;
   public connections: Connection[] = [];
-  public connceted = false;
 
   constructor(public id: string) {}
 
   public getConnection(remoteUserId: string): Connection {
-    const connection = this.connections.find((item) => item.userId == remoteUserId);
+    const connection = this.connections.find(
+      (item) => item.userId == remoteUserId
+    );
     return connection || this.createConnection(remoteUserId);
   }
 
@@ -33,5 +34,11 @@ export class User {
     const connection = new Connection(remoteUserId);
     this.connections.push(connection);
     return connection;
+  }
+
+  public addTracks(connection: RTCPeerConnection) {
+    this.stream
+      .getTracks()
+      .forEach((track) => connection.addTrack(track, this.stream));
   }
 }

@@ -45,16 +45,7 @@ export class RoomService {
   }
 
   public userJoined(roomId: string): Observable<any> {
-    return this.firestore
-      .collection(`rooms/${roomId}/users`)
-      .snapshotChanges()
-      .pipe(
-        map((changes) => {
-          changes
-            .filter((change) => change.type === "added")
-            .map((change) => change.payload);
-        })
-      );
+    return this.firestore.collection(`rooms/${roomId}/users`).snapshotChanges();
   }
 
   public userOffers(userId: string): Observable<Offer[]> {
@@ -70,12 +61,34 @@ export class RoomService {
   }
 
   public async createOffer(offer: Offer): Promise<string> {
+    const existing = this.room.collection<Offer>(
+      "offers",
+      (ref) =>
+        ref.where("from", "==", offer.from) && ref.where("to", "==", offer.to)
+    );
+
+    if (existing) {
+      const epired = await existing.get().toPromise();
+      epired.forEach((doc) => doc.ref.delete());
+    }
+
     const created = await this.offerCollection.add(offer);
     await created.update({ id: created.id });
     return created.id;
   }
 
   public async createAnswer(answer: Answer): Promise<string> {
+    const existing = this.room.collection<Offer>(
+      "answers",
+      (ref) =>
+        ref.where("from", "==", answer.from) && ref.where("to", "==", answer.to)
+    );
+
+    if (existing) {
+      const epired = await existing.get().toPromise();
+      epired.forEach((doc) => doc.ref.delete());
+    }
+
     const created = await this.answerCollection.add(answer);
     await created.update({ id: created.id });
     return created.id;

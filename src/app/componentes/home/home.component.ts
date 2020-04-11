@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit {
   }
 
   public async joinRoom() {
+    localStorage.removeItem("uno-client-id");
     this.router.navigate([`/room/${this.roomId}`]);
   }
 }
