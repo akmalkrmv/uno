@@ -16,12 +16,7 @@ import { delimeter } from 'src/app/constants/logging';
 })
 export class RoomComponent implements OnInit, OnDestroy {
   public roomId: string;
-  public userId: string;
   public user: User;
-  public connections: User[] = [];
-  public users: Observable<any>;
-  public localStream: MediaStream;
-
   public onlineUsers$: Observable<User[]>;
 
   constructor(
@@ -58,7 +53,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       .subscribe(async (answers) => {
         for (const answer of answers) {
           await this.handleAnswer(answer);
-          // await this.createOfferToUser(this.user.id, answer.from);
         }
       });
   }
@@ -80,7 +74,11 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
   }
 
-  public hangup() {}
+  public hangup() {
+    for (const connection of this.user.connections) {
+      connection.remote.close();
+    }
+  }
 
   public async createOfferToUser(from: string, to: string) {
     try {

@@ -39,7 +39,6 @@ export class Connection {
 export class User {
   public name?: string;
   public stream?: MediaStream;
-  public connection?: RTCPeerConnection;
   public connections: Connection[] = [];
 
   constructor(public id: string) {}
