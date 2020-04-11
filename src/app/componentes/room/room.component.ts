@@ -6,9 +6,8 @@ import { Observable } from "rxjs";
 import { vgaConstraints } from "src/app/constants/rts-configurations";
 import { User } from "../../models/user";
 import { RoomService } from "../../services/room.service";
-import { map } from "rxjs/operators";
-
-const delimeter = "\r\n--------------------\r\n";
+import { Offer, Answer } from "src/app/models/room";
+import { delimeter } from 'src/app/constants/logging';
 
 @Component({
   selector: "app-room",
@@ -44,57 +43,22 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     this.roomService
       .userOffers(userId)
-      .pipe(
-        untilDestroyed(this),
-        map((offers) => offers.filter((offer) => offer.from != this.user.id))
-      )
+      .pipe(untilDestroyed(this))
       .subscribe(async (offers) => {
         for (const offer of offers) {
-          try {
-            console.log("Got offer from", offer.from);
-            console.log("Setting remote description");
-
-            const connection = this.user.getConnection(offer.from).remote;
-            await connection.setRemoteDescription(offer.description);
-
-            console.log("Creating answer");
-            console.log("Setting local description", delimeter);
-
-            const answer = await connection.createAnswer();
-            await connection.setLocalDescription(answer);
-
-            this.roomService.createAnswer({
-              to: offer.from,
-              from: this.user.id,
-              description: connection.localDescription.toJSON(),
-            });
-          } catch (error) {
-            console.log(error, delimeter);
-          }
+          await this.answerToOffer(offer);
+          // Call back when someone calls
+          await this.createOfferToUser(this.user.id, offer.from);
         }
       });
 
     this.roomService
       .userAnswers(userId)
-      .pipe(
-        untilDestroyed(this),
-        map((answers) =>
-          answers.filter((answer) => answer.from != this.user.id)
-        )
-      )
+      .pipe(untilDestroyed(this))
       .subscribe(async (answers) => {
         for (const answer of answers) {
-          try {
-            console.log("Got answer from", answer.from);
-            console.log("Setting remote description", delimeter);
-
-            const connection = this.user.getConnection(answer.from).remote;
-            await connection.setRemoteDescription(answer.description);
-
-            this.muteAllVideos();
-          } catch (error) {
-            console.log(error, delimeter);
-          }
+          await this.handleAnswer(answer);
+          // await this.createOfferToUser(this.user.id, answer.from);
         }
       });
   }
@@ -106,32 +70,76 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public async call() {
-    this.onlineUsers$
-      .pipe(
-        untilDestroyed(this),
-        map((users) => users.filter((user) => user.id != this.user.id))
-      )
+    this.roomService
+      .otherUsers(this.user.id)
+      .pipe(untilDestroyed(this))
       .subscribe(async (users) => {
-        for (const target of users) {
-          const connection = this.user.getConnection(target.id).remote;
-          this.user.addTracks(connection);
-
-          console.log("Creating offer to ", target.id);
-          console.log("Setting remote description", delimeter);
-
-          const offer = await connection.createOffer();
-          connection.setLocalDescription(offer);
-
-          await this.roomService.createOffer({
-            from: this.user.id,
-            to: target.id,
-            description: connection.localDescription.toJSON(),
-          });
+        for (const user of users) {
+          await this.createOfferToUser(this.user.id, user.id);
         }
       });
   }
 
   public hangup() {}
+
+  public async createOfferToUser(from: string, to: string) {
+    try {
+      const connection = this.user.getConnection(to).remote;
+      this.user.addTracks(connection);
+
+      console.log("Creating offer to ", to);
+      console.log("Setting remote description", delimeter);
+
+      const offer = await connection.createOffer();
+      connection.setLocalDescription(offer);
+
+      await this.roomService.createOffer({
+        from,
+        to,
+        description: connection.localDescription.toJSON(),
+      });
+    } catch (error) {
+      console.log(error, delimeter);
+    }
+  }
+
+  public async answerToOffer(offer: Offer) {
+    try {
+      console.log("Got offer from", offer.from);
+      console.log("Setting remote description");
+
+      const connection = this.user.getConnection(offer.from).remote;
+      await connection.setRemoteDescription(offer.description);
+
+      console.log("Creating answer");
+      console.log("Setting local description", delimeter);
+
+      const answer = await connection.createAnswer();
+      await connection.setLocalDescription(answer);
+
+      this.roomService.createAnswer({
+        to: offer.from,
+        from: this.user.id,
+        description: connection.localDescription.toJSON(),
+      });
+    } catch (error) {
+      console.log(error, delimeter);
+    }
+  }
+
+  public async handleAnswer(answer: Answer) {
+    try {
+      console.log("Got answer from", answer.from);
+      console.log("Setting remote description", delimeter);
+
+      const connection = this.user.getConnection(answer.from).remote;
+      await connection.setRemoteDescription(answer.description);
+
+      this.muteAllVideos();
+    } catch (error) {
+      console.log(error, delimeter);
+    }
+  }
 
   public muteAllVideos() {
     setTimeout(() => {

@@ -1,6 +1,5 @@
 import { rtcConfiguration } from "../constants/rts-configurations";
-
-const delimeter = "\r\n--------------------\r\n";
+import { delimeter } from "../constants/logging";
 
 export class Connection {
   public remote: RTCPeerConnection;
@@ -9,10 +8,30 @@ export class Connection {
   constructor(public userId: string) {
     this.remote = new RTCPeerConnection(rtcConfiguration);
 
+    const showState = () => {
+      const { signalingState, connectionState } = this.remote;
+      console.log("State: ", { signalingState, connectionState }, delimeter);
+    };
+
     // Registering remote stream
     this.remote.ontrack = (event: RTCTrackEvent) => {
       console.log("ontrack", userId, event.streams, delimeter);
       this.stream = event.streams[0];
+    };
+
+    this.remote.onconnectionstatechange = (event) => {
+      console.log("onconnectionstatechange", event);
+      showState();
+    };
+
+    this.remote.onsignalingstatechange = (event) => {
+      console.log("onsignalingstatechange", event);
+      showState();
+    };
+
+    this.remote.onstatsended = (event: RTCStatsEvent) => {
+      console.log("onstatsended", event);
+      showState();
     };
   }
 }
@@ -48,10 +67,12 @@ export class User {
   }
 
   public addTracks(connection: RTCPeerConnection) {
-    console.log("Adding tracks", delimeter);
+    try {
+      console.log("Adding tracks", delimeter);
 
-    this.stream
-      .getTracks()
-      .forEach((track) => connection.addTrack(track, this.stream));
+      this.stream
+        .getTracks()
+        .forEach((track) => connection.addTrack(track, this.stream));
+    } catch (error) {}
   }
 }

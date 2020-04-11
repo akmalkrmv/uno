@@ -5,9 +5,9 @@ import {
   AngularFirestoreCollection,
   AngularFirestoreDocument,
 } from "angularfire2/firestore";
-import { User } from "../models/user";
 import { Room, Offer, Answer } from "../models/room";
 import { map } from "rxjs/operators";
+import { delimeter } from "../constants/logging";
 
 @Injectable({
   providedIn: "root",
@@ -48,28 +48,42 @@ export class RoomService {
     return this.firestore.collection(`rooms/${roomId}/users`).snapshotChanges();
   }
 
+  public otherUsers(userId: string): Observable<any[]> {
+    return this.users$.pipe(
+      map((users) => users.filter((user) => user.id != userId))
+    );
+  }
+
   public userOffers(userId: string): Observable<Offer[]> {
     return this.room
       .collection<Offer>("offers", (ref) => ref.where("to", "==", userId))
-      .valueChanges();
+      .valueChanges()
+      .pipe(map((offers) => offers.filter((offer) => offer.from != userId)));
   }
 
   public userAnswers(userId: string): Observable<Answer[]> {
     return this.room
       .collection<Answer>("answers", (ref) => ref.where("to", "==", userId))
-      .valueChanges();
+      .valueChanges()
+      .pipe(
+        map((answers) => answers.filter((answer) => answer.from != userId))
+      );
   }
 
   public async createOffer(offer: Offer): Promise<string> {
-    const existing = this.room.collection<Offer>(
-      "offers",
-      (ref) =>
-        ref.where("from", "==", offer.from) && ref.where("to", "==", offer.to)
-    );
+    const existing = await this.room
+      .collection<Offer>(
+        "offers",
+        (ref) =>
+          ref.where("from", "==", offer.from) && ref.where("to", "==", offer.to)
+      )
+      .get()
+      .toPromise();
 
-    if (existing) {
-      const epired = await existing.get().toPromise();
-      epired.forEach((doc) => doc.ref.delete());
+    if (!existing.empty) {
+      const log = `Offer from ${offer.from} to ${offer.to} already exists`;
+      console.log(log, delimeter);
+      return;
     }
 
     const created = await this.offerCollection.add(offer);
@@ -78,15 +92,20 @@ export class RoomService {
   }
 
   public async createAnswer(answer: Answer): Promise<string> {
-    const existing = this.room.collection<Offer>(
-      "answers",
-      (ref) =>
-        ref.where("from", "==", answer.from) && ref.where("to", "==", answer.to)
-    );
+    const existing = await this.room
+      .collection<Offer>(
+        "answers",
+        (ref) =>
+          ref.where("from", "==", answer.from) &&
+          ref.where("to", "==", answer.to)
+      )
+      .get()
+      .toPromise();
 
-    if (existing) {
-      const epired = await existing.get().toPromise();
-      epired.forEach((doc) => doc.ref.delete());
+    if (!existing.empty) {
+      const log = `Offer from ${answer.from} to ${answer.to} already exists`;
+      console.log(log, delimeter);
+      return;
     }
 
     const created = await this.answerCollection.add(answer);
