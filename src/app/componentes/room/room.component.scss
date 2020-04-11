@@ -1,5 +1,6 @@
 .room-container {
   display: flex;
+  flex-wrap: wrap;
 
   .online-users {
     flex-grow: 1;

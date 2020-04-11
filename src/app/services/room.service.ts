@@ -56,7 +56,7 @@ export class RoomService {
 
   public userAnswers(userId: string): Observable<Answer[]> {
     return this.room
-      .collection<Answer>("answer", (ref) => ref.where("to", "==", userId))
+      .collection<Answer>("answers", (ref) => ref.where("to", "==", userId))
       .valueChanges();
   }
 

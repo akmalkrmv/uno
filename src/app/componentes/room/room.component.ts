@@ -57,14 +57,42 @@ export class RoomComponent implements OnInit, OnDestroy {
           const answer = await connection.createAnswer();
           await connection.setLocalDescription(answer);
 
-          console.log(this.user.id, `got offer from ${offer.from}`, offer.description);
-          console.log(this.user.id, `creating answer`, connection.localDescription, connection.localDescription.toJSON());
+          console.log(
+            this.user.id,
+            `got offer from ${offer.from}`,
+            offer.description
+          );
+          console.log(
+            this.user.id,
+            `creating answer`,
+            connection.localDescription.toJSON()
+          );
 
           this.roomService.createAnswer({
             to: offer.from,
             from: this.user.id,
             description: connection.localDescription.toJSON(),
           });
+        }
+      });
+
+    this.roomService
+      .userAnswers(userId)
+      .pipe(
+        untilDestroyed(this),
+        map((answers) =>
+          answers.filter((answer) => answer.from != this.user.id)
+        )
+      )
+      .subscribe(async (answers) => {
+        for (const answer of answers) {
+          console.log(this.user.id, `setting remote desc`, answer);
+          try {
+            const connection = this.user.getConnection(answer.from).remote;
+            await connection.setRemoteDescription(answer.description);
+          } catch (error) {
+            console.log(error);
+          }
         }
       });
   }
@@ -83,7 +111,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       .subscribe(async (users) => {
         for (const otherUser of users) {
-
           const connection = this.user.getConnection(otherUser.id).remote;
           this.user.addTracks(connection);
 
