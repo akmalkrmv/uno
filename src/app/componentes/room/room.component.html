@@ -1,31 +1,116 @@
 <div class="room-container">
-  <div class="header-controls">
-    <button mat-stroked-button color="warn" (click)="leaveRoom()">
-      Покинуть комнату
+  <mat-toolbar class="header-controls" *ngIf="user">
+    <!-- <div>Номер: {{ roomId }}</div> -->
+    <div>{{ user.name }}</div>
+    <div class="fill-remaining-space"></div>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      aria-label="Example icon-button with a menu"
+    >
+      <mat-icon>more_vert</mat-icon>
     </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="copyLink()">
+        <mat-icon>link</mat-icon>
+        <span>Скопировать ссылку</span>
+      </button>
+
+      <mat-divider></mat-divider>
+
+      <ng-container *ngIf="!user.connections || !user.connections.length">
+        <button mat-menu-item (click)="call()">
+          <mat-icon>phone</mat-icon>
+          <span>Подключится</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="user.connections && user.connections.length">
+        <button mat-menu-item (click)="retryCall()">
+          <mat-icon>swap_calls</mat-icon>
+          <span>Переподключить</span>
+        </button>
+        <button mat-menu-item (click)="hangup()">
+          <mat-icon>call_end</mat-icon>
+          <span>Отключить</span>
+        </button>
+      </ng-container>
+      <mat-divider></mat-divider>
+      <button  mat-menu-item (click)="leaveRoom()">
+        <mat-icon color="warn"> power_settings_new</mat-icon>
+        <span class="warn-color">Покинуть комнату</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <div class="header-controls" *ngIf="user && false">
+    <div>
+      <button mat-stroked-button color="warn" (click)="leaveRoom()">
+        Покинуть комнату
+      </button>
+    </div>
+    <div>
+      <ng-container *ngIf="!user.connections || !user.connections.length">
+        <button mat-button color="accent" (click)="call()">
+          <i class="fa fa-phone"></i> Подключится
+        </button>
+      </ng-container>
+      <ng-container *ngIf="user.connections && user.connections.length">
+        <button mat-button color="accent" (click)="retryCall()">
+          <i class="fa fa-refresh"></i> Переподключить
+        </button>
+        <button mat-button color="warn" (click)="hangup()">
+          <i class="fa fa-phone fa-phone-hangup"></i> Отключить
+        </button>
+      </ng-container>
+    </div>
   </div>
 
-  <div
-    class="online-users"
-    *ngIf="user && (!user.connections || !user.connections.length)"
-  >
-    <h4>Сейчвс в сети:</h4>
-    <p *ngFor="let user of onlineUsers$ | async">{{ user.name }}</p>
+  <div class="online-users" *ngIf="onlineUsers$ | async as onlineUsers">
+    <mat-expansion-panel class="expansion-panel-inverse">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Люди ({{ onlineUsers.length }}) </mat-panel-title>
+      </mat-expansion-panel-header>
+      <p *ngFor="let onlineUser of onlineUsers">
+        <span>{{ onlineUser.name }}</span>
+      </p>
+    </mat-expansion-panel>
   </div>
 
   <div class="videos-contanier" *ngIf="user">
     <div class="users-container">
       <div class="user-details">
         <video
+          id="self-video"
           *ngIf="user.stream"
           [srcObject]="user.stream"
           autoplay
-          controls
           muted
         ></video>
         <p>{{ user.name }}</p>
 
         <div class="buttons-container">
+          <div class="buttons-horizontal">
+            <button mat-fab color="accent" (click)="toggleSound()">
+              <mat-icon *ngIf="isAudioOn | async">mic</mat-icon>
+              <mat-icon *ngIf="!(isAudioOn | async)">mic_off</mat-icon>
+            </button>
+            <button mat-fab color="accent" (click)="toggleVideo()">
+              <mat-icon *ngIf="isVideoOn | async">videocam</mat-icon>
+              <mat-icon *ngIf="!(isVideoOn | async)">videocam_off</mat-icon>
+            </button>
+
+            <button
+              *ngIf="canFlipCamera"
+              mat-fab
+              color="accent"
+              (click)="flipCamera()"
+            >
+              <mat-icon>flip_camera_ios</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- <div class="buttons-container">
           <div class="buttons">
             <ng-container *ngIf="!user.connections || !user.connections.length">
               <button mat-button color="accent" (click)="call()">
@@ -41,23 +126,34 @@
               </button>
             </ng-container>
           </div>
-        </div>
+        </div> -->
       </div>
 
-      <div *ngFor="let connection of user.connections" class="user-details">
-        <ng-container>
-          <video
-            *ngIf="connection.stream"
-            [srcObject]="connection.stream"
-            autoplay
-            controls
-            muted
-          ></video>
-          <p *ngIf="connection.userName">{{ connection.userName }}</p>
-          <p>Статус связи: {{ connection.remote.connectionState }}</p>
-          <p>Статус сигнала: {{ connection.remote.signalingState }}</p>
+      <ng-container *ngFor="let connection of user.connections">
+        <ng-container *ngIf="connection.remote.connectionState != 'new'">
+          <div class="user-details">
+            <mat-progress-bar
+              *ngIf="
+                connection.stream &&
+                connection.remote.connectionState != 'connected'
+              "
+              mode="indeterminate"
+              class="progress-bar-inverse"
+            ></mat-progress-bar>
+
+            <video
+              *ngIf="connection.stream"
+              [srcObject]="connection.stream"
+              autoplay
+              muted
+            ></video>
+
+            <p *ngIf="connection.userName">{{ connection.userName }}</p>
+            <p>Статус связи: {{ connection.remote.connectionState }}</p>
+            <p>Статус сигнала: {{ connection.remote.signalingState }}</p>
+          </div>
         </ng-container>
-      </div>
+      </ng-container>
     </div>
   </div>
 </div>

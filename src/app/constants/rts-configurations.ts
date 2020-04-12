@@ -11,9 +11,15 @@ export const rtcConfiguration: RTCConfiguration = {
   ],
 };
 
+export const videoConstraints: MediaTrackConstraints = {
+  width: { exact: 320 },
+  height: { exact: 240 },
+  facingMode: 'user',
+};
+
 export const vgaConstraints: MediaStreamConstraints = {
   audio: true,
-  video: { width: { exact: 320 }, height: { exact: 240 } },
+  video: videoConstraints,
 };
 
 export const offerOptions: RTCOfferOptions = {

@@ -1,16 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, merge } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-import { vgaConstraints } from 'src/app/constants/rts-configurations';
 import { User } from '../../models/user';
 import { RoomService } from '../../services/room.service';
 import { Offer, Answer } from 'src/app/models/room';
 import { delimeter } from 'src/app/constants/logging';
 import { UsersService } from 'src/app/services/users.service';
 import { RoomUserService } from 'src/app/services/room-user.service';
-import { switchMap, tap } from 'rxjs/operators';
+import { ClipboardService } from 'src/app/services/clipboard.service';
 
 @Component({
   selector: 'app-room',
@@ -18,11 +19,16 @@ import { switchMap, tap } from 'rxjs/operators';
   styleUrls: ['./room.component.scss'],
 })
 export class RoomComponent implements OnInit, OnDestroy {
-  public roomId: string;
   public user: User;
+  public roomId: string;
   public onlineUsers$: Observable<User[]>;
+  public isAudioOn = new BehaviorSubject(true);
+  public isVideoOn = new BehaviorSubject(true);
+  public isFront = new BehaviorSubject(true);
+  public canFlipCamera = false;
 
   constructor(
+    private snackBar: MatSnackBar,
     private router: Router,
     private activeRoute: ActivatedRoute,
     private roomService: RoomService,
@@ -37,10 +43,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.roomService.init(this.roomId);
-    // this.logging();
 
     this.user = await this.usersService.authorize();
-    await this.startSelfStream();
+    await this.updateStream();
     await this.roomUserService.joinRoom(this.roomId, this.user.id);
 
     this.onlineUsers$ = this.roomUserService
@@ -66,12 +71,45 @@ export class RoomComponent implements OnInit, OnDestroy {
           await this.handleAnswer(answer);
         }
       });
+
+    merge([this.isAudioOn, this.isVideoOn, this.isFront])
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        // await this.updateStream();
+      });
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    this.canFlipCamera =
+      devices.filter((device) => device.kind == 'videoinput').length > 1;
+
+    this.call();
   }
 
-  public async startSelfStream() {
-    const stream = await navigator.mediaDevices.getUserMedia(vgaConstraints);
+  public toggleSound() {
+    this.isAudioOn.next(!this.isAudioOn.value);
+    this.user.toggleAudio();
+  }
+  public toggleVideo() {
+    this.isVideoOn.next(!this.isVideoOn.value);
+    this.user.toggleVideo();
+  }
+  public async flipCamera() {
+    this.isFront.next(!this.isFront.value);
+  }
+
+  public async updateStream() {
+    const stream = await navigator.mediaDevices.getUserMedia(
+      this.getVgaConstraints()
+    );
     this.user.stream = stream;
-    this.muteAllVideos();
+    this.muteVideo('#self-video');
+  }
+
+  public muteVideo(selector: string) {
+    setTimeout(() => {
+      const currentVideo = document.querySelector(selector);
+      currentVideo && ((currentVideo as HTMLVideoElement).volume = 0);
+    }, 100);
   }
 
   public async call() {
@@ -106,6 +144,14 @@ export class RoomComponent implements OnInit, OnDestroy {
   public async retryCall() {
     await this.hangup();
     await this.call();
+  }
+
+  public copyLink() {
+    const url = location.href;
+    ClipboardService.copyTextToClipboard(url);
+    this.snackBar.open(`Cсылка скопирована: ${url}`, '', {
+      duration: 2000,
+    });
   }
 
   public async createOfferToUser(from: string, to: string) {
@@ -164,40 +210,21 @@ export class RoomComponent implements OnInit, OnDestroy {
 
       const connection = this.user.getConnection(answer.from).remote;
       await connection.setRemoteDescription(answer.description);
-
-      this.muteAllVideos();
     } catch (error) {
       console.log(error, delimeter);
     }
   }
 
-  public muteAllVideos() {
-    setTimeout(() => {
-      console.log('Muting all sounds', delimeter);
+  private getVgaConstraints(): MediaStreamConstraints {
+    const video = {
+      width: { exact: 320 },
+      height: { exact: 240 },
+      facingMode: this.isFront.value ? 'user' : 'environment',
+    } as MediaTrackConstraints;
 
-      const videos = Array.from(document.getElementsByTagName('video'));
-      videos.forEach((video) => (video.muted = true));
-    }, 100);
-  }
-
-  private logging() {
-    this.roomService.users$.pipe(untilDestroyed(this)).subscribe((items) => {
-      console.log('users', items);
-    });
-
-    this.roomService.offers$.pipe(untilDestroyed(this)).subscribe((items) => {
-      console.log('offers', items);
-    });
-
-    this.roomService.answers$.pipe(untilDestroyed(this)).subscribe((items) => {
-      console.log('answers', items);
-    });
-
-    this.roomService
-      .userJoined(this.roomId)
-      .pipe(untilDestroyed(this))
-      .subscribe((users) => {
-        console.log('joind: ', users);
-      });
+    return {
+      audio: this.isAudioOn.value,
+      video: this.isVideoOn.value ? video : false,
+    };
   }
 }

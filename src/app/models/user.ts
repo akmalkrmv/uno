@@ -39,4 +39,26 @@ export class User {
         .forEach((track) => connection.addTrack(track, this.stream));
     } catch (error) {}
   }
+
+  public toggleVideo() {
+    const videoTracks = this.stream.getVideoTracks();
+    if (!videoTracks.length) {
+      return;
+    }
+
+    for (const track of videoTracks) {
+      track.enabled = !track.enabled;
+    }
+  }
+
+  public toggleAudio() {
+    const audioTracks = this.stream.getAudioTracks();
+    if (!audioTracks.length) {
+      return;
+    }
+
+    for (const track of audioTracks) {
+      track.enabled = !track.enabled;
+    }
+  }
 }
