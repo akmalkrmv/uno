@@ -205,7 +205,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       console.log('Setting remote description', delimeter);
 
       const offer = await connection.createOffer();
-      connection.setLocalDescription(offer);
+      await connection.setLocalDescription(offer);
 
       await this.roomService.createOffer({
         from,
