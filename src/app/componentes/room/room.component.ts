@@ -28,7 +28,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public isFront = new BehaviorSubject(true);
   public canFlipCamera = false;
 
-  private retryAfterMs = 60000;
+  private retryAfterMs = 10 * 60 * 1000; // ten minutes
   private retryIndex: any = 0;
 
   constructor(
