@@ -12,6 +12,7 @@ import { delimeter } from 'src/app/constants/logging';
 import { UsersService } from 'src/app/services/users.service';
 import { RoomUserService } from 'src/app/services/room-user.service';
 import { ClipboardService } from 'src/app/services/clipboard.service';
+import { Connection } from 'src/app/models/connection';
 
 @Component({
   selector: 'app-room',
@@ -26,6 +27,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   public isVideoOn = new BehaviorSubject(true);
   public isFront = new BehaviorSubject(true);
   public canFlipCamera = false;
+
+  private retryAfterMs = 60000;
+  private retryIndex: any = 0;
 
   constructor(
     private snackBar: MatSnackBar,
@@ -80,7 +84,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.canFlipCamera =
       devices.filter((device) => device.kind == 'videoinput').length > 1;
 
-    this.call();
+    this.retryCall();
   }
 
   public toggleSound() {
@@ -142,6 +146,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   public retryCall() {
     console.log('recalling, hangup started');
 
+    clearTimeout(this.retryIndex);
+
     this.roomService
       .clearConnections()
       .pipe(
@@ -181,23 +187,10 @@ export class RoomComponent implements OnInit, OnDestroy {
       const connectionRef = this.user.getConnection(to);
       const connection = connectionRef.remote;
 
-      connection.onconnectionstatechange = async () => {
-        if (
-          connection.connectionState == 'failed' ||
-          connection.connectionState == 'disconnected'
-        ) {
-          // kick user when disconnected
-          // console.log('kicking user', to);
-          // await this.roomUserService.leaveRoom(this.roomId, to);
-
-          // close and remove connection
-          const index = this.user.connections.indexOf(connectionRef);
-          if (index > -1) {
-            connection.close();
-            this.user.connections.splice(index, 1);
-          }
-        }
-      };
+      connection.onconnectionstatechange = this.handleStateChange(
+        connection,
+        connectionRef
+      );
 
       this.user.addTracks(connection);
 
@@ -216,6 +209,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       console.log('Done creating offer', delimeter);
     } catch (error) {
       console.log(error, delimeter);
+      // retry
+      this.retryIndex = setTimeout(() => this.retryCall(), this.retryAfterMs);
     }
   }
 
@@ -224,7 +219,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       console.log('Got offer from', offer.from);
       console.log('Setting remote description');
 
-      const connection = this.user.getConnection(offer.from).remote;
+      const connectionRef = this.user.getConnection(offer.from);
+      const connection = connectionRef.remote;
+
+      connection.onconnectionstatechange = this.handleStateChange(
+        connection,
+        connectionRef
+      );
+
       await connection.setRemoteDescription(offer.description);
 
       console.log('Creating answer');
@@ -242,6 +244,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       console.log('Done creating answer', delimeter);
     } catch (error) {
       console.log(error, delimeter);
+      // retry
+      this.retryIndex = setTimeout(() => this.retryCall(), this.retryAfterMs);
     }
   }
 
@@ -250,10 +254,19 @@ export class RoomComponent implements OnInit, OnDestroy {
       console.log('Got answer from', answer.from);
       console.log('Setting remote description', delimeter);
 
-      const connection = this.user.getConnection(answer.from).remote;
+      const connectionRef = this.user.getConnection(answer.from);
+      const connection = connectionRef.remote;
+
+      connection.onconnectionstatechange = this.handleStateChange(
+        connection,
+        connectionRef
+      );
+
       await connection.setRemoteDescription(answer.description);
     } catch (error) {
       console.log(error, delimeter);
+      // retry
+      this.retryIndex = setTimeout(() => this.retryCall(), this.retryAfterMs);
     }
   }
 
@@ -267,6 +280,29 @@ export class RoomComponent implements OnInit, OnDestroy {
     return {
       audio: this.isAudioOn.value,
       video: this.isVideoOn.value ? video : false,
+    };
+  }
+
+  private handleStateChange(
+    connection: RTCPeerConnection,
+    connectionRef: Connection
+  ): (this: RTCPeerConnection, ev: Event) => any {
+    return async () => {
+      if (
+        connection.connectionState == 'failed' ||
+        connection.connectionState == 'closed' ||
+        connection.connectionState == 'disconnected'
+      ) {
+        // kick user when disconnected
+        // console.log('kicking user', to);
+        // await this.roomUserService.leaveRoom(this.roomId, to);
+        // close and remove connection
+        const index = this.user.connections.indexOf(connectionRef);
+        if (index > -1) {
+          connection.close();
+          this.user.connections.splice(index, 1);
+        }
+      }
     };
   }
 }
