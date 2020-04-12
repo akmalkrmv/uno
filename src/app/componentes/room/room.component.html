@@ -1,11 +1,7 @@
 <div class="room-container">
   <div class="online-users">
-    <p>Online users:</p>
-    <ul>
-      <li *ngFor="let user of onlineUsers$ | async">
-        {{ user.name || user.id }}
-      </li>
-    </ul>
+    <h3>Пользователи:</h3>
+    <p *ngFor="let user of onlineUsers$ | async">- {{ user.name }}</p>
   </div>
   <div class="videos-contanier">
     <div class="users-container" *ngIf="user">
@@ -17,7 +13,18 @@
           controls
           muted
         ></video>
-        <p>Name: {{ user.name || user.id }}</p>
+        <p>{{ user.name }}</p>
+
+        <div class="buttons-container">
+          <div class="buttons">
+            <button mat-fab color="accent" (click)="call()">
+              <i class="fa fa-phone"></i>
+            </button>
+            <button mat-fab color="warn" (click)="hangup()">
+              <i class="fa fa-phone fa-phone-hangup"></i>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div *ngFor="let connection of user.connections" class="user-details">
@@ -29,20 +36,10 @@
             controls
             muted
           ></video>
-          <p>Name: {{ connection.userId }}</p>
-          <p>Connection state: {{ connection.remote.connectionState }}</p>
+          <p *ngIf="connection.userName">{{ connection.userName }}</p>
+          <p>Статус связи: {{ connection.remote.connectionState }}</p>
+          <p>Статус сигнала: {{ connection.remote.signalingState }}</p>
         </ng-container>
-      </div>
-    </div>
-
-    <div class="buttons-container">
-      <div class="buttons">
-        <button mat-fab color="accent" (click)="call()">
-          <i class="fa fa-phone"></i>
-        </button>
-        <button mat-fab color="warn" (click)="hangup()">
-          <i class="fa fa-phone fa-phone-hangup"></i>
-        </button>
       </div>
     </div>
   </div>

@@ -9,6 +9,8 @@ import { RoomService } from '../../services/room.service';
 import { Offer, Answer } from 'src/app/models/room';
 import { delimeter } from 'src/app/constants/logging';
 import { UsersService } from 'src/app/services/users.service';
+import { RoomUserService } from 'src/app/services/room-user.service';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-room',
@@ -23,7 +25,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   constructor(
     private activeRoute: ActivatedRoute,
     private roomService: RoomService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private roomUserService: RoomUserService
   ) {}
 
   async ngOnDestroy() {
@@ -33,17 +36,18 @@ export class RoomComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.roomService.init(this.roomId);
-    this.onlineUsers$ = this.roomService.users$;
     // this.logging();
 
-    const userId = await this.usersService.authorize();
-    await this.roomService.joinRoom(userId);
-
-    this.user = new User(userId);
+    this.user = await this.usersService.authorize();
     await this.startSelfStream();
+    await this.roomUserService.joinRoom(this.roomId, this.user.id);
+
+    this.onlineUsers$ = this.roomUserService
+      .roomUserIds(this.roomId)
+      .pipe(switchMap((userIds) => this.usersService.getByIds(userIds)));
 
     this.roomService
-      .userOffers(userId)
+      .userOffers(this.user.id)
       .pipe(untilDestroyed(this))
       .subscribe(async (offers) => {
         for (const offer of offers) {
@@ -54,7 +58,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
 
     this.roomService
-      .userAnswers(userId)
+      .userAnswers(this.user.id)
       .pipe(untilDestroyed(this))
       .subscribe(async (answers) => {
         for (const answer of answers) {
@@ -70,12 +74,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public async call() {
-    this.roomService
-      .otherUsers(this.user.id)
+    this.roomUserService
+      .roomOtherUserIds(this.roomId, this.user.id)
       .pipe(untilDestroyed(this))
-      .subscribe(async (users) => {
-        for (const user of users) {
-          await this.createOfferToUser(this.user.id, user.id);
+      .subscribe(async (userIds) => {
+        for (const userId of userIds) {
+          await this.createOfferToUser(this.user.id, userId);
         }
       });
   }

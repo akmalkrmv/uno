@@ -59,6 +59,7 @@ export class RoomService extends BaseFirestoreService {
     return this.firestore.collection(`rooms/${roomId}/users`).snapshotChanges();
   }
 
+  /** obsolete */
   public otherUsers(userId: string): Observable<any[]> {
     return this.users$.pipe(
       map((users) => users.filter((user) => user.id != userId))

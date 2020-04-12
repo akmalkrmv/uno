@@ -3,11 +3,10 @@ import { Connection } from './connection';
 
 export class User {
   public ref?: string;
-  public name?: string;
   public stream?: MediaStream;
   public connections: Connection[] = [];
 
-  constructor(public id: string) {}
+  constructor(public id: string, public name?: string) {}
 
   public getConnection(remoteUserId: string): Connection {
     const connection = this.connections.find(

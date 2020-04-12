@@ -20,8 +20,8 @@ export class HomeComponent implements OnInit {
   ngOnInit() {}
 
   public async createRoom() {
-    const userId = await this.usersService.authorize();
-    const roomId = await this.roomService.createRoom(userId);
+    const user = await this.usersService.authorize();
+    const roomId = await this.roomService.createRoom(user.id);
     this.router.navigate([`/room/${roomId}`]);
   }
 

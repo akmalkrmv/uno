@@ -5,7 +5,7 @@ export class Connection {
   public remote: RTCPeerConnection;
   public stream?: MediaStream;
 
-  constructor(public userId: string) {
+  constructor(public userId: string, public userName?: string) {
     this.remote = new RTCPeerConnection(rtcConfiguration);
 
     const showState = () => {
@@ -20,12 +20,12 @@ export class Connection {
     };
 
     this.remote.onconnectionstatechange = (event) => {
-      console.log('onconnectionstatechange', event);
+      console.log('onconnectionstatechange');
       showState();
     };
 
     this.remote.onsignalingstatechange = (event) => {
-      console.log('onsignalingstatechange', event);
+      console.log('onsignalingstatechange');
       showState();
     };
 
