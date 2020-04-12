@@ -1,10 +1,20 @@
 <div class="room-container">
-  <div class="online-users">
-    <h3>Пользователи:</h3>
-    <p *ngFor="let user of onlineUsers$ | async">- {{ user.name }}</p>
+  <div class="header-controls">
+    <button mat-stroked-button color="warn" (click)="leaveRoom()">
+      Покинуть комнату
+    </button>
   </div>
-  <div class="videos-contanier">
-    <div class="users-container" *ngIf="user">
+
+  <div
+    class="online-users"
+    *ngIf="user && (!user.connections || !user.connections.length)"
+  >
+    <h4>Сейчвс в сети:</h4>
+    <p *ngFor="let user of onlineUsers$ | async">{{ user.name }}</p>
+  </div>
+
+  <div class="videos-contanier" *ngIf="user">
+    <div class="users-container">
       <div class="user-details">
         <video
           *ngIf="user.stream"
@@ -17,12 +27,19 @@
 
         <div class="buttons-container">
           <div class="buttons">
-            <button mat-fab color="accent" (click)="call()">
-              <i class="fa fa-phone"></i>
-            </button>
-            <button mat-fab color="warn" (click)="hangup()">
-              <i class="fa fa-phone fa-phone-hangup"></i>
-            </button>
+            <ng-container *ngIf="!user.connections || !user.connections.length">
+              <button mat-button color="accent" (click)="call()">
+                <i class="fa fa-phone"></i> Подключится
+              </button>
+            </ng-container>
+            <ng-container *ngIf="user.connections && user.connections.length">
+              <button mat-button color="accent" (click)="retryCall()">
+                <i class="fa fa-refresh"></i> Переподключить
+              </button>
+              <button mat-button color="warn" (click)="hangup()">
+                <i class="fa fa-phone fa-phone-hangup"></i> Отключить
+              </button>
+            </ng-container>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { Observable } from 'rxjs';
 
@@ -23,6 +23,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public onlineUsers$: Observable<User[]>;
 
   constructor(
+    private router: Router,
     private activeRoute: ActivatedRoute,
     private roomService: RoomService,
     private usersService: UsersService,
@@ -95,6 +96,16 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.user.connections = [];
       console.log(result, delimeter);
     });
+  }
+
+  public async leaveRoom() {
+    await this.roomUserService.leaveRoom(this.roomId, this.user.id);
+    this.router.navigate([`/`]);
+  }
+
+  public async retryCall() {
+    await this.hangup();
+    await this.call();
   }
 
   public async createOfferToUser(from: string, to: string) {

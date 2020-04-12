@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+  box-sizing: border-box;
+}
 
 html,
 body {
@@ -9,9 +12,9 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 .fa-phone-hangup {
-    transform: rotate(135deg) translateY(2px);
+  transform: rotate(135deg) translateY(2px);
 }
