@@ -35,7 +35,7 @@
         </button>
       </ng-container>
       <mat-divider></mat-divider>
-      <button  mat-menu-item (click)="leaveRoom()">
+      <button mat-menu-item (click)="leaveRoom()">
         <mat-icon color="warn"> power_settings_new</mat-icon>
         <span class="warn-color">Покинуть комнату</span>
       </button>
@@ -130,29 +130,24 @@
       </div>
 
       <ng-container *ngFor="let connection of user.connections">
-        <ng-container *ngIf="connection.remote.connectionState != 'new'">
-          <div class="user-details">
-            <mat-progress-bar
-              *ngIf="
-                connection.stream &&
-                connection.remote.connectionState != 'connected'
-              "
-              mode="indeterminate"
-              class="progress-bar-inverse"
-            ></mat-progress-bar>
+        <div class="user-details">
+          <mat-progress-bar
+            *ngIf="connection.remote.connectionState != 'connected'"
+            mode="indeterminate"
+            class="progress-bar-inverse"
+          ></mat-progress-bar>
 
-            <video
-              *ngIf="connection.stream"
-              [srcObject]="connection.stream"
-              autoplay
-              muted
-            ></video>
+          <video
+            *ngIf="connection.stream"
+            [srcObject]="connection.stream"
+            autoplay
+            muted
+          ></video>
 
-            <p *ngIf="connection.userName">{{ connection.userName }}</p>
-            <p>Статус связи: {{ connection.remote.connectionState }}</p>
-            <p>Статус сигнала: {{ connection.remote.signalingState }}</p>
-          </div>
-        </ng-container>
+          <p *ngIf="connection.userName">{{ connection.userName }}</p>
+          <p>Статус связи: {{ connection.remote.connectionState }}</p>
+          <!-- <p>Статус сигнала: {{ connection.remote.signalingState }}</p> -->
+        </div>
       </ng-container>
     </div>
   </div>

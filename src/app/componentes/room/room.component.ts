@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable, BehaviorSubject, merge } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { User } from '../../models/user';
@@ -72,11 +72,9 @@ export class RoomComponent implements OnInit, OnDestroy {
         }
       });
 
-    merge([this.isAudioOn, this.isVideoOn, this.isFront])
-      .pipe(untilDestroyed(this))
-      .subscribe(async () => {
-        // await this.updateStream();
-      });
+    this.isFront.pipe(untilDestroyed(this)).subscribe(async () => {
+      await this.updateStream();
+    });
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     this.canFlipCamera =
@@ -112,7 +110,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  public async call() {
+  public call() {
     this.roomUserService
       .roomOtherUserIds(this.roomId, this.user.id)
       .pipe(untilDestroyed(this))
@@ -123,8 +121,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
   }
 
-  public async hangup() {
-    console.log('Deleting offers');
+  public hangup() {
+    console.log('Hanging up, Deleting offers');
 
     this.roomService.clearConnections().subscribe((result) => {
       for (const connection of this.user.connections) {
@@ -141,9 +139,33 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.router.navigate([`/`]);
   }
 
-  public async retryCall() {
-    await this.hangup();
-    await this.call();
+  public retryCall() {
+    console.log('recalling, hangup started');
+
+    this.roomService
+      .clearConnections()
+      .pipe(
+        switchMap(() => {
+          for (const connection of this.user.connections) {
+            connection.remote.close();
+          }
+
+          this.user.connections = [];
+          console.log('hangup done, call started');
+
+          return this.roomUserService.roomOtherUserIds(
+            this.roomId,
+            this.user.id
+          );
+        })
+      )
+      .subscribe(async (userIds) => {
+        console.log('creating offers');
+        for (const userId of userIds) {
+          await this.createOfferToUser(this.user.id, userId);
+        }
+        console.log('call done', delimeter);
+      });
   }
 
   public copyLink() {
@@ -156,7 +178,27 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public async createOfferToUser(from: string, to: string) {
     try {
-      const connection = this.user.getConnection(to).remote;
+      const connectionRef = this.user.getConnection(to);
+      const connection = connectionRef.remote;
+
+      connection.onconnectionstatechange = async () => {
+        if (
+          connection.connectionState == 'failed' ||
+          connection.connectionState == 'disconnected'
+        ) {
+          // kick user when disconnected
+          // console.log('kicking user', to);
+          // await this.roomUserService.leaveRoom(this.roomId, to);
+
+          // close and remove connection
+          const index = this.user.connections.indexOf(connectionRef);
+          if (index > -1) {
+            connection.close();
+            this.user.connections.splice(index, 1);
+          }
+        }
+      };
+
       this.user.addTracks(connection);
 
       console.log('Creating offer to ', to);
