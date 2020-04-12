@@ -1,20 +1,20 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
   AngularFirestoreDocument,
   QuerySnapshot,
   DocumentData,
-} from "angularfire2/firestore";
-import { Observable, forkJoin, empty, from } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+} from 'angularfire2/firestore';
+import { Observable, forkJoin, empty, from } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
-import { BaseFirestoreService } from "./base-firestore.service";
-import { Room, Offer, Answer, IOffer } from "../models/room";
-import { delimeter } from "../constants/logging";
+import { BaseFirestoreService } from './base-firestore.service';
+import { Room, Offer, Answer, IOffer } from '../models/room';
+import { delimeter } from '../constants/logging';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class RoomService extends BaseFirestoreService {
   public room: AngularFirestoreDocument<Room>;
@@ -30,22 +30,29 @@ export class RoomService extends BaseFirestoreService {
   }
 
   public init(roomId: string) {
-    this.room = this.firestore.doc(`rooms/${roomId}`);
+    this.room = this.firestore.doc<Room>(`rooms/${roomId}`);
 
-    this.userCollection = this.room.collection<any>("users");
-    this.offerCollection = this.room.collection<Offer>("offers");
-    this.answerCollection = this.room.collection<Answer>("answers");
+    this.userCollection = this.room.collection<any>('users');
+    this.offerCollection = this.room.collection<Offer>('offers');
+    this.answerCollection = this.room.collection<Answer>('answers');
 
     this.users$ = this.withId(this.userCollection);
     this.offers$ = this.withId(this.offerCollection);
     this.answers$ = this.withId(this.answerCollection);
   }
 
-  public async joinRoom(roomId: string): Promise<string> {
-    const created = await this.firestore
-      .collection(`rooms/${roomId}/users`)
-      .add({});
-    return created.id;
+  public async joinRoom(userId: string): Promise<void> {
+    const userRef = this.firestore.doc(`users/${userId}`).ref;
+    const collection = this.room.collection<any>('users', (ref) =>
+      ref.where('ref', '==', userRef)
+    );
+
+    const users = await collection.get().toPromise();
+    console.log(userId, users, users.docs);
+
+    if (users.empty) {
+      collection.add({ ref: userRef });
+    }
   }
 
   public userJoined(roomId: string): Observable<any> {
@@ -59,19 +66,19 @@ export class RoomService extends BaseFirestoreService {
   }
 
   public userOffers(userId: string): Observable<Offer[]> {
-    return this.offersByType<Offer>(userId, "offers");
+    return this.offersByType<Offer>(userId, 'offers');
   }
 
   public userAnswers(userId: string): Observable<Answer[]> {
-    return this.offersByType<Answer>(userId, "answers");
+    return this.offersByType<Answer>(userId, 'answers');
   }
 
   public createOffer(offer: Offer): Promise<any> {
-    return this.createOfferByType(offer, "offers").toPromise();
+    return this.createOfferByType(offer, 'offers').toPromise();
   }
 
   public createAnswer(answer: Answer): Promise<any> {
-    return this.createOfferByType(answer, "answers").toPromise();
+    return this.createOfferByType(answer, 'answers').toPromise();
   }
 
   public clearConnections(): Observable<any> {
@@ -86,10 +93,10 @@ export class RoomService extends BaseFirestoreService {
 
   private offersByType<T extends IOffer>(
     userId: string,
-    offerType: "offers" | "answers"
+    offerType: 'offers' | 'answers'
   ): Observable<T[]> {
     const query = this.room.collection<T>(offerType, (ref) =>
-      ref.where("to", "==", userId)
+      ref.where('to', '==', userId)
     );
 
     return this.withId<T>(query).pipe(
@@ -99,13 +106,13 @@ export class RoomService extends BaseFirestoreService {
 
   private createOfferByType<T extends IOffer>(
     payload: T,
-    offerType: "offers" | "answers"
+    offerType: 'offers' | 'answers'
   ): Observable<any> {
     const collection = this.room.collection<T>(
       offerType,
       (ref) =>
-        ref.where("from", "==", payload.from) &&
-        ref.where("to", "==", payload.to)
+        ref.where('from', '==', payload.from) &&
+        ref.where('to', '==', payload.to)
     );
 
     return collection.get().pipe(

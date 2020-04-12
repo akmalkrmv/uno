@@ -1,1 +1,1 @@
-export const delimeter = "\r\n--------------------\r\n";
+export const delimeter = '\r\n--------------------\r\n';

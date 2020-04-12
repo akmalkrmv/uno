@@ -1,18 +1,19 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { untilDestroyed } from "ngx-take-until-destroy";
-import { Observable } from "rxjs";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { untilDestroyed } from 'ngx-take-until-destroy';
+import { Observable } from 'rxjs';
 
-import { vgaConstraints } from "src/app/constants/rts-configurations";
-import { User } from "../../models/user";
-import { RoomService } from "../../services/room.service";
-import { Offer, Answer } from "src/app/models/room";
-import { delimeter } from "src/app/constants/logging";
+import { vgaConstraints } from 'src/app/constants/rts-configurations';
+import { User } from '../../models/user';
+import { RoomService } from '../../services/room.service';
+import { Offer, Answer } from 'src/app/models/room';
+import { delimeter } from 'src/app/constants/logging';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
-  selector: "app-room",
-  templateUrl: "./room.component.html",
-  styleUrls: ["./room.component.scss"],
+  selector: 'app-room',
+  templateUrl: './room.component.html',
+  styleUrls: ['./room.component.scss'],
 })
 export class RoomComponent implements OnInit, OnDestroy {
   public roomId: string;
@@ -20,8 +21,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   public onlineUsers$: Observable<User[]>;
 
   constructor(
+    private activeRoute: ActivatedRoute,
     private roomService: RoomService,
-    private activeRoute: ActivatedRoute
+    private usersService: UsersService
   ) {}
 
   async ngOnDestroy() {
@@ -29,12 +31,14 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.roomId = this.activeRoute.snapshot.paramMap.get("id");
+    this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.roomService.init(this.roomId);
     this.onlineUsers$ = this.roomService.users$;
     // this.logging();
 
-    const userId = await this.fetchUserId();
+    const userId = await this.usersService.authorize();
+    await this.roomService.joinRoom(userId);
+
     this.user = new User(userId);
     await this.startSelfStream();
 
@@ -77,7 +81,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public async hangup() {
-    console.log("Deleting offers");
+    console.log('Deleting offers');
 
     this.roomService.clearConnections().subscribe((result) => {
       for (const connection of this.user.connections) {
@@ -94,8 +98,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       const connection = this.user.getConnection(to).remote;
       this.user.addTracks(connection);
 
-      console.log("Creating offer to ", to);
-      console.log("Setting remote description", delimeter);
+      console.log('Creating offer to ', to);
+      console.log('Setting remote description', delimeter);
 
       const offer = await connection.createOffer();
       connection.setLocalDescription(offer);
@@ -106,7 +110,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         description: connection.localDescription.toJSON(),
       });
 
-      console.log("Done creating offer", delimeter);
+      console.log('Done creating offer', delimeter);
     } catch (error) {
       console.log(error, delimeter);
     }
@@ -114,14 +118,14 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public async answerToOffer(offer: Offer) {
     try {
-      console.log("Got offer from", offer.from);
-      console.log("Setting remote description");
+      console.log('Got offer from', offer.from);
+      console.log('Setting remote description');
 
       const connection = this.user.getConnection(offer.from).remote;
       await connection.setRemoteDescription(offer.description);
 
-      console.log("Creating answer");
-      console.log("Setting local description", delimeter);
+      console.log('Creating answer');
+      console.log('Setting local description', delimeter);
 
       const answer = await connection.createAnswer();
       await connection.setLocalDescription(answer);
@@ -132,7 +136,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         description: connection.localDescription.toJSON(),
       });
 
-      console.log("Done creating answer", delimeter);
+      console.log('Done creating answer', delimeter);
     } catch (error) {
       console.log(error, delimeter);
     }
@@ -140,8 +144,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public async handleAnswer(answer: Answer) {
     try {
-      console.log("Got answer from", answer.from);
-      console.log("Setting remote description", delimeter);
+      console.log('Got answer from', answer.from);
+      console.log('Setting remote description', delimeter);
 
       const connection = this.user.getConnection(answer.from).remote;
       await connection.setRemoteDescription(answer.description);
@@ -154,42 +158,31 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public muteAllVideos() {
     setTimeout(() => {
-      console.log("Muting all sounds", delimeter);
+      console.log('Muting all sounds', delimeter);
 
-      const videos = Array.from(document.getElementsByTagName("video"));
+      const videos = Array.from(document.getElementsByTagName('video'));
       videos.forEach((video) => (video.muted = true));
     }, 100);
   }
 
-  public async fetchUserId(): Promise<string> {
-    if (localStorage.getItem("uno-client-id")) {
-      return localStorage.getItem("uno-client-id");
-    }
-
-    const userId = await this.roomService.joinRoom(this.roomId);
-    localStorage.setItem("uno-client-id", userId);
-
-    return userId;
-  }
-
   private logging() {
     this.roomService.users$.pipe(untilDestroyed(this)).subscribe((items) => {
-      console.log("users", items);
+      console.log('users', items);
     });
 
     this.roomService.offers$.pipe(untilDestroyed(this)).subscribe((items) => {
-      console.log("offers", items);
+      console.log('offers', items);
     });
 
     this.roomService.answers$.pipe(untilDestroyed(this)).subscribe((items) => {
-      console.log("answers", items);
+      console.log('answers', items);
     });
 
     this.roomService
       .userJoined(this.roomId)
       .pipe(untilDestroyed(this))
       .subscribe((users) => {
-        console.log("joind: ", users);
+        console.log('joind: ', users);
       });
   }
 }

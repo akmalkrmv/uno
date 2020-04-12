@@ -1,5 +1,6 @@
 <div class="room-container">
   <div class="online-users">
+    <p>Online users:</p>
     <ul>
       <li *ngFor="let user of onlineUsers$ | async">
         {{ user.name || user.id }}
@@ -16,18 +17,21 @@
           controls
           muted
         ></video>
-        <p>{{ user.name || user.id }}</p>
+        <p>Name: {{ user.name || user.id }}</p>
       </div>
 
       <div *ngFor="let connection of user.connections" class="user-details">
-        <video
-          *ngIf="connection.stream"
-          [srcObject]="connection.stream"
-          autoplay
-          controls
-          muted
-        ></video>
-        <p>{{ connection.userId }}</p>
+        <ng-container>
+          <video
+            *ngIf="connection.stream"
+            [srcObject]="connection.stream"
+            autoplay
+            controls
+            muted
+          ></video>
+          <p>Name: {{ connection.userId }}</p>
+          <p>Connection state: {{ connection.remote.connectionState }}</p>
+        </ng-container>
       </div>
     </div>
 

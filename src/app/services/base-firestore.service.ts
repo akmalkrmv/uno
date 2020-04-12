@@ -1,9 +1,9 @@
 import {
   AngularFirestoreCollection,
   DocumentChangeAction,
-} from "angularfire2/firestore";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+} from 'angularfire2/firestore';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export class BaseFirestoreService {
   protected withId<T>(
