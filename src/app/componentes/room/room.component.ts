@@ -47,7 +47,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.init(this.roomId);
 
     this.user = await this.usersService.authorize();
-    await this.updateStream();
+    // await this.updateStream();
     await this.roomUserService.joinRoom(this.roomId, this.user.id);
 
     this.onlineUsers$ = this.roomUserService
@@ -78,11 +78,11 @@ export class RoomComponent implements OnInit, OnDestroy {
       await this.updateStream();
     });
 
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    this.canFlipCamera =
-      devices.filter((device) => device.kind == 'videoinput').length > 1;
+    // const devices = await navigator.mediaDevices.enumerateDevices();
+    // this.canFlipCamera =
+    //   devices.filter((device) => device.kind == 'videoinput').length > 1;
 
-    this.retryCall();
+    // this.retryCall();
   }
 
   public toggleSound() {

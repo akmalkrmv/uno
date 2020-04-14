@@ -10,11 +10,14 @@
     [users]="onlineUsers$ | async"
   ></app-user-list>
 
-  <div class="videos-contanier" *ngIf="user">
+  <app-videos-list class="viewport" [user]="user"></app-videos-list>
+
+  <div class="videos-contanier" *ngIf="user && false">
     <div class="users-container">
       <div class="user-details">
         <video
           id="self-video"
+          class="mirrored"
           *ngIf="user.stream"
           [srcObject]="user.stream"
           autoplay
