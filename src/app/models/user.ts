@@ -8,12 +8,12 @@ export class User {
 
   constructor(public id: string, public name?: string) {}
 
-  public getConnection(remoteUserId: string): Connection {
+  public getConnection(userId: string): Connection {
     const connection = this.connections.find(
-      (item) => item.userId == remoteUserId
+      (item) => item.userId == userId
     );
 
-    console.log('Looking for existing connection', remoteUserId);
+    console.log('Looking for existing connection', userId);
     console.log(
       connection
         ? 'Connection exists'
@@ -21,13 +21,36 @@ export class User {
       delimeter
     );
 
-    return connection || this.createConnection(remoteUserId);
+    return connection || this.createConnection(userId);
   }
 
-  public createConnection(remoteUserId: string): Connection {
-    const connection = new Connection(remoteUserId);
-    this.connections.push(connection);
-    return connection;
+  public createConnection(userId: string): Connection {
+    const connectionRef = new Connection(userId);
+    const connection = connectionRef.remote;
+
+    connection.onconnectionstatechange = () => {
+      const { signalingState, connectionState } = connection;
+      console.log('createConnection: onconnectionstatechange', {
+        signalingState,
+        connectionState,
+      });
+
+      if (
+        connection.connectionState == 'failed' ||
+        connection.connectionState == 'closed' ||
+        connection.connectionState == 'disconnected'
+      ) {
+        const index = this.connections.indexOf(connectionRef);
+        if (index > -1) {
+          connection.close();
+          this.connections.splice(index, 1);
+        }
+      }
+    };
+
+    this.connections.push(connectionRef);
+
+    return connectionRef;
   }
 
   public closeConnections() {
@@ -50,23 +73,19 @@ export class User {
 
   public toggleVideo() {
     const videoTracks = this.stream.getVideoTracks();
-    if (!videoTracks.length) {
-      return;
-    }
-
-    for (const track of videoTracks) {
-      track.enabled = !track.enabled;
+    if (videoTracks && videoTracks.length) {
+      for (const track of videoTracks) {
+        track.enabled = !track.enabled;
+      }
     }
   }
 
   public toggleAudio() {
     const audioTracks = this.stream.getAudioTracks();
-    if (!audioTracks.length) {
-      return;
-    }
-
-    for (const track of audioTracks) {
-      track.enabled = !track.enabled;
+    if (audioTracks && audioTracks.length) {
+      for (const track of audioTracks) {
+        track.enabled = !track.enabled;
+      }
     }
   }
 }

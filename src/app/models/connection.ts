@@ -6,32 +6,48 @@ export class Connection {
   public stream?: MediaStream;
 
   constructor(public userId: string, public userName?: string) {
-    this.remote = new RTCPeerConnection(rtcConfiguration);
+    let isNegotiating = false; // Workaround for Chrome: skip nested negotiations
 
+    const connection = new RTCPeerConnection(rtcConfiguration);
     const showState = () => {
-      const { signalingState, connectionState } = this.remote;
+      const { signalingState, connectionState } = connection;
       console.log('State: ', { signalingState, connectionState }, delimeter);
     };
 
     // Registering remote stream
-    this.remote.ontrack = (event: RTCTrackEvent) => {
+    connection.ontrack = (event: RTCTrackEvent) => {
       console.log('ontrack', userId, event.streams, delimeter);
       this.stream = event.streams[0];
     };
 
-    this.remote.onconnectionstatechange = (event) => {
-      console.log('onconnectionstatechange');
-      showState();
-    };
-
-    this.remote.onsignalingstatechange = (event) => {
+    connection.onsignalingstatechange = (event) => {
       console.log('onsignalingstatechange');
       showState();
+      // Workaround for Chrome: skip nested negotiations
+      isNegotiating = connection.signalingState != 'stable';
     };
 
-    this.remote.onstatsended = (event: RTCStatsEvent) => {
+    connection.onstatsended = (event: RTCStatsEvent) => {
       console.log('onstatsended', event);
       showState();
     };
+
+    connection.onnegotiationneeded = (event) => {
+      if (isNegotiating) {
+        console.log('SKIP nested negotiations');
+        return;
+      }
+      isNegotiating = true;
+      // try {
+      //   await pc1.setLocalDescription(await pc1.createOffer());
+      //   await pc2.setRemoteDescription(pc1.localDescription);
+      //   await pc2.setLocalDescription(await pc2.createAnswer());
+      //   await pc1.setRemoteDescription(pc2.localDescription);
+      // } catch (e) {
+      //   console.log(e);
+      // }
+    };
+
+    this.remote = connection;
   }
 }

@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
-  QueryDocumentSnapshot,
-  DocumentData,
 } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+
 import { BaseFirestoreService } from './base-firestore.service';
 import { LocalStorageKeys } from '../constants/local-storage-keys';
-import { map, tap } from 'rxjs/operators';
 import { User } from '../models/user';
 
 @Injectable({
@@ -19,44 +18,44 @@ export class UsersService extends BaseFirestoreService {
   public users$: Observable<any[]>;
   public path = 'users';
 
-  constructor(private firestore: AngularFirestore) {
+  constructor(firestore: AngularFirestore) {
     super();
 
     this.userCollection = firestore.collection(this.path);
     this.users$ = this.withId(this.userCollection);
   }
 
-  public async createUser(name?: string): Promise<User> {
-    const created = await this.userCollection.add({ name });
-    return new User(created.id, name);
+  public createUser(name?: string): Observable<User> {
+    return this.addToCollection(this.userCollection, { name }).pipe(
+      map((id) => new User(id, name))
+    );
   }
 
-  public async authorize(): Promise<User> {
+  public authorize(): Observable<User> {
     let userId = localStorage.getItem(LocalStorageKeys.userId);
 
     if (userId) {
-      const user = await this.findById(userId);
-      if (user && user.exists) {
-        return new User(user.id, user.data().name);
-      }
+      return this.findById(userId).pipe(
+        map((user) => new User(user.id, user.name))
+      );
     }
 
     const name = prompt('Ваще имя: ');
-    const user = await this.createUser(name);
-    localStorage.setItem(LocalStorageKeys.userId, user.id);
 
-    return user;
+    return this.createUser(name).pipe(
+      tap((user) => localStorage.setItem(LocalStorageKeys.userId, user.id))
+    );
   }
 
-  public getByIds(userIds: string[]): Observable<any[]> {
+  public getByIds(userIds: string[]): Observable<User[]> {
     return this.users$.pipe(
       map((users) => users.filter((user) => userIds.includes(user.id)))
     );
   }
 
-  public async findById(
-    userId: string
-  ): Promise<QueryDocumentSnapshot<DocumentData>> {
-    return this.firestore.doc<User>(`${this.path}/${userId}`).get().toPromise();
+  public findById(userId: string): Observable<User> {
+    return this.users$.pipe(
+      map((users) => users.find((user) => user.id == userId))
+    );
   }
 }

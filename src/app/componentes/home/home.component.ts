@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
+import { untilDestroyed } from 'ngx-take-until-destroy';
+
 import { RoomCollectionService } from 'src/app/services/room-collection.service';
 import { UsersService } from 'src/app/services/users.service';
 
@@ -18,14 +21,19 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {}
+  ngOnDestroy() {}
 
-  public async createRoom() {
-    const user = await this.usersService.authorize();
-    const roomId = await this.roomService.createRoom(user.id);
-    this.router.navigate([`/room/${roomId}`]);
+  public createRoom() {
+    this.usersService
+      .authorize()
+      .pipe(untilDestroyed(this))
+      .pipe(switchMap((user) => this.roomService.createRoom(user.id)))
+      .subscribe((roomId) => {
+        this.router.navigate([`/room/${roomId}`]);
+      });
   }
 
-  public async joinRoom() {
+  public joinRoom() {
     this.router.navigate([`/room/${this.roomId}`]);
   }
 }

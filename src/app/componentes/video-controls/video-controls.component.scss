@@ -1,0 +1,21 @@
+.buttons-container {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  .buttons-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 200px;
+
+    button {
+      background-color: rgba(10, 10, 10, 0.6);
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.2em;
+    }
+  }
+}

@@ -13,10 +13,15 @@
           autoplay
           muted
         ></video>
+  
+        <app-video-controls
+          *ngIf="user.stream"
+          [user]="user"
+          class="stream-controls"
+        ></app-video-controls>
+
         <div class="video-cover flex-center">
-          <div class="user-name">
-            {{ user.name }}
-          </div>
+          <div class="user-name">{{ user.name }}</div>
           <div class="video-controls flex-center"></div>
         </div>
       </div>
@@ -32,13 +37,15 @@
             <video
               *ngIf="connection.stream"
               [srcObject]="connection.stream"
-              class="video mirrored"
+              class="video "
               autoplay
               muted
             ></video>
           </div>
           <div class="video-cover">
-            <div class="user-name">{{ connection.userName }}</div>
+            <div class="user-name">
+              {{ connection.userName || connection.userId }}
+            </div>
             <div class="video-controls flex-center"></div>
             <mat-progress-bar
               *ngIf="
@@ -54,8 +61,8 @@
     </ng-container>
   </div>
   <div class="games flex-center">
-    <button mat-raised-button (click)="decrement()">remove video -</button>
-    <button mat-raised-button (click)="increment()">add video +</button>
+    <!-- <button mat-raised-button (click)="decrement()">remove video -</button>
+    <button mat-raised-button (click)="increment()">add video +</button> -->
   </div>
 </div>
 

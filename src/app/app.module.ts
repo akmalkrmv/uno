@@ -30,6 +30,7 @@ import { RoomComponent } from './componentes/room/room.component';
 import { UserListComponent } from './componentes/user-list/user-list.component';
 import { RoomToolbarComponent } from './componentes/room-toolbar/room-toolbar.component';
 import { VideosListComponent } from './componentes/videos-list/videos-list.component';
+import { VideoControlsComponent } from './componentes/video-controls/video-controls.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { VideosListComponent } from './componentes/videos-list/videos-list.compo
     UserListComponent,
     RoomToolbarComponent,
     VideosListComponent,
+    VideoControlsComponent,
   ],
   imports: [
     BrowserModule,

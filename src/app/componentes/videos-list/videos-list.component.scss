@@ -15,13 +15,20 @@
     transform: scaleX(-1);
   }
 
+  .stream-controls {
+    position: absolute;
+    bottom: 0px;
+    z-index: 100;
+  }
+
+
   .videos {
     display: flex;
     flex-wrap: wrap;
     flex-grow: 1;
 
     .video-container {
-      border: 1px solid #222;
+      border: 1px solid #111;
       flex-grow: 1;
       min-width: 30%;
       min-height: 160px;
@@ -34,9 +41,10 @@
         .video {
           width: 100%;
           height: 100%;
+          max-height: 300px;
 
-          background-color: #fff;
-          color: #000;
+          background-color: #222;
+          color: #fff;
         }
 
         .video-cover {
