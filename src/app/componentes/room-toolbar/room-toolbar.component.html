@@ -1,0 +1,45 @@
+<mat-toolbar class="header-controls" *ngIf="user">
+  <div>{{ user.name }}</div>
+  <div class="fill-remaining-space"></div>
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    aria-label="Example icon-button with a menu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <mat-menu #menu="matMenu">
+    <ng-container *ngIf="!user.connections || !user.connections.length">
+      <button mat-menu-item (click)="call()">
+        <mat-icon>phone</mat-icon>
+        <span>Подключится</span>
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="user.connections && user.connections.length">
+      <button mat-menu-item (click)="retryCall()">
+        <mat-icon>swap_calls</mat-icon>
+        <span>Переподключить</span>
+      </button>
+      <button mat-menu-item (click)="hangup()">
+        <mat-icon>call_end</mat-icon>
+        <span>Отключить</span>
+      </button>
+    </ng-container>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="copyLink()">
+      <mat-icon>link</mat-icon>
+      <span>Скопировать ссылку</span>
+    </button>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="leaveRoom()">
+      <mat-icon color="warn"> power_settings_new</mat-icon>
+      <span class="warn-color">Покинуть комнату</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

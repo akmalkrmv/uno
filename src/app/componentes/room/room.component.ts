@@ -13,6 +13,7 @@ import { UsersService } from 'src/app/services/users.service';
 import { RoomUserService } from 'src/app/services/room-user.service';
 import { ClipboardService } from 'src/app/services/clipboard.service';
 import { Connection } from 'src/app/models/connection';
+import { MenuItemEvent } from 'src/app/models/menu-item-event';
 
 @Component({
   selector: 'app-room',
@@ -111,6 +112,23 @@ export class RoomComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  public async onMenuItemClicked($event: MenuItemEvent) {
+    switch ($event.type) {
+      case 'call':
+        this.call();
+        break;
+      case 'hangup':
+        this.hangup();
+        break;
+      case 'leaveRoom':
+        await this.leaveRoom();
+        break;
+      case 'retryCall':
+        this.retryCall();
+        break;
+    }
+  }
+
   public call() {
     this.roomUserService
       .roomOtherUserIds(this.roomId, this.user.id)
@@ -126,11 +144,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     console.log('Hanging up, Deleting offers');
 
     this.roomService.clearConnections().subscribe((result) => {
-      for (const connection of this.user.connections) {
-        connection.remote.close();
-      }
-
-      this.user.connections = [];
+      this.user.closeConnections();
       console.log(result, delimeter);
     });
   }
@@ -147,11 +161,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       .clearConnections()
       .pipe(
         switchMap(() => {
-          for (const connection of this.user.connections) {
-            connection.remote.close();
-          }
-
-          this.user.connections = [];
+          this.user.closeConnections();
           console.log('hangup done, call started');
 
           return this.roomUserService.roomOtherUserIds(

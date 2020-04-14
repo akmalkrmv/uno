@@ -1,80 +1,14 @@
 <div class="room-container">
-  <mat-toolbar class="header-controls" *ngIf="user">
-    <!-- <div>Номер: {{ roomId }}</div> -->
-    <div>{{ user.name }}</div>
-    <div class="fill-remaining-space"></div>
-    <button
-      mat-icon-button
-      [matMenuTriggerFor]="menu"
-      aria-label="Example icon-button with a menu"
-    >
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="copyLink()">
-        <mat-icon>link</mat-icon>
-        <span>Скопировать ссылку</span>
-      </button>
+  <app-room-toolbar
+    class="header-controls"
+    [user]="user"
+    (menuItemClicked)="onMenuItemClicked($event)"
+  ></app-room-toolbar>
 
-      <mat-divider></mat-divider>
-
-      <ng-container *ngIf="!user.connections || !user.connections.length">
-        <button mat-menu-item (click)="call()">
-          <mat-icon>phone</mat-icon>
-          <span>Подключится</span>
-        </button>
-      </ng-container>
-      <ng-container *ngIf="user.connections && user.connections.length">
-        <button mat-menu-item (click)="retryCall()">
-          <mat-icon>swap_calls</mat-icon>
-          <span>Переподключить</span>
-        </button>
-        <button mat-menu-item (click)="hangup()">
-          <mat-icon>call_end</mat-icon>
-          <span>Отключить</span>
-        </button>
-      </ng-container>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="leaveRoom()">
-        <mat-icon color="warn"> power_settings_new</mat-icon>
-        <span class="warn-color">Покинуть комнату</span>
-      </button>
-    </mat-menu>
-  </mat-toolbar>
-
-  <div class="header-controls" *ngIf="user && false">
-    <div>
-      <button mat-stroked-button color="warn" (click)="leaveRoom()">
-        Покинуть комнату
-      </button>
-    </div>
-    <div>
-      <ng-container *ngIf="!user.connections || !user.connections.length">
-        <button mat-button color="accent" (click)="call()">
-          <i class="fa fa-phone"></i> Подключится
-        </button>
-      </ng-container>
-      <ng-container *ngIf="user.connections && user.connections.length">
-        <button mat-button color="accent" (click)="retryCall()">
-          <i class="fa fa-refresh"></i> Переподключить
-        </button>
-        <button mat-button color="warn" (click)="hangup()">
-          <i class="fa fa-phone fa-phone-hangup"></i> Отключить
-        </button>
-      </ng-container>
-    </div>
-  </div>
-
-  <div class="online-users" *ngIf="onlineUsers$ | async as onlineUsers">
-    <mat-expansion-panel class="expansion-panel-inverse">
-      <mat-expansion-panel-header>
-        <mat-panel-title> Люди ({{ onlineUsers.length }}) </mat-panel-title>
-      </mat-expansion-panel-header>
-      <p *ngFor="let onlineUser of onlineUsers">
-        <span>{{ onlineUser.name }}</span>
-      </p>
-    </mat-expansion-panel>
-  </div>
+  <app-user-list
+    class="online-users"
+    [users]="onlineUsers$ | async"
+  ></app-user-list>
 
   <div class="videos-contanier" *ngIf="user">
     <div class="users-container">
@@ -109,24 +43,6 @@
             </button>
           </div>
         </div>
-
-        <!-- <div class="buttons-container">
-          <div class="buttons">
-            <ng-container *ngIf="!user.connections || !user.connections.length">
-              <button mat-button color="accent" (click)="call()">
-                <i class="fa fa-phone"></i> Подключится
-              </button>
-            </ng-container>
-            <ng-container *ngIf="user.connections && user.connections.length">
-              <button mat-button color="accent" (click)="retryCall()">
-                <i class="fa fa-refresh"></i> Переподключить
-              </button>
-              <button mat-button color="warn" (click)="hangup()">
-                <i class="fa fa-phone fa-phone-hangup"></i> Отключить
-              </button>
-            </ng-container>
-          </div>
-        </div> -->
       </div>
 
       <ng-container *ngFor="let connection of user.connections">

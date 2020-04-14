@@ -7,20 +7,7 @@
   background-color: #333;
   color: white;
 
-  .header-controls {
-    padding: 10px 0px 10px 20px;
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    background-color: #222;
-    color: white;
-
-    .fill-remaining-space {
-      flex: 1 1 auto;
-    }
-  }
-
+  .header-controls,
   .online-users {
     width: 100%;
   }
@@ -117,7 +104,7 @@
 
         video {
           min-height: auto;
-          width: 90vw;
+          width: 100vw;
         }
       }
     }

@@ -27,6 +27,8 @@ import { CardComponent } from './componentes/card/card.component';
 import { PlayComponent } from './componentes/play/play.component';
 import { HomeComponent } from './componentes/home/home.component';
 import { RoomComponent } from './componentes/room/room.component';
+import { UserListComponent } from './componentes/user-list/user-list.component';
+import { RoomToolbarComponent } from './componentes/room-toolbar/room-toolbar.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { RoomComponent } from './componentes/room/room.component';
     PlayComponent,
     HomeComponent,
     RoomComponent,
+    UserListComponent,
+    RoomToolbarComponent,
   ],
   imports: [
     BrowserModule,

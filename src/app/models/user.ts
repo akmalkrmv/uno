@@ -30,6 +30,14 @@ export class User {
     return connection;
   }
 
+  public closeConnections() {
+    for (const connection of this.connections) {
+      connection.remote.close();
+    }
+
+    this.connections = [];
+  }
+
   public addTracks(connection: RTCPeerConnection) {
     try {
       console.log('Adding tracks', delimeter);
