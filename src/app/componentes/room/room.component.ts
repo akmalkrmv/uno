@@ -28,9 +28,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   public isFront = new BehaviorSubject(true);
   public canFlipCamera = false;
 
-  private retryAfterMs = 10 * 60 * 1000; // ten minutes
-  private retryIndex: any = 0;
-
   constructor(
     private snackBar: MatSnackBar,
     private router: Router,
@@ -146,8 +143,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   public retryCall() {
     console.log('recalling, hangup started');
 
-    clearTimeout(this.retryIndex);
-
     this.roomService
       .clearConnections()
       .pipe(
@@ -209,8 +204,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       console.log('Done creating offer', delimeter);
     } catch (error) {
       console.log(error, delimeter);
-      // retry
-      this.retryIndex = setTimeout(() => this.retryCall(), this.retryAfterMs);
     }
   }
 
@@ -244,8 +237,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       console.log('Done creating answer', delimeter);
     } catch (error) {
       console.log(error, delimeter);
-      // retry
-      this.retryIndex = setTimeout(() => this.retryCall(), this.retryAfterMs);
     }
   }
 
@@ -265,8 +256,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       await connection.setRemoteDescription(answer.description);
     } catch (error) {
       console.log(error, delimeter);
-      // retry
-      this.retryIndex = setTimeout(() => this.retryCall(), this.retryAfterMs);
     }
   }
 
