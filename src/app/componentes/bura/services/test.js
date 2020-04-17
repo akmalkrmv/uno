@@ -1,4 +1,4 @@
-const KOZER = 'yurek';
+const TRUMP = 'yurek';
 
 const table = [
   { index: 7, suit: 'qarga' },
@@ -39,20 +39,39 @@ function bosadi(hand, table) {
 }
 
 // Algorithm 1
-function compare(kartaA, kartaB) {
-  if (kartaA.suit == kartaB.suit) {
-    // Agar mast bir hil bo'sa
-    return kartaA.index > kartaB.index;
-  } 
-  
-   // Agar mast KOZER bo'sa
-   return kartaA.suit == KOZER;
-}
+// function compare(kartaA, kartaB) {
+//   if (kartaA.suit == kartaB.suit) {
+//     // Agar mast bir hil bo'sa
+//     return kartaA.index > kartaB.index;
+//   }
+
+//    // Agar mast KOZER bo'sa
+//    return kartaA.suit == TRUMP;
+// }
 
 // Algorithm 2
-// function compare(kartaA, kartaB) {
-//   const indexA = kartaA.suit == KOZER ? kartaA.index : kartaA.index + 10;
-//   const indexB = kartaB.suit == KOZER ? kartaB.index : kartaB.index + 10;
+function compare(kartaA, kartaB) {
+  const indexA = kartaA.suit == TRUMP ? kartaA.index : kartaA.index + 10;
+  const indexB = kartaB.suit == TRUMP ? kartaB.index : kartaB.index + 10;
 
-//   return indexA > indexB;
-// }
+  return indexA > indexB;
+}
+
+navigator.mediaDevices.enumerateDevices().then((devices) => {
+  const videoDevices = devices.filter((device) => device.kind == 'videoinput');
+  const constaints = {
+    video: {
+      deviceId: {
+        exact: videoDevices[0].deviceId,
+      },
+    },
+  };
+
+  console.log(videoDevices[0]);
+
+
+  navigator.mediaDevices.getUserMedia(constaints).then((stream) => {
+    const videoTrack = stream.getVideoTracks()[0];
+    console.log(videoTrack);
+  });
+});

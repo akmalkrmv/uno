@@ -14,7 +14,7 @@ export const rtcConfiguration: RTCConfiguration = {
 export const videoConstraints: MediaTrackConstraints = {
   width: { exact: 320 },
   height: { exact: 240 },
-  facingMode: 'user',
+  // facingMode: 'user',
 };
 
 export const vgaConstraints: MediaStreamConstraints = {

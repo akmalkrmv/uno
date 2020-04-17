@@ -100,13 +100,15 @@ export class User {
     };
 
     navigator.mediaDevices.getUserMedia(constaints).then((stream) => {
-      const videoTrack = stream.getVideoTracks()[0];
       this.stream = stream;
+
+      const videoTrack = stream.getVideoTracks()[0];
       this.connections.forEach((connection) => {
-        var sender = connection.remote.getSenders().find(function (s) {
-          return s.track.kind == videoTrack.kind;
-        });
-        sender.replaceTrack(videoTrack);
+        const sender = connection.remote
+          .getSenders()
+          .find((sender) => sender.track.kind == videoTrack.kind);
+
+        sender && sender.replaceTrack(videoTrack);
       });
     });
   }

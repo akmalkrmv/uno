@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/models/user';
 
@@ -18,14 +19,14 @@ export class VideoControlsComponent implements OnInit {
   private videoDevices: MediaDeviceInfo[] = [];
   private currentDevice: MediaDeviceInfo = null;
 
-  constructor() {}
+  constructor(private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
       this.videoDevices = devices.filter(
         (device) => device.kind == 'videoinput'
       );
-      this.canFlipCamera = this.videoDevices.length > 1;
+      this.canFlipCamera = this.videoDevices.length > 1 || true;
       this.currentDevice = this.videoDevices[0];
     });
   }
@@ -42,11 +43,15 @@ export class VideoControlsComponent implements OnInit {
 
   public flipCamera() {
     const index = this.videoDevices.indexOf(this.currentDevice);
-    const nextDevice = this.videoDevices[
+
+    this.currentDevice = this.videoDevices[
       (index + 1) % this.videoDevices.length
     ];
 
-    this.currentDevice = nextDevice;
+    this.snackBar.open('Camera: ' + this.currentDevice.label, '', {
+      duration: 2000,
+    });
+
     this.isFront$.next(!this.isFront$.value);
     this.user.toggleCamera(this.currentDevice);
   }
