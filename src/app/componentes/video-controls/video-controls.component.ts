@@ -15,12 +15,18 @@ export class VideoControlsComponent implements OnInit {
   public isFront$ = new BehaviorSubject(true);
   public canFlipCamera = false;
 
+  private videoDevices: MediaDeviceInfo[] = [];
+  private currentDevice: MediaDeviceInfo = null;
+
   constructor() {}
 
   ngOnInit(): void {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
-      const inputs = devices.filter((device) => device.kind == 'videoinput');
-      this.canFlipCamera = inputs.length > 1;
+      this.videoDevices = devices.filter(
+        (device) => device.kind == 'videoinput'
+      );
+      this.canFlipCamera = this.videoDevices.length > 1;
+      this.currentDevice = this.videoDevices[0];
     });
   }
 
@@ -35,7 +41,13 @@ export class VideoControlsComponent implements OnInit {
   }
 
   public flipCamera() {
+    const index = this.videoDevices.indexOf(this.currentDevice);
+    const nextDevice = this.videoDevices[
+      (index + 1) % this.videoDevices.length
+    ];
+
+    this.currentDevice = nextDevice;
     this.isFront$.next(!this.isFront$.value);
-    this.user.toggleCamera(this.isFront$.value);
+    this.user.toggleCamera(this.currentDevice);
   }
 }

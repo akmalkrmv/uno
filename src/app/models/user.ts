@@ -90,12 +90,12 @@ export class User {
     }
   }
 
-  public toggleCamera(isFront = true) {
+  public toggleCamera(device: MediaDeviceInfo) {
     const constaints = {
       audio: vgaConstraints.audio,
       video: {
         ...videoConstraints,
-        facingMode: { exact: isFront ? 'user' : 'environment' },
+        deviceId: { exact: device.deviceId },
       },
     };
 
