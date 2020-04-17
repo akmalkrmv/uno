@@ -8,7 +8,8 @@
         <video
           *ngIf="user.stream"
           [srcObject]="user.stream"
-          class="video mirrored"
+          [class.mirrored]="user.isFrontCamera"
+          class="video"
           id="self-video"
           autoplay
           muted

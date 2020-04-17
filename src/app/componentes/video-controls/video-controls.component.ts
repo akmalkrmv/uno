@@ -54,5 +54,6 @@ export class VideoControlsComponent implements OnInit {
 
     this.isFront$.next(!this.isFront$.value);
     this.user.toggleCamera(this.currentDevice);
+    this.user.isFrontCamera = this.isFront$.value;
   }
 }
