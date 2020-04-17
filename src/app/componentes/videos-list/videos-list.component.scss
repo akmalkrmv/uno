@@ -19,6 +19,7 @@
     position: absolute;
     bottom: 0px;
     z-index: 100;
+    width: 100%;
   }
 
 
@@ -72,5 +73,7 @@
   .games {
     flex-grow: 1;
     min-height: 300px;
+    // max-height: 300px;
+    overflow: auto;
   }
 }

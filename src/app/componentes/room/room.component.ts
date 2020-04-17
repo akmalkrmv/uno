@@ -1,13 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, forkJoin } from 'rxjs';
 import {
   switchMap,
   take,
   map,
   distinctUntilChanged,
   throttleTime,
+  takeWhile,
+  combineLatest,
 } from 'rxjs/operators';
 
 import { User } from '../../models/user';
@@ -18,7 +20,7 @@ import { RoomUserService } from 'src/app/services/room-user.service';
 import { MenuItemEvent } from 'src/app/models/menu-item-event';
 import { vgaConstraints } from 'src/app/constants/rts-configurations';
 import { OfferService } from 'src/app/services/offer.service';
-import { Offer } from 'src/app/models/room';
+import { Offer, Answer, IOffer } from 'src/app/models/room';
 
 @Component({
   selector: 'app-room',
@@ -29,10 +31,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   public user: User;
   public roomId: string;
   public onlineUsers$: Observable<User[]>;
-  public isAudioOn = new BehaviorSubject(true);
-  public isVideoOn = new BehaviorSubject(true);
-  public isFront = new BehaviorSubject(true);
-  public canFlipCamera = false;
+  public offers$: Observable<Offer[]>;
+  public answers$: Observable<Answer[]>;
+  public isConnectionOn = new BehaviorSubject(true);
 
   constructor(
     private router: Router,
@@ -67,41 +68,24 @@ export class RoomComponent implements OnInit, OnDestroy {
 
         this.offerService.init(user);
 
-        this.onlineUsers$ = this.roomUserService
-          .roomUserIds(this.roomId)
-          .pipe(switchMap((userIds) => this.usersService.getByIds(userIds)));
+        this.onlineUsers$ = this.roomUserService.roomUserIds(this.roomId).pipe(
+          untilDestroyed(this),
+          switchMap((userIds) => this.usersService.getByIds(userIds))
+        );
 
-        this.roomService
-          .userOffers(this.user.id)
-          .pipe(
-            untilDestroyed(this),
-            throttleTime(1000),
-            distinctUntilChanged(this.compareOffers)
-          )
-          .subscribe((offers) => {
-            for (const offer of offers) {
-              this.offerService
-                .answerToOffer(offer)
-                .pipe(take(1))
-                .subscribe(() => {
-                  // Call back when someone calls
-                  this.offerService
-                    .createOfferToUser(this.user.id, offer.from)
-                    .pipe(take(1))
-                    .subscribe();
-                });
-            }
-          });
+        this.offers$ = this.roomService.userOffers(this.user.id).pipe(
+          untilDestroyed(this),
+          takeWhile(() => this.isConnectionOn.value)
+        );
 
-        this.roomService
-          .userAnswers(this.user.id)
-          .pipe(untilDestroyed(this))
-          .subscribe((answers) => {
-            for (const answer of answers) {
-              this.offerService.handleAnswer(answer).pipe(take(1)).subscribe();
-            }
-          });
+        this.answers$ = this.roomService.userAnswers(this.user.id).pipe(
+          untilDestroyed(this),
+          takeWhile(() => this.isConnectionOn.value)
+        );
 
+        const throttleTimeMs = 2000;
+        // this.listenToOffers(throttleTimeMs);
+        // this.listenToAnswers(throttleTimeMs);
         // this.retryCall();
       });
   }
@@ -127,13 +111,14 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public call() {
-    this.roomUserService
-      .roomOtherUserIds(this.roomId, this.user.id)
-      .pipe(untilDestroyed(this), take(1))
-      .subscribe((userIds) => {
-        for (const userId of userIds) {
+    this.isConnectionOn.next(true);
+
+    this.roomUsers()
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((users) => {
+        for (const user of users) {
           this.offerService
-            .createOfferToUser(this.user.id, userId)
+            .createOfferToUser(this.user.id, user.id, user.name)
             .pipe(take(1))
             .subscribe();
         }
@@ -141,7 +126,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public hangup() {
-    console.log('Hanging up, Deleting offers');
+    // this.isConnectionOn.next(false);
 
     this.roomService
       .clearConnections()
@@ -149,6 +134,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       .subscribe((result) => {
         this.user.closeConnections();
         console.log(result, delimeter);
+
+        this.isConnectionOn.next(true);
       });
   }
 
@@ -160,36 +147,36 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public retryCall() {
-    console.log('recalling, hangup started');
+    this.isConnectionOn.next(false);
 
     this.roomService
       .clearConnections()
       .pipe(
+        take(1),
+        untilDestroyed(this),
         switchMap(() => {
           this.user.closeConnections();
-          console.log('hangup done, call started');
-
-          return this.roomUserService.roomOtherUserIds(
-            this.roomId,
-            this.user.id
-          );
+          return this.roomUsers();
         })
       )
-      .subscribe((userIds) => {
-        console.log('creating offers');
-        for (const userId of userIds) {
+      .subscribe((users) => {
+        this.isConnectionOn.next(true);
+        for (const user of users) {
           this.offerService
-            .createOfferToUser(this.user.id, userId)
+            .createOfferToUser(this.user.id, user.id, user.name)
             .pipe(take(1))
             .subscribe();
         }
-        console.log('call done', delimeter);
       });
   }
 
-  private compareOffers(before: Offer[], after: Offer[]) {
-    console.log({ before, after });
+  private roomUsers(): Observable<User[]> {
+    return this.roomUserService
+      .roomOtherUserIds(this.roomId, this.user.id)
+      .pipe(switchMap((userIds) => this.usersService.getByIds(userIds)));
+  }
 
+  private compareOffers(before: IOffer[], after: IOffer[]) {
     if (before.length !== after.length) {
       console.log('Changed', before.length, after.length);
       return false;
@@ -208,5 +195,56 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     console.log('Not changed');
     return true;
+  }
+
+  private listenToOffers(throttleTimeMs: number) {
+    this.offers$
+      .pipe(
+        throttleTime(throttleTimeMs),
+        distinctUntilChanged(this.compareOffers),
+        combineLatest(this.roomUsers())
+      )
+      .subscribe(([offers, users]) => {
+        if (!offers || !offers.length) {
+          // this.user.closeConnections();
+          return;
+        }
+
+        console.log('got offer');
+
+        offers.map((offer) => {
+          const user = users.find((user) => user.id == offer.from);
+
+          this.offerService
+            .answerToOffer(offer, user.name)
+            .pipe(take(1))
+            .subscribe();
+        });
+      });
+  }
+
+  private listenToAnswers(throttleTimeMs: number) {
+    this.answers$
+      .pipe(
+        throttleTime(throttleTimeMs),
+        distinctUntilChanged(this.compareOffers),
+        combineLatest(this.roomUsers())
+      )
+      .subscribe(([answers, users]) => {
+        if (!answers || !answers.length) {
+          // this.user.closeConnections();
+          return;
+        }
+
+        console.log('got answer');
+
+        for (const answer of answers) {
+          const user = users.find((user) => user.id == answer.from);
+          this.offerService
+            .handleAnswer(answer, user && user.name)
+            .pipe(take(1))
+            .subscribe();
+        }
+      });
   }
 }

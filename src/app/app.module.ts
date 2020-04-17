@@ -23,14 +23,17 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { CardComponent } from './componentes/card/card.component';
-import { PlayComponent } from './componentes/play/play.component';
+import { CardComponent } from './componentes/bura/card/card.component';
 import { HomeComponent } from './componentes/home/home.component';
 import { RoomComponent } from './componentes/room/room.component';
 import { UserListComponent } from './componentes/user-list/user-list.component';
 import { RoomToolbarComponent } from './componentes/room-toolbar/room-toolbar.component';
 import { VideosListComponent } from './componentes/videos-list/videos-list.component';
 import { VideoControlsComponent } from './componentes/video-controls/video-controls.component';
+
+import { PlayComponent } from './componentes/bura/play/play.component';
+import { CardsComponent } from './componentes/bura/cards/cards.component';
+import { DeckComponent } from './componentes/bura/deck/deck.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +46,8 @@ import { VideoControlsComponent } from './componentes/video-controls/video-contr
     RoomToolbarComponent,
     VideosListComponent,
     VideoControlsComponent,
+    CardsComponent,
+    DeckComponent,
   ],
   imports: [
     BrowserModule,

@@ -8,8 +8,8 @@ import { map, tap } from 'rxjs/operators';
 export class BaseFirestoreService {
   protected withId<T>(
     collection: AngularFirestoreCollection<T>,
-    logItems = true,
-    logChanges = false
+    logItems = false,
+    logChanges = true
   ): Observable<T[]> {
     return collection
       .snapshotChanges()
@@ -39,5 +39,4 @@ export class BaseFirestoreService {
   ): Observable<string> {
     return from(collection.add(item)).pipe(map((created) => created.id));
   }
-
 }

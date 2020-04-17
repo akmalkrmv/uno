@@ -1,0 +1,8 @@
+<div class="deck">
+  <ng-container *ngIf="deck && trump">
+    <app-card class="card" [card]="trump" [visible]="false">
+      <div class="cards-count">{{ deck.length }}</div>
+    </app-card>
+    <app-card class="trump" [card]="trump" [onlySuit]="!deck.length" ></app-card>
+  </ng-container>
+</div>

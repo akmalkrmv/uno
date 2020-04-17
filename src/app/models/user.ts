@@ -9,16 +9,13 @@ export class User {
   constructor(public id: string, public name?: string) {}
 
   public getConnection(userId: string): Connection {
-    const connection = this.connections.find(
-      (item) => item.userId == userId
-    );
+    const connection = this.connections.find((item) => item.userId == userId);
 
     console.log('Looking for existing connection', userId);
     console.log(
       connection
         ? 'Connection exists'
-        : "Connection doesn't exists, creating new connection",
-      delimeter
+        : "Connection doesn't exists, creating new connection"
     );
 
     return connection || this.createConnection(userId);

@@ -12,6 +12,14 @@
     width: 100%;
   }
 
+  .text-wrap {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 700px;
+    height: 1.2em;
+    white-space: nowrap;
+  }
+
   .viewport {
     // width: 360px;
     width: 100vw;

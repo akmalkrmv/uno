@@ -1,0 +1,72 @@
+.card {
+  padding: 4px;
+  width: 60px;
+  height: 90px;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  user-select: none;
+  cursor: pointer;
+
+  transition: all ease 0.1s;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
+
+  &.selected {
+    transform: scale(1.2);
+    // transform: translateY(-20px);
+  }
+  &.disabled {
+    cursor: not-allowed;
+    background-color: #aaa;
+    box-shadow: none;
+    opacity: 0.8;
+  }
+
+  .front,
+  .back {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  .front {
+    padding: 4px 6px;
+    border: 1px solid #999;
+    display: flex;
+
+    .name {
+      font-size: 1em;
+      font-weight: bold;
+    }
+
+    .suit {
+      font-size: 1.4em;
+      margin-left: 4px;
+
+      &.spade::after {
+        content: '♠';
+      }
+      &.club::after {
+        content: '♣';
+      }
+      &.diamond::after {
+        content: '♦';
+        color: red;
+      }
+      &.heart::after {
+        content: '♥';
+        color: red;
+      }
+    }
+  }
+
+  .back {
+    background-color: #444;
+    color: #fff;
+    font-size: 1.2em;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

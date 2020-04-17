@@ -3,11 +3,8 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
   AngularFirestoreDocument,
-  QuerySnapshot,
-  DocumentData,
-  DocumentReference,
 } from 'angularfire2/firestore';
-import { Observable, forkJoin, empty, from, of } from 'rxjs';
+import { Observable, forkJoin, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
@@ -62,11 +59,11 @@ export class RoomService extends BaseFirestoreService {
   }
 
   public userOffers(userId: string): Observable<Offer[]> {
-    return this.offersByType(userId, 'offers');
+    return this.offersToUserId(userId, 'offers');
   }
 
   public userAnswers(userId: string): Observable<Answer[]> {
-    return this.offersByType(userId, 'answers');
+    return this.offersToUserId(userId, 'answers');
   }
 
   public createOffer(offer: Offer): Observable<string> {
@@ -78,24 +75,65 @@ export class RoomService extends BaseFirestoreService {
   }
 
   public clearConnections(): Observable<any> {
-    const deleteEach = (array: QuerySnapshot<DocumentData>) =>
-      array.forEach((item) => item.ref.delete());
+    // const deleteEach = (array: QuerySnapshot<DocumentData>) =>
+    //   array.forEach((item) => item.ref.delete());
 
-    return forkJoin(
-      this.offerCollection.get().pipe(map((offers) => deleteEach(offers))),
-      this.answerCollection.get().pipe(map((answers) => deleteEach(answers)))
+    // return forkJoin(
+    //   this.answerCollection.get().pipe(map((answers) => deleteEach(answers))),
+    //   this.offerCollection.get().pipe(map((offers) => deleteEach(offers)))
+    // );
+
+    const deleteOffers = this.offers$.pipe(
+      switchMap((changes) =>
+        from(
+          changes.map((change) =>
+            this.firestore
+              .doc(`${this.room.ref.path}/offers/${change.id}`)
+              .delete()
+          )
+        )
+      )
+    );
+
+    const deleteAnswers = this.answers$.pipe(
+      switchMap((changes) =>
+        from(
+          changes.map((change) =>
+            this.firestore
+              .doc(`${this.room.ref.path}/answers/${change.id}`)
+              .delete()
+          )
+        )
+      )
+    );
+    return forkJoin(deleteAnswers, deleteOffers);
+  }
+
+  public findByUsers(
+    userFrom: string,
+    userTo: string,
+    offerType: 'offers' | 'answers'
+  ): Observable<IOffer> {
+    const changes = offerType == 'offers' ? this.offers$ : this.answers$;
+
+    return changes.pipe(
+      map((items) =>
+        items.find((item) => item.from == userFrom && item.to == userTo)
+      )
     );
   }
 
-  private offersByType<T extends IOffer>(
+  private offersToUserId(
     userId: string,
     offerType: 'offers' | 'answers'
   ): Observable<any[]> {
     const changes = offerType == 'offers' ? this.offers$ : this.answers$;
 
-    return changes
-      .pipe(map((items) => items.filter((item) => item.to == userId)))
-      .pipe(map((items) => items.filter((item) => item.from != userId)));
+    return changes.pipe(
+      map((items) =>
+        items.filter((item) => item.to == userId && item.from != userId)
+      )
+    );
   }
 
   private createOfferByType<T extends IOffer>(
@@ -104,36 +142,29 @@ export class RoomService extends BaseFirestoreService {
   ): Observable<string> {
     const collection =
       offerType == 'offers' ? this.offerCollection : this.answerCollection;
-    const changes = offerType == 'offers' ? this.offers$ : this.answers$;
 
-    return changes
-      .pipe(
-        map((items) =>
-          items.find(
-            (item) => item.from == payload.from && item.to == payload.to
-          )
-        )
-      )
-      .pipe(
-        switchMap((existing) => {
-          if (!existing) {
-            const message = `from ${payload.from} to ${payload.to} does NOT exists`;
-            console.log(typeof payload, message, delimeter);
+    return this.findByUsers(payload.from, payload.to, offerType).pipe(
+      switchMap((existing) => {
+        if (!existing) {
+          const message = `from ${payload.from} to ${payload.to} does NOT exists`;
+          console.log(typeof payload, message, delimeter);
 
-            return this.addToCollection(collection, payload);
-          } else {
-            const message = `from ${payload.from} to ${payload.to} ALREADY exists`;
-            console.log(typeof payload, message, delimeter);
+          return this.addToCollection(collection, payload);
+        } else {
+          const message = `from ${payload.from} to ${payload.to} ALREADY exists`;
+          console.log(typeof payload, message, delimeter);
 
-            const doc = this.firestore.doc(
-              `${this.room.ref.path}/${offerType}/${existing.id}`
-            );
+          return of(null);
 
-            return from(doc.update({ ...payload })).pipe(
-              map(() => existing.id)
-            );
-          }
-        })
-      );
+          // const doc = this.firestore.doc(
+          //   `${this.room.ref.path}/${offerType}/${existing.id}`
+          // );
+
+          // return from(doc.update({ description: payload.description })).pipe(
+          //   map(() => existing.id)
+          // );
+        }
+      })
+    );
   }
 }

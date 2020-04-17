@@ -2,7 +2,7 @@
   <div class="videos" *ngIf="user">
     <div
       class="video-container flex-center"
-      [style.min-width]="list.length < 5 ? '50%' : '30%'"
+      [style.width]="list.length < 5 ? '50%' : '30%'"
     >
       <div class="video-wrapper flex-center">
         <video
@@ -13,7 +13,7 @@
           autoplay
           muted
         ></video>
-  
+
         <app-video-controls
           *ngIf="user.stream"
           [user]="user"
@@ -30,14 +30,14 @@
     <ng-container *ngFor="let connection of user.connections">
       <div
         class="video-container flex-center"
-        [style.min-width]="user.connections.length < 5 ? '50%' : '30%'"
+        [style.width]="user.connections.length < 5 ? '50%' : '30%'"
       >
         <div class="video-wrapper flex-center">
           <div class="video flex-center">
             <video
               *ngIf="connection.stream"
               [srcObject]="connection.stream"
-              class="video "
+              class="video"
               autoplay
               muted
             ></video>
@@ -60,9 +60,10 @@
       </div>
     </ng-container>
   </div>
-  <div class="games flex-center">
+  <div class="games">
     <!-- <button mat-raised-button (click)="decrement()">remove video -</button>
     <button mat-raised-button (click)="increment()">add video +</button> -->
+    <ng-content></ng-content>
   </div>
 </div>
 

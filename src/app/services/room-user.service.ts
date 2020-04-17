@@ -46,11 +46,9 @@ export class RoomUserService extends BaseFirestoreService {
 
   public findByIds(roomId: string, userId: string): Observable<RommUserMap> {
     return this.maps$.pipe(
-      tap((maps) => console.log(maps, roomId, userId)),
       map((maps) =>
         maps.find((value) => value.roomId == roomId && value.userId == userId)
-      ),
-      tap((map) => console.log(map))
+      )
     );
   }
 

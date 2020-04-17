@@ -1,0 +1,107 @@
+.play-container {
+  min-width: 100%;
+  min-height: 100%;
+  background-color: #333;
+  color: #fff;
+
+  .table-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+
+  .table,
+  .deck,
+  .hand {
+    padding: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    .card {
+      margin-right: -20px;
+      z-index: 1;
+    }
+  }
+
+  .table {
+    flex-grow: 10;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .deck {
+    justify-content: flex-start;
+    position: relative;
+    min-width: 120px;
+
+    .cards-count {
+      font-size: 1.6em;
+      user-select: none;
+    }
+
+    .card {
+      margin: 10px;
+      cursor: pointer;
+      z-index: 11;
+    }
+
+    .trump {
+      position: absolute;
+      left: 40px;
+      transform: rotateZ(90deg);
+    }
+  }
+
+  .hand {
+    padding: 20px 10px;
+
+    &.current-hand {
+      background-color: #555;
+    }
+
+    .hand-deck {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hand-controls {
+      min-width: 140px;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      button {
+        margin: 10px;
+      }
+    }
+  }
+
+  .game-info {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+
+    .moving-player {
+      color: greenyellow;
+    }
+  }
+
+  .points-info {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+
+    .points-data {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}

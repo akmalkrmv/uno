@@ -1,0 +1,14 @@
+<div
+  *ngIf="card"
+  class="card"
+  [class.selected]="selected || card.selected"
+  [class.disabled]="disabled || card.disabled"
+>
+  <div class="front" *ngIf="visible && card.visible">
+    <div class="name" *ngIf="!onlySuit">{{ card.name }}</div>
+    <div class="suit {{ card.suit }}"></div>
+  </div>
+  <div class="back" *ngIf="!(visible && card.visible)">
+    <ng-content></ng-content>
+  </div>
+</div>
