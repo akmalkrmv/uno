@@ -92,7 +92,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public setStream(user: User) {
     navigator.mediaDevices.getUserMedia(vgaConstraints).then((stream) => {
-      user.stream = stream;
+      user.stream$.next(stream);
       this.muteVideo('#self-video');
     });
   }
