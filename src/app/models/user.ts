@@ -4,17 +4,13 @@ import {
   vgaConstraints,
   videoConstraints,
 } from '../constants/rts-configurations';
-import { BehaviorSubject } from 'rxjs';
 
 export class User {
   public ref?: string;
   public stream?: MediaStream;
   public connections: Connection[] = [];
 
-  public stream$ = new BehaviorSubject<MediaStream>(null);
-
   constructor(public id: string, public name?: string) {
-    this.stream$.subscribe((stream) => (this.stream = stream));
   }
 
   public getConnection(userId: string): Connection {
@@ -105,15 +101,18 @@ export class User {
     };
 
     navigator.mediaDevices.getUserMedia(constaints).then((stream) => {
-      this.stream$.next(stream);
+      const currentVideTrack = this.stream.getVideoTracks()[0];
+      const newVideoTrack = stream.getVideoTracks()[0];
 
-      const videoTrack = stream.getVideoTracks()[0];
+      this.stream.removeTrack(currentVideTrack);
+      this.stream.addTrack(newVideoTrack);
+
       this.connections.forEach((connection) => {
         const sender = connection.remote
           .getSenders()
-          .find((sender) => sender.track.kind == videoTrack.kind);
+          .find((sender) => sender.track.kind == newVideoTrack.kind);
 
-        sender && sender.replaceTrack(videoTrack);
+        sender && sender.replaceTrack(newVideoTrack);
       });
     });
   }

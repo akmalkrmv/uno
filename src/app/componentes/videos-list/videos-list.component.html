@@ -6,8 +6,8 @@
     >
       <div class="video-wrapper flex-center">
         <video
-          *ngIf="user.stream$ | async as stream"
-          [srcObject]="stream"
+          *ngIf="user.stream"
+          [srcObject]="user.stream"
           class="video mirrored"
           id="self-video"
           autoplay
@@ -15,7 +15,7 @@
         ></video>
 
         <app-video-controls
-          *ngIf="user.stream$ | async"
+          *ngIf="user.stream"
           [user]="user"
           class="stream-controls"
         ></app-video-controls>
