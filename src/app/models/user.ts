@@ -1,5 +1,9 @@
 import { delimeter } from '../constants/logging';
 import { Connection } from './connection';
+import {
+  vgaConstraints,
+  videoConstraints,
+} from '../constants/rts-configurations';
 
 export class User {
   public ref?: string;
@@ -84,5 +88,26 @@ export class User {
         track.enabled = !track.enabled;
       }
     }
+  }
+
+  public toggleCamera(isFront = true) {
+    const constaints = {
+      audio: vgaConstraints.audio,
+      video: {
+        ...videoConstraints,
+        facingMode: isFront ? 'user' : 'environment',
+      },
+    };
+
+    navigator.mediaDevices.getUserMedia(constaints).then((stream) => {
+      const videoTrack = stream.getVideoTracks()[0];
+      this.stream = stream;
+      this.connections.forEach((connection) => {
+        var sender = connection.remote.getSenders().find(function (s) {
+          return s.track.kind == videoTrack.kind;
+        });
+        sender.replaceTrack(videoTrack);
+      });
+    });
   }
 }

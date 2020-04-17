@@ -10,9 +10,9 @@ import { User } from 'src/app/models/user';
 export class VideoControlsComponent implements OnInit {
   @Input() user: User;
 
-  public isAudioOn = new BehaviorSubject(true);
-  public isVideoOn = new BehaviorSubject(true);
-  public isFront = new BehaviorSubject(true);
+  public isAudioOn$ = new BehaviorSubject(true);
+  public isVideoOn$ = new BehaviorSubject(true);
+  public isFront$ = new BehaviorSubject(true);
   public canFlipCamera = false;
 
   constructor() {}
@@ -25,16 +25,17 @@ export class VideoControlsComponent implements OnInit {
   }
 
   public toggleSound() {
-    this.isAudioOn.next(!this.isAudioOn.value);
+    this.isAudioOn$.next(!this.isAudioOn$.value);
     this.user.toggleAudio();
   }
 
   public toggleVideo() {
-    this.isVideoOn.next(!this.isVideoOn.value);
+    this.isVideoOn$.next(!this.isVideoOn$.value);
     this.user.toggleVideo();
   }
 
   public flipCamera() {
-    this.isFront.next(!this.isFront.value);
+    this.isFront$.next(!this.isFront$.value);
+    this.user.toggleCamera(this.isFront$.value);
   }
 }
