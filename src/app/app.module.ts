@@ -1,53 +1,36 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-// Material
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatDividerModule } from '@angular/material/divider';
-
+// Firestore
 import { environment } from './../environments/environment';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 
+// Modules
+import { MaterialImportsModule } from './shared/material-imports.module';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { BuraModule } from './componentes/bura/bura.module';
 
-import { CardComponent } from './componentes/bura/card/card.component';
+// Components
+import { AppComponent } from './app.component';
 import { HomeComponent } from './componentes/home/home.component';
 import { RoomComponent } from './componentes/room/room.component';
 import { UserListComponent } from './componentes/user-list/user-list.component';
-import { RoomToolbarComponent } from './componentes/room-toolbar/room-toolbar.component';
+import { RoomToolbarComponent } from './componentes/room/room-toolbar/room-toolbar.component';
 import { VideosListComponent } from './componentes/videos-list/videos-list.component';
 import { VideoControlsComponent } from './componentes/video-controls/video-controls.component';
-
-import { PlayComponent } from './componentes/bura/play/play.component';
-import { CardsComponent } from './componentes/bura/cards/cards.component';
-import { DeckComponent } from './componentes/bura/deck/deck.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CardComponent,
-    PlayComponent,
     HomeComponent,
     RoomComponent,
     UserListComponent,
     RoomToolbarComponent,
     VideosListComponent,
     VideoControlsComponent,
-    CardsComponent,
-    DeckComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,19 +41,10 @@ import { DeckComponent } from './componentes/bura/deck/deck.component';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     // Material
-    MatButtonModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatMenuModule,
-    MatSnackBarModule,
-    MatExpansionModule,
-    MatDividerModule,
+    MaterialImportsModule,
     // App
     AppRoutingModule,
+    BuraModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

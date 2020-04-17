@@ -84,8 +84,8 @@ export class RoomComponent implements OnInit, OnDestroy {
         );
 
         const throttleTimeMs = 2000;
-        // this.listenToOffers(throttleTimeMs);
-        // this.listenToAnswers(throttleTimeMs);
+        this.listenToOffers(throttleTimeMs);
+        this.listenToAnswers(throttleTimeMs);
         // this.retryCall();
       });
   }

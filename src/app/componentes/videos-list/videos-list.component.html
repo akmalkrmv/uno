@@ -2,7 +2,7 @@
   <div class="videos" *ngIf="user">
     <div
       class="video-container flex-center"
-      [style.width]="list.length < 5 ? '50%' : '30%'"
+      [style.min-width]="list.length < 5 ? '50%' : '30%'"
     >
       <div class="video-wrapper flex-center">
         <video
@@ -30,7 +30,7 @@
     <ng-container *ngFor="let connection of user.connections">
       <div
         class="video-container flex-center"
-        [style.width]="user.connections.length < 5 ? '50%' : '30%'"
+        [style.min-width]="user.connections.length < 5 ? '50%' : '30%'"
       >
         <div class="video-wrapper flex-center">
           <div class="video flex-center">
@@ -60,11 +60,11 @@
       </div>
     </ng-container>
   </div>
-  <div class="games">
-    <!-- <button mat-raised-button (click)="decrement()">remove video -</button>
-    <button mat-raised-button (click)="increment()">add video +</button> -->
+  <!-- <div class="games">
+    <button mat-raised-button (click)="decrement()">remove video -</button>
+    <button mat-raised-button (click)="increment()">add video +</button>
     <ng-content></ng-content>
-  </div>
+  </div> -->
 </div>
 
 <ng-template #videoContainer let-user>

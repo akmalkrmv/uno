@@ -18,10 +18,18 @@
   .stream-controls {
     position: absolute;
     bottom: 0px;
-    z-index: 100;
+    left: 0px;
     width: 100%;
+    z-index: 100;
   }
 
+  /* Smartphones (portrait) ----------- */
+  @media only screen and (max-width: 420px) {
+    .stream-controls {
+      position: fixed;
+      bottom: 10px;
+    }
+  }
 
   .videos {
     display: flex;
