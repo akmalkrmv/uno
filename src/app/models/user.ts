@@ -10,8 +10,7 @@ export class User {
   public stream?: MediaStream;
   public connections: Connection[] = [];
 
-  constructor(public id: string, public name?: string) {
-  }
+  constructor(public id: string, public name?: string) {}
 
   public getConnection(userId: string): Connection {
     const connection = this.connections.find((item) => item.userId == userId);
@@ -92,6 +91,8 @@ export class User {
   }
 
   public toggleCamera(device: MediaDeviceInfo) {
+    this.stream.getVideoTracks().forEach((track) => track.stop());
+
     const constaints = {
       audio: vgaConstraints.audio,
       video: {
@@ -101,18 +102,15 @@ export class User {
     };
 
     navigator.mediaDevices.getUserMedia(constaints).then((stream) => {
-      const currentVideTrack = this.stream.getVideoTracks()[0];
-      const newVideoTrack = stream.getVideoTracks()[0];
+      const videoTrack = stream.getVideoTracks()[0];
 
-      this.stream.removeTrack(currentVideTrack);
-      this.stream.addTrack(newVideoTrack);
-
+      this.stream = stream;
       this.connections.forEach((connection) => {
         const sender = connection.remote
           .getSenders()
-          .find((sender) => sender.track.kind == newVideoTrack.kind);
+          .find((sender) => sender.track.kind == videoTrack.kind);
 
-        sender && sender.replaceTrack(newVideoTrack);
+        sender && sender.replaceTrack(videoTrack);
       });
     });
   }
