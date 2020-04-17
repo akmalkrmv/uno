@@ -95,7 +95,7 @@ export class User {
       audio: vgaConstraints.audio,
       video: {
         ...videoConstraints,
-        facingMode: isFront ? 'user' : 'environment',
+        facingMode: 'exact ' + isFront ? 'user' : 'environment',
       },
     };
 
