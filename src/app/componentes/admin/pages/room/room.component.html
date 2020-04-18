@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card *ngIf="room">
   <mat-card-header>
     <mat-card-title>{{ room.id }}</mat-card-title>
     <mat-card-subtitle>
@@ -8,10 +8,12 @@
   </mat-card-header>
 
   <mat-card-content>
-    <mat-form-field>
-      <mat-label>Name</mat-label>
-      <input matInput [(ngModel)]="room.name" />
-    </mat-form-field>
+    <div>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="room.name" />
+      </mat-form-field>
+    </div>
     <div>
       Creator:
       <a [routerLink]="'/admin/users/' + room.creator.id">
@@ -33,5 +35,6 @@
     <button mat-button color="warn" (click)="remove.emit(room.id)">
       Delete
     </button>
+    <button mat-button (click)="back()">Back</button>
   </mat-card-actions>
 </mat-card>

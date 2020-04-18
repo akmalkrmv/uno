@@ -16,17 +16,13 @@ export class UsersComponent implements OnInit {
   ngOnDestroy(): void {}
 
   ngOnInit(): void {
-    combineLatest([
-      this.api.users.users$,
-      // this.api.roomUsers.maps$,
-      // this.api.rooms.rooms$,
-    ])
+    combineLatest([this.api.users.users$])
       .pipe(untilDestroyed(this))
       .subscribe(([users]) => {
         this.users$.next(users);
       });
   }
-  
+
   public save(user: User) {
     this.api.users.update(user);
   }
