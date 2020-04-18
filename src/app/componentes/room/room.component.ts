@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, empty, of } from 'rxjs';
 import {
   switchMap,
   take,
@@ -30,6 +30,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public onlineUsers$: Observable<User[]>;
   public offers$: Observable<Offer[]>;
   public answers$: Observable<Answer[]>;
+  public messages$: Observable<any[]>;
   public isConnectionOn = new BehaviorSubject(true);
 
   constructor(
@@ -37,7 +38,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private api: ApiService,
     private offerService: OfferService,
-    public messaging: MessagingService
+    private messaging: MessagingService
   ) {}
 
   ngOnDestroy() {
@@ -46,19 +47,30 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
-    this.api.room.init(this.roomId);
 
-    this.api.users
-      .authorize()
-      .pipe(untilDestroyed(this))
+    this.api.room
+      .exists(this.roomId)
       .pipe(
-        switchMap((user) =>
-          this.api.roomUsers
+        untilDestroyed(this),
+        switchMap((exists) => {
+          if (!exists) {
+            this.router.navigate(['']);
+            return of(null);
+          }
+          
+          return this.api.users.authorize();
+        }),
+        switchMap((user) => {
+          if (!user) return of(null);
+
+          return this.api.roomUsers
             .joinRoom(this.roomId, user.id)
-            .pipe(map(() => user))
-        )
+            .pipe(map(() => user));
+        })
       )
       .subscribe((user) => {
+        if (!user) return;
+
         this.user = user;
         this.setStream(user);
 
@@ -87,6 +99,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.messaging.requestPermission(this.user.id);
         this.messaging.monitorRefresh(this.user.id);
         this.messaging.receiveMessage();
+        this.messages$ = this.messaging.message$;
       });
   }
 
@@ -126,6 +139,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public hangup() {
+    if (!this.user) return;
+
     // this.isConnectionOn.next(false);
     this.user.closeConnections();
 

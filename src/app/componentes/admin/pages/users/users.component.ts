@@ -28,6 +28,7 @@ export class UsersComponent implements OnInit {
   }
 
   public remove(roomId: string) {
+    this.api.roomUsers.removeByUserId(roomId);
     this.api.users.remove(roomId);
   }
 }

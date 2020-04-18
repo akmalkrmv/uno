@@ -69,4 +69,21 @@ export class RoomUserService extends BaseFirestoreService {
       )
     );
   }
+
+  // DELETE
+  public removeByUserId(userId: string): Observable<any> {
+    return this.maps$
+      .pipe(map((values) => values.filter((value) => value.userId == userId)))
+      .pipe(map((values) => values.map((value) => this.remove(value.id))));
+  }
+
+  public removeByRoomId(roomId: string): Observable<any> {
+    return this.maps$
+      .pipe(map((values) => values.filter((value) => value.roomId == roomId)))
+      .pipe(map((values) => values.map((value) => this.remove(value.id))));
+  }
+
+  public remove(userId: string) {
+    return this.firestore.doc(`users/${userId}`).ref.delete();
+  }
 }

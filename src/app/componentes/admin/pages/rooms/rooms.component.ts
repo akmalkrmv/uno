@@ -46,6 +46,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
   }
 
   public remove(roomId: string) {
+    this.api.roomUsers.removeByRoomId(roomId);
     this.api.rooms.remove(roomId);
   }
 }

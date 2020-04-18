@@ -36,6 +36,10 @@ export class RoomService extends BaseFirestoreService {
     this.answers$ = this.withId(this.answerCollection);
   }
 
+  public exists(roomId: string): Observable<boolean> {
+    const roomRef = this.firestore.doc<Room>(`rooms/${roomId}`).ref;
+    return from(roomRef.get()).pipe(map((doc) => doc.exists));
+  }
 
   public joinRoom(userId: string): Observable<any> {
     const userRef = this.firestore.doc(`users/${userId}`).ref;
