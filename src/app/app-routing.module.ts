@@ -8,6 +8,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'room/:id', component: RoomComponent },
   { path: 'game', component: PlayComponent },
+  { path: 'admin', loadChildren: () => import('./componentes/admin/admin.module').then(m => m.AdminModule) },
 ];
 
 @NgModule({

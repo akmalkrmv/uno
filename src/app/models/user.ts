@@ -8,6 +8,8 @@ export class User {
   public ref?: string;
   public stream?: MediaStream;
   public connections: Connection[] = [];
+  public fcmTokens?: any;
+  public created?: number;
   public isFrontCamera = true;
 
   constructor(public id: string, public name?: string) {}

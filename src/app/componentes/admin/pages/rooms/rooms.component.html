@@ -1,0 +1,10 @@
+<div class="list">
+  <ng-container *ngFor="let room of rooms$ | async | sort: 'created':'desc'">
+    <app-room-card
+      class="list-item"
+      [room]="room"
+      (save)="save($event)"
+      (remove)="remove($event)"
+    ></app-room-card>
+  </ng-container>
+</div>

@@ -13,8 +13,15 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-}
 
+  a {
+    color: #1976d2;
+    text-decoration: none;
+    &:hover {
+      color: #6e6e6e;
+    }
+  }
+}
 
 .warn-color {
   color: #f44336;
@@ -22,6 +29,17 @@ body {
 
 .fa-phone-hangup {
   transform: rotate(135deg) translateY(2px);
+}
+
+.mat-card {
+  .mat-card-header-text {
+    margin: 0;
+  }
+}
+
+.mat-toolbar-dark {
+  background-color: #222;
+  color: white;
 }
 
 .expansion-panel-inverse {

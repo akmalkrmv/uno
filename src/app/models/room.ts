@@ -10,7 +10,9 @@ export class Answer extends IOffer {}
 
 export interface Room {
   id?: string;
+  name?: string;
   creator?: any;
+  created?: number;
   users?: any[];
   offers?: Offer[];
   answers?: Answer[];

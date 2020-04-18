@@ -36,6 +36,7 @@ export class RoomService extends BaseFirestoreService {
     this.answers$ = this.withId(this.answerCollection);
   }
 
+
   public joinRoom(userId: string): Observable<any> {
     const userRef = this.firestore.doc(`users/${userId}`).ref;
     const result = this.users$.pipe(

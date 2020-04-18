@@ -26,6 +26,7 @@ export class RoomCollectionService extends BaseFirestoreService {
   public createRoom(creatorId: string): Observable<string> {
     const creatorRef = this.firestore.doc(`users/${creatorId}`).ref;
     const room = {
+      created: Date.now(),
       creator: creatorRef,
       users: [creatorRef],
     };
@@ -33,5 +34,14 @@ export class RoomCollectionService extends BaseFirestoreService {
     return from(this.roomsCollection.add(room)).pipe(
       map((created) => created.id)
     );
+  }
+
+  public update(room: Room) {
+    const roomRef = this.firestore.doc(`rooms/${room.id}`).ref;
+    return roomRef.update({ ...room });
+  }
+
+  public remove(roomId: string) {
+    return this.firestore.doc(`rooms/${roomId}`).ref.delete();
   }
 }

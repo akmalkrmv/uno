@@ -1,0 +1,10 @@
+<div class="list">
+  <ng-container *ngFor="let user of users$ | async | sort: 'created':'desc'">
+    <app-user-card
+      class="list-item"
+      [user]="user"
+      (save)="save($event)"
+      (remove)="remove($event)"
+    ></app-user-card>
+  </ng-container>
+</div>

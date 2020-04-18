@@ -13,8 +13,8 @@ import { RommUserMap } from '../../models/room-user';
   providedIn: 'root',
 })
 export class RoomUserService extends BaseFirestoreService {
-  private collection: AngularFirestoreCollection<RommUserMap>;
-  private maps$: Observable<RommUserMap[]>;
+  public collection: AngularFirestoreCollection<RommUserMap>;
+  public maps$: Observable<RommUserMap[]>;
   private path = 'room-user-map';
 
   constructor(private firestore: AngularFirestore) {

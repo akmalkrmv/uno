@@ -18,7 +18,7 @@ export class UsersService extends BaseFirestoreService {
   public users$: Observable<any[]>;
   public path = 'users';
 
-  constructor(firestore: AngularFirestore) {
+  constructor(private firestore: AngularFirestore) {
     super();
 
     this.userCollection = firestore.collection(this.path);
@@ -63,5 +63,14 @@ export class UsersService extends BaseFirestoreService {
     return this.users$.pipe(
       map((users) => users.find((user) => user.id == userId))
     );
+  }
+
+  public update(user: User) {
+    const userRef = this.firestore.doc(`users/${user.id}`).ref;
+    return userRef.update({ ...user });
+  }
+
+  public remove(userId: string) {
+    return this.firestore.doc(`users/${userId}`).ref.delete();
   }
 }

@@ -1,0 +1,15 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  .list-item {
+    width: 300px;
+    padding: 10px;
+    display: flex;
+
+    .mat-card {
+      width: 100%;
+    }
+  }
+}
