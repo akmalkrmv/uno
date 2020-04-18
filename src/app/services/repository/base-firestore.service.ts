@@ -1,6 +1,9 @@
 import {
   AngularFirestoreCollection,
+  AngularFirestoreDocument,
   DocumentChangeAction,
+  DocumentSnapshot,
+  Action,
 } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -29,6 +32,31 @@ export class BaseFirestoreService {
       .pipe(
         tap((items: T[]) => {
           logItems && console.log(`${collection.ref.path}`, items);
+        })
+      );
+  }
+
+  protected withIdSingle<T>(
+    document: AngularFirestoreDocument<T>,
+    logItems = true,
+    logChanges = false
+  ): Observable<T> {
+    return document
+      .snapshotChanges()
+      .pipe(
+        tap((change: Action<DocumentSnapshot<T>>) => {
+          logChanges && console.log(`${document.ref.path}`, change);
+        })
+      )
+      .pipe(
+        map((change: Action<DocumentSnapshot<T>>) => ({
+          ...(change.payload.data() as T),
+          id: change.payload.id,
+        }))
+      )
+      .pipe(
+        tap((item: T) => {
+          logItems && console.log(`${document.ref.path}`, item);
         })
       );
   }

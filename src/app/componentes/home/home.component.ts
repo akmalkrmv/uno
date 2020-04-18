@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { ApiService } from '@services/repository/api.service';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,11 @@ import { ApiService } from '@services/repository/api.service';
 export class HomeComponent implements OnInit {
   public roomId: string;
 
-  constructor(private router: Router, private api: ApiService) {}
+  constructor(
+    private router: Router,
+    private api: ApiService,
+    public auth: AuthService
+  ) {}
 
   ngOnInit() {}
   ngOnDestroy() {}
@@ -20,8 +25,11 @@ export class HomeComponent implements OnInit {
   public createRoom() {
     this.api.users
       .authorize()
-      .pipe(untilDestroyed(this))
-      .pipe(switchMap((user) => this.api.rooms.createRoom(user.id)))
+      .pipe(
+        take(1),
+        untilDestroyed(this),
+        switchMap((user) => this.api.rooms.createRoom(user.id))
+      )
       .subscribe((roomId) => {
         this.router.navigate([`/room/${roomId}`]);
       });
@@ -29,5 +37,15 @@ export class HomeComponent implements OnInit {
 
   public joinRoom() {
     this.router.navigate([`/room/${this.roomId}`]);
+  }
+
+  public googleSignIn() {
+    this.auth.googleSignIn().pipe(take(1), untilDestroyed(this)).subscribe();
+  }
+  public facebookSignIn() {
+    this.auth.facebookSignIn().pipe(take(1), untilDestroyed(this)).subscribe();
+  }
+  public githubSignIn() {
+    this.auth.githubSignIn().pipe(take(1), untilDestroyed(this)).subscribe();
   }
 }

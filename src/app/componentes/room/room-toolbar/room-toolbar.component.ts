@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ClipboardService } from 'src/app/services/clipboard.service';
 import { MenuItemEvent } from 'src/app/models/menu-item-event';
 import { User } from 'src/app/models/user';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-room-toolbar',
@@ -23,7 +24,7 @@ export class RoomToolbarComponent implements OnInit, OnDestroy {
 
   @Output() menuItemClicked = new EventEmitter<MenuItemEvent>();
 
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private snackBar: MatSnackBar, public auth: AuthService) {}
 
   ngOnInit(): void {}
   ngOnDestroy(): void {}

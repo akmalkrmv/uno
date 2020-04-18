@@ -6,7 +6,10 @@ import {
 
 export class User {
   public created?: number;
-  public profilePic?: string;
+  public email?: string;
+  public displayName?: string;
+  public phoneNumber?: string;
+  public photoURL?: string;
   public fcmTokens?: any;
 
   public ref?: string;

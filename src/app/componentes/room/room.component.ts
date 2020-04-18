@@ -47,6 +47,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
+    this.api.room.init(this.roomId);
 
     this.api.room
       .exists(this.roomId)
@@ -57,7 +58,6 @@ export class RoomComponent implements OnInit, OnDestroy {
             this.router.navigate(['']);
             return of(null);
           }
-          
           return this.api.users.authorize();
         }),
         switchMap((user) => {
@@ -96,10 +96,10 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.listenToAnswers(throttleTimeMs);
         // this.retryCall();
 
-        this.messaging.requestPermission(this.user.id);
-        this.messaging.monitorRefresh(this.user.id);
-        this.messaging.receiveMessage();
-        this.messages$ = this.messaging.message$;
+        // this.messaging.requestPermission(this.user.id);
+        // this.messaging.monitorRefresh(this.user.id);
+        // this.messaging.receiveMessage();
+        // this.messages$ = this.messaging.message$;
       });
   }
 
