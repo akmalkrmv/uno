@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 // Modules
 import { MaterialImportsModule } from './shared/material-imports.module';
-import { FirestroeImportsModule } from './shared/firestroe-imports.module';
+import { FirestoreImportsModule } from './shared/firestore-imports.module';
 import { AppRoutingModule } from './app-routing.module';
 import { BuraModule } from './componentes/bura/bura.module';
 
@@ -34,7 +34,7 @@ import { VideoControlsComponent } from './componentes/video-controls/video-contr
     FormsModule,
     // Imports
     MaterialImportsModule,
-    FirestroeImportsModule,
+    FirestoreImportsModule,
     // App
     AppRoutingModule,
     BuraModule,

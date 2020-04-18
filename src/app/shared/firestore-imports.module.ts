@@ -21,4 +21,4 @@ import { environment } from 'src/environments/environment';
     AngularFireDatabaseModule,
   ],
 })
-export class FirestroeImportsModule {}
+export class FirestoreImportsModule {}
