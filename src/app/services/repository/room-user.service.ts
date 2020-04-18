@@ -21,7 +21,7 @@ export class RoomUserService extends BaseFirestoreService {
     super();
 
     this.collection = firestore.collection(this.path);
-    this.maps$ = this.withId(this.collection);
+    this.maps$ = this.collectionChanges(this.collection);
   }
 
   // READ

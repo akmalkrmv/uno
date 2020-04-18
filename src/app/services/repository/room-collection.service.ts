@@ -20,7 +20,7 @@ export class RoomCollectionService extends BaseFirestoreService {
     super();
 
     this.roomsCollection = firestore.collection('rooms');
-    this.rooms$ = this.withId(this.roomsCollection);
+    this.rooms$ = this.collectionChanges(this.roomsCollection);
   }
 
   public createRoom(creatorId: string): Observable<string> {

@@ -25,7 +25,7 @@ export class AuthService extends BaseFirestoreService {
     this.user$ = this.fireauth.authState.pipe(
       switchMap((user) => {
         if (user) {
-          return this.withIdSingle(this.firestore.doc<User>(`users/${user.uid}`));
+          return this.documentChanges(this.firestore.doc<User>(`users/${user.uid}`));
         } else {
           return of(null);
         }

@@ -22,7 +22,7 @@ export class UsersService extends BaseFirestoreService {
     super();
 
     this.userCollection = firestore.collection(this.path);
-    this.users$ = this.withId(this.userCollection);
+    this.users$ = this.collectionChanges(this.userCollection);
   }
 
   public createUser(name?: string): Observable<User> {

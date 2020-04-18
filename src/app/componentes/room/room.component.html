@@ -14,6 +14,8 @@
     <!-- <app-play-cards></app-play-cards> -->
     <!-- <div>{{ messages$ | async | json }}</div> -->
 
+    <app-message-list *ngIf="user" [userId]="user.id" [roomId]="roomId"></app-message-list>
+
     <div style="padding: 10px;" *ngIf="false">
       <ng-container *ngIf="offers$">
         <div *ngFor="let item of offers$ | async">

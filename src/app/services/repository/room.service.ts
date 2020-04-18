@@ -31,9 +31,9 @@ export class RoomService extends BaseFirestoreService {
     this.offerCollection = this.room.collection<Offer>('offers');
     this.answerCollection = this.room.collection<Answer>('answers');
 
-    this.users$ = this.withId(this.userCollection);
-    this.offers$ = this.withId(this.offerCollection);
-    this.answers$ = this.withId(this.answerCollection);
+    this.users$ = this.collectionChanges(this.userCollection);
+    this.offers$ = this.collectionChanges(this.offerCollection);
+    this.answers$ = this.collectionChanges(this.answerCollection);
   }
 
   public exists(roomId: string): Observable<boolean> {

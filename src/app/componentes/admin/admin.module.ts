@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { MaterialImportsModule } from 'src/app/shared/material-imports.module';
-import { ArraySortPipe } from 'src/app/pipes/sort-by.pipe';
 
 import { AdminComponent } from './admin.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
@@ -14,7 +13,6 @@ import { UserComponent } from './pages/user/user.component';
 
 @NgModule({
   declarations: [
-    ArraySortPipe,
     AdminComponent,
     RoomsComponent,
     RoomComponent,
@@ -26,6 +24,6 @@ import { UserComponent } from './pages/user/user.component';
     FormsModule,
     MaterialImportsModule,
     AdminRoutingModule,
-  ],
+  ]
 })
 export class AdminModule {}

@@ -9,7 +9,7 @@ import { Observable, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 export class BaseFirestoreService {
-  protected withId<T>(
+  protected collectionChanges<T>(
     collection: AngularFirestoreCollection<T>,
     logItems = true,
     logChanges = false
@@ -36,7 +36,7 @@ export class BaseFirestoreService {
       );
   }
 
-  protected withIdSingle<T>(
+  protected documentChanges<T>(
     document: AngularFirestoreDocument<T>,
     logItems = true,
     logChanges = false
