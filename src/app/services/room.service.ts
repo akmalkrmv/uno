@@ -3,13 +3,12 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
   AngularFirestoreDocument,
-} from 'angularfire2/firestore';
+} from '@angular/fire/firestore';
 import { Observable, forkJoin, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
 import { Room, Offer, Answer, IOffer } from '../models/room';
-import { delimeter } from '../constants/logging';
 
 @Injectable({
   providedIn: 'root',
@@ -147,19 +146,17 @@ export class RoomService extends BaseFirestoreService {
       switchMap((existing) => {
         if (!existing) {
           const message = `from ${payload.from} to ${payload.to} does NOT exists`;
-          console.log(typeof payload, message, delimeter);
+          console.log(typeof payload, message);
 
           return this.addToCollection(collection, payload);
         } else {
           const message = `from ${payload.from} to ${payload.to} ALREADY exists`;
-          console.log(typeof payload, message, delimeter);
+          console.log(typeof payload, message);
 
           return of(null);
 
-          // const doc = this.firestore.doc(
-          //   `${this.room.ref.path}/${offerType}/${existing.id}`
-          // );
-
+          // const path = `${this.room.ref.path}/${offerType}/${existing.id}`;
+          // const doc = this.firestore.doc(path);
           // return from(doc.update({ description: payload.description })).pipe(
           //   map(() => existing.id)
           // );

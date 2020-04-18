@@ -1,4 +1,3 @@
-import { delimeter } from '../constants/logging';
 import { Connection } from './connection';
 import {
   vgaConstraints,
@@ -15,14 +14,6 @@ export class User {
 
   public getConnection(userId: string): Connection {
     const connection = this.connections.find((item) => item.userId == userId);
-
-    console.log('Looking for existing connection', userId);
-    console.log(
-      connection
-        ? 'Connection exists'
-        : "Connection doesn't exists, creating new connection"
-    );
-
     return connection || this.createConnection(userId);
   }
 
@@ -65,7 +56,7 @@ export class User {
 
   public addTracks(connection: RTCPeerConnection) {
     try {
-      console.log('Adding tracks', delimeter);
+      console.log('Adding tracks');
 
       this.stream
         .getTracks()

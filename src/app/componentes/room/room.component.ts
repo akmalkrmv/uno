@@ -14,7 +14,6 @@ import {
 
 import { User } from '../../models/user';
 import { RoomService } from '../../services/room.service';
-import { delimeter } from 'src/app/constants/logging';
 import { UsersService } from 'src/app/services/users.service';
 import { RoomUserService } from 'src/app/services/room-user.service';
 import { MenuItemEvent } from 'src/app/models/menu-item-event';
@@ -133,8 +132,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this))
       .subscribe((result) => {
         this.user.closeConnections();
-        console.log(result, delimeter);
-
         this.isConnectionOn.next(true);
       });
   }

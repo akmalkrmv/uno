@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
-} from 'angularfire2/firestore';
+} from '@angular/fire/firestore';
+import { Observable, from } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { Room } from '../models/room';
 import { BaseFirestoreService } from './base-firestore.service';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

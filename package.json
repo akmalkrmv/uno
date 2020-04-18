@@ -1,6 +1,6 @@
 {
   "name": "uno",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -18,13 +18,13 @@
     "@angular/common": "~9.0.1",
     "@angular/compiler": "~9.0.1",
     "@angular/core": "~9.0.1",
+    "@angular/fire": "^6.0.0",
     "@angular/forms": "~9.0.1",
     "@angular/material": "^9.2.0",
     "@angular/platform-browser": "~9.0.1",
     "@angular/platform-browser-dynamic": "~9.0.1",
     "@angular/router": "~9.0.1",
-    "angularfire2": "^5.4.2",
-    "firebase": "^7.13.2",
+    "firebase": "^7.14.1",
     "font-awesome": "^4.7.0",
     "ngx-take-until-destroy": "^5.4.0",
     "rxjs": "~6.5.4",

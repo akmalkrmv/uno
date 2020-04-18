@@ -1,15 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-// Firestore
-import { environment } from './../environments/environment';
-import { AngularFireModule } from 'angularfire2';
-import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { FormsModule } from '@angular/forms';
 
 // Modules
 import { MaterialImportsModule } from './shared/material-imports.module';
+import { FirestroeImportsModule } from './shared/firestroe-imports.module';
 import { AppRoutingModule } from './app-routing.module';
 import { BuraModule } from './componentes/bura/bura.module';
 
@@ -35,13 +31,10 @@ import { VideoControlsComponent } from './componentes/video-controls/video-contr
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    ReactiveFormsModule,
     FormsModule,
-    // Firebase
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule,
-    // Material
+    // Imports
     MaterialImportsModule,
+    FirestroeImportsModule,
     // App
     AppRoutingModule,
     BuraModule,

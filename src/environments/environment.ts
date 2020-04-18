@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  firebaseConfig: {
+  firebase: {
     apiKey: 'AIzaSyB8OELF8OtaSi-hF8rJm3lzgBn5GOI6Yeo',
     authDomain: 'uno-server-3000.firebaseapp.com',
     databaseURL: 'https://uno-server-3000.firebaseio.com',

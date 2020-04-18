@@ -1,7 +1,7 @@
 import {
   AngularFirestoreCollection,
   DocumentChangeAction,
-} from 'angularfire2/firestore';
+} from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 

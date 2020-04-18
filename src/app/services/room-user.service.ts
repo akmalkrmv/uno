@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
-  QueryDocumentSnapshot,
-  DocumentData,
-} from 'angularfire2/firestore';
+} from '@angular/fire/firestore';
+import { map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+
 import { BaseFirestoreService } from './base-firestore.service';
 import { RommUserMap } from '../models/room-user';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

@@ -1,5 +1,4 @@
 import { rtcConfiguration } from '../constants/rts-configurations';
-import { delimeter } from '../constants/logging';
 
 export class Connection {
   public remote: RTCPeerConnection;
@@ -11,12 +10,12 @@ export class Connection {
     const connection = new RTCPeerConnection(rtcConfiguration);
     const showState = () => {
       const { signalingState, connectionState } = connection;
-      console.log('State: ', { signalingState, connectionState }, delimeter);
+      console.log('State: ', { signalingState, connectionState });
     };
 
     // Registering remote stream
     connection.ontrack = (event: RTCTrackEvent) => {
-      console.log('ontrack', userId, event.streams, delimeter);
+      console.log('ontrack', userId, event.streams);
       this.stream = event.streams[0];
     };
 
