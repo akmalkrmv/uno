@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
-import { switchMap, catchError, take, tap } from 'rxjs/operators';
+import { switchMap, catchError, tap } from 'rxjs/operators';
 
-import { RoomService } from './room.service';
+import { RoomService } from './repository/room.service';
 import { Offer, Answer } from '../models/room';
 import { User } from '../models/user';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class OfferService {
   public user: User;
 

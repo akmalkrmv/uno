@@ -8,11 +8,9 @@ import { Observable, forkJoin, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
-import { Room, Offer, Answer, IOffer } from '../models/room';
+import { Room, Offer, Answer, IOffer } from '../../models/room';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class RoomService extends BaseFirestoreService {
   public room: AngularFirestoreDocument<Room>;
   public userCollection: AngularFirestoreCollection<any>;

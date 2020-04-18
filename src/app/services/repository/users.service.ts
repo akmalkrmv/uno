@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
-import { LocalStorageKeys } from '../constants/local-storage-keys';
-import { User } from '../models/user';
+import { LocalStorageKeys } from '../../constants/local-storage-keys';
+import { User } from '../../models/user';
 
 @Injectable({
   providedIn: 'root',

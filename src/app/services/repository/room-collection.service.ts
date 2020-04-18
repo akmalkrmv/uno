@@ -6,7 +6,7 @@ import {
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Room } from '../models/room';
+import { Room } from '../../models/room';
 import { BaseFirestoreService } from './base-firestore.service';
 
 @Injectable({

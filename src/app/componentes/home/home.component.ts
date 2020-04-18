@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-
-import { RoomCollectionService } from 'src/app/services/room-collection.service';
-import { UsersService } from 'src/app/services/users.service';
+import { ApiService } from '@services/repository/api.service';
 
 @Component({
   selector: 'app-home',
@@ -14,20 +12,16 @@ import { UsersService } from 'src/app/services/users.service';
 export class HomeComponent implements OnInit {
   public roomId: string;
 
-  constructor(
-    private router: Router,
-    private roomService: RoomCollectionService,
-    private usersService: UsersService
-  ) {}
+  constructor(private router: Router, private api: ApiService) {}
 
   ngOnInit() {}
   ngOnDestroy() {}
 
   public createRoom() {
-    this.usersService
+    this.api.users
       .authorize()
       .pipe(untilDestroyed(this))
-      .pipe(switchMap((user) => this.roomService.createRoom(user.id)))
+      .pipe(switchMap((user) => this.api.rooms.createRoom(user.id)))
       .subscribe((roomId) => {
         this.router.navigate([`/room/${roomId}`]);
       });

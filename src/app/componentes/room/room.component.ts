@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable, BehaviorSubject, forkJoin } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import {
   switchMap,
   take,
@@ -12,14 +12,11 @@ import {
   combineLatest,
 } from 'rxjs/operators';
 
-import { User } from '../../models/user';
-import { RoomService } from '../../services/room.service';
-import { UsersService } from 'src/app/services/users.service';
-import { RoomUserService } from 'src/app/services/room-user.service';
-import { MenuItemEvent } from 'src/app/models/menu-item-event';
-import { vgaConstraints } from 'src/app/constants/rts-configurations';
-import { OfferService } from 'src/app/services/offer.service';
-import { Offer, Answer, IOffer } from 'src/app/models/room';
+import { vgaConstraints } from '@constants/index';
+import { User, MenuItemEvent } from '@models/index';
+import { Offer, Answer, IOffer } from '@models/index';
+import { OfferService } from '@services/offer.service';
+import { ApiService } from '@services/repository/api.service';
 
 @Component({
   selector: 'app-room',
@@ -37,10 +34,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private activeRoute: ActivatedRoute,
-    private roomService: RoomService,
-    private usersService: UsersService,
-    private roomUserService: RoomUserService,
-    private offerService: OfferService
+    private offerService: OfferService,
+    private api: ApiService
   ) {}
 
   ngOnDestroy() {
@@ -49,14 +44,14 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
-    this.roomService.init(this.roomId);
+    this.api.room.init(this.roomId);
 
-    this.usersService
+    this.api.users
       .authorize()
       .pipe(untilDestroyed(this))
       .pipe(
         switchMap((user) =>
-          this.roomUserService
+          this.api.roomUsers
             .joinRoom(this.roomId, user.id)
             .pipe(map(() => user))
         )
@@ -67,17 +62,17 @@ export class RoomComponent implements OnInit, OnDestroy {
 
         this.offerService.init(user);
 
-        this.onlineUsers$ = this.roomUserService.roomUserIds(this.roomId).pipe(
+        this.onlineUsers$ = this.api.roomUsers.roomUserIds(this.roomId).pipe(
           untilDestroyed(this),
-          switchMap((userIds) => this.usersService.getByIds(userIds))
+          switchMap((userIds) => this.api.users.getByIds(userIds))
         );
 
-        this.offers$ = this.roomService.userOffers(this.user.id).pipe(
+        this.offers$ = this.api.room.userOffers(this.user.id).pipe(
           untilDestroyed(this),
           takeWhile(() => this.isConnectionOn.value)
         );
 
-        this.answers$ = this.roomService.userAnswers(this.user.id).pipe(
+        this.answers$ = this.api.room.userAnswers(this.user.id).pipe(
           untilDestroyed(this),
           takeWhile(() => this.isConnectionOn.value)
         );
@@ -127,7 +122,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public hangup() {
     // this.isConnectionOn.next(false);
 
-    this.roomService
+    this.api.room
       .clearConnections()
       .pipe(untilDestroyed(this))
       .subscribe((result) => {
@@ -137,7 +132,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public leaveRoom() {
-    this.roomUserService
+    this.api.roomUsers
       .leaveRoom(this.roomId, this.user.id)
       .pipe(take(1), untilDestroyed(this))
       .subscribe(() => this.router.navigate([`/`]));
@@ -146,7 +141,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public retryCall() {
     this.isConnectionOn.next(false);
 
-    this.roomService
+    this.api.room
       .clearConnections()
       .pipe(
         take(1),
@@ -168,9 +163,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   private roomUsers(): Observable<User[]> {
-    return this.roomUserService
+    return this.api.roomUsers
       .roomOtherUserIds(this.roomId, this.user.id)
-      .pipe(switchMap((userIds) => this.usersService.getByIds(userIds)));
+      .pipe(switchMap((userIds) => this.api.users.getByIds(userIds)));
   }
 
   private compareOffers(before: IOffer[], after: IOffer[]) {

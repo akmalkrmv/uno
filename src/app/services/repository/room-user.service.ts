@@ -7,7 +7,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { BaseFirestoreService } from './base-firestore.service';
-import { RommUserMap } from '../models/room-user';
+import { RommUserMap } from '../../models/room-user';
 
 @Injectable({
   providedIn: 'root',
