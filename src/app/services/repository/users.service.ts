@@ -31,6 +31,12 @@ export class UsersService extends BaseFirestoreService {
     );
   }
 
+  public saveToken(userId: string, token: string) {
+    const userRef = this.userCollection.doc(userId);
+    const tokens = { [token]: true };
+    userRef.update({ fcmTokens: tokens });
+  }
+
   public authorize(): Observable<User> {
     let userId = localStorage.getItem(LocalStorageKeys.userId);
 

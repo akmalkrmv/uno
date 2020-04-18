@@ -13,8 +13,9 @@
   <app-videos-list class="viewport" [user]="user">
     <!-- <app-play-cards></app-play-cards> -->
 
-    <div style="padding: 10px;" *ngIf="false">
+    <div>{{ messaging.message$ | async | json }}</div>
 
+    <div style="padding: 10px;" *ngIf="false">
       <ng-container *ngIf="offers$">
         <div *ngFor="let item of offers$ | async">
           <div>id: {{ item.id }}, from: {{ item.from }}, to: {{ item.to }}</div>

@@ -9,16 +9,16 @@ import { environment } from 'src/environments/environment';
 @NgModule({
   imports: [
     AngularFirestoreModule,
+    AngularFireDatabaseModule,
     AngularFireAuthModule,
     AngularFireMessagingModule,
-    AngularFireDatabaseModule,
     AngularFireModule.initializeApp(environment.firebase),
   ],
   exports: [
     AngularFirestoreModule,
+    AngularFireDatabaseModule,
     AngularFireAuthModule,
     AngularFireMessagingModule,
-    AngularFireDatabaseModule,
   ],
 })
 export class FirestoreImportsModule {}

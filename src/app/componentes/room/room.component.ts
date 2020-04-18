@@ -15,8 +15,9 @@ import {
 import { vgaConstraints } from '@constants/index';
 import { User, MenuItemEvent } from '@models/index';
 import { Offer, Answer, IOffer } from '@models/index';
-import { OfferService } from '@services/offer.service';
 import { ApiService } from '@services/repository/api.service';
+import { OfferService } from '@services/offer.service';
+import { MessagingService } from '@services/messaging.service';
 
 @Component({
   selector: 'app-room',
@@ -34,8 +35,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private activeRoute: ActivatedRoute,
+    private api: ApiService,
     private offerService: OfferService,
-    private api: ApiService
+    public messaging: MessagingService
   ) {}
 
   ngOnDestroy() {
@@ -81,6 +83,10 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.listenToOffers(throttleTimeMs);
         this.listenToAnswers(throttleTimeMs);
         // this.retryCall();
+
+        this.messaging.requestPermission(this.user.id);
+        this.messaging.monitorRefresh(this.user.id);
+        this.messaging.receiveMessage();
       });
   }
 
@@ -121,6 +127,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public hangup() {
     // this.isConnectionOn.next(false);
+    this.user.closeConnections();
 
     this.api.room
       .clearConnections()
@@ -140,16 +147,14 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public retryCall() {
     this.isConnectionOn.next(false);
+    this.user.closeConnections();
 
     this.api.room
       .clearConnections()
       .pipe(
         take(1),
         untilDestroyed(this),
-        switchMap(() => {
-          this.user.closeConnections();
-          return this.roomUsers();
-        })
+        switchMap(() => this.roomUsers())
       )
       .subscribe((users) => {
         this.isConnectionOn.next(true);
