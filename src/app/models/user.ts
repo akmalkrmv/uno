@@ -5,11 +5,13 @@ import {
 } from '../constants/rts-configurations';
 
 export class User {
+  public created?: number;
+  public profilePic?: string;
+  public fcmTokens?: any;
+
   public ref?: string;
   public stream?: MediaStream;
   public connections: Connection[] = [];
-  public fcmTokens?: any;
-  public created?: number;
   public isFrontCamera = true;
 
   constructor(public id: string, public name?: string) {}

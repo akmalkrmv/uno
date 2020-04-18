@@ -1,23 +1,35 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>{{ user.id }}</mat-card-title>
+    <div mat-card-avatar>
+      <img
+        *ngIf="user.profilePic"
+        [src]="user.profilePic"
+        class="profile-img"
+      />
+      <mat-icon *ngIf="!user.profilePic">camera_alt</mat-icon>
+    </div>
+    <mat-card-title>{{ user.name || '___' }}</mat-card-title>
     <mat-card-subtitle>
       Created: <span *ngIf="user.created">{{ user.created | date }}</span>
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     <mat-form-field>
+      <mat-label>Id</mat-label>
+      <input matInput disabled [value]="user.id" />
+    </mat-form-field>
+    <mat-form-field>
       <mat-label>Name</mat-label>
       <input matInput [(ngModel)]="user.name" />
     </mat-form-field>
-    <div class="tokens">Tokens: {{ user.fcmTokens | json }}</div>
+    <div class="tokens" *ngIf="user.fcmTokens">
+      Tokens: {{ user.fcmTokens | json }}
+    </div>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button color="primary" (click)="save.emit(user)">
-      <mat-icon>save</mat-icon> Save
-    </button>
+    <button mat-button color="primary" (click)="save.emit(user)">Save</button>
     <button mat-button color="warn" (click)="remove.emit(user.id)">
-      <mat-icon>delete</mat-icon> Delete
+      Delete
     </button>
   </mat-card-actions>
 </mat-card>

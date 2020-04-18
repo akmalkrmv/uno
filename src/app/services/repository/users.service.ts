@@ -26,7 +26,8 @@ export class UsersService extends BaseFirestoreService {
   }
 
   public createUser(name?: string): Observable<User> {
-    return this.addToCollection(this.userCollection, { name }).pipe(
+    const payload = { name, created: Date.now() };
+    return this.addToCollection(this.userCollection, payload).pipe(
       map((id) => new User(id, name))
     );
   }

@@ -2,7 +2,8 @@
   <mat-card-header>
     <mat-card-title>{{ room.id }}</mat-card-title>
     <mat-card-subtitle>
-      Created: <span *ngIf="room.created">{{ room.created | date: 'medium' }}</span>
+      Created:
+      <span *ngIf="room.created">{{ room.created | date: 'medium' }}</span>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -28,11 +29,9 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button mat-button color="primary" (click)="save.emit(room)">
-      <mat-icon>save</mat-icon> Save
-    </button>
+    <button mat-button color="primary" (click)="save.emit(room)">Save</button>
     <button mat-button color="warn" (click)="remove.emit(room.id)">
-      <mat-icon>delete</mat-icon> Delete
+      Delete
     </button>
   </mat-card-actions>
 </mat-card>
