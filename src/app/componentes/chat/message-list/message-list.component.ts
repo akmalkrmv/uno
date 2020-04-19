@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Message } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { take, map } from 'rxjs/operators';
@@ -62,8 +57,8 @@ export class MessageListComponent implements OnInit, OnDestroy {
   }
 
   public keyDown(event: KeyboardEvent): void {
-    if (event.keyCode === 13 && event.shiftKey) {
-      // On 'Shift+Enter' do this...
+    if (event.keyCode === 13) {
+      // On 'Enter' do this...
       this.send();
     }
   }
