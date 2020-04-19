@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 
-import { RoomService } from './repository/room.service';
-import { Offer, Answer } from '../models/room';
-import { User } from '../models/user';
+import { offerOptions } from '@constants/index';
+import { User, Offer, Answer } from '@models/index';
+import { RoomService } from '@services/repository/room.service';
 
 @Injectable({ providedIn: 'root' })
 export class OfferService {
@@ -37,7 +37,7 @@ export class OfferService {
       return of(null);
     }
 
-    return from(connection.createOffer()).pipe(
+    return from(connection.createOffer(offerOptions)).pipe(
       switchMap((offer) => from(connection.setLocalDescription(offer))),
       switchMap(() =>
         this.roomService.createOffer({
@@ -67,7 +67,7 @@ export class OfferService {
 
     return from(connection.setRemoteDescription(offer.description)).pipe(
       tap(() => console.log('setRemoteDescription')),
-      switchMap(() => from(connection.createAnswer())),
+      switchMap(() => from(connection.createAnswer(offerOptions))),
       switchMap((answer) => from(connection.setLocalDescription(answer))),
       switchMap(() => {
         console.log('answering...');

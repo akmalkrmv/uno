@@ -1,5 +1,6 @@
 .mat-card {
   width: 100%;
+  color: #666;
 
   .mat-card-avatar {
     margin-right: 10px;
@@ -19,11 +20,45 @@
     }
   }
 
-  .tokens {
-    word-break: break-all;
-  }
-
   .mat-card-actions {
     text-align: right;
+  }
+}
+
+.tokens {
+  word-break: break-all;
+}
+
+.panel-view-wrapper {
+  width: 100%;
+}
+
+.panel-view {
+  width: 100%;
+  color: #666;
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+
+    .panel-avatar {
+      width: 36px;
+      height: 36px;
+      margin-right: 10px;
+      color: #aaa;
+      background-color: #ddd;
+      background-size: cover;
+      border-radius: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .profile-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+      }
+    }
   }
 }

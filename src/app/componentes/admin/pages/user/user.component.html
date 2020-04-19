@@ -1,4 +1,4 @@
-<mat-card *ngIf="user">
+<mat-card *ngIf="user && false">
   <mat-card-header>
     <div mat-card-avatar>
       <img *ngIf="user.photoURL" [src]="user.photoURL" class="profile-img" />
@@ -6,7 +6,8 @@
     </div>
     <mat-card-title>{{ user.name || '___' }}</mat-card-title>
     <mat-card-subtitle>
-      Created: <span *ngIf="user.created">{{ user.created | date }}</span>
+      Created:
+      <span *ngIf="user.created">{{ user.created | date: 'medium' }}</span>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -54,3 +55,71 @@
     <button mat-button (click)="back()">Back</button>
   </mat-card-actions>
 </mat-card>
+
+<div class="panel-view-wrapper">
+  <mat-expansion-panel *ngIf="user" class="panel-view">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div class="panel-title">
+          <div class="panel-avatar">
+            <img
+              *ngIf="user.photoURL"
+              [src]="user.photoURL"
+              class="profile-img"
+            />
+            <mat-icon *ngIf="!user.photoURL">camera_alt</mat-icon>
+          </div>
+          <div>{{ user.name || '___' }}</div>
+        </div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div>
+      <div>
+        Created:
+        <span *ngIf="user.created">{{ user.created | date: 'medium' }}</span>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Id</mat-label>
+          <input matInput disabled [value]="user.id" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="user.name" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Display name</mat-label>
+          <input matInput [(ngModel)]="user.displayName" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Phone number</mat-label>
+          <input matInput [(ngModel)]="user.phoneNumber" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="user.email" />
+        </mat-form-field>
+      </div>
+      <div class="tokens" *ngIf="user.fcmTokens">
+        Tokens: {{ user.fcmTokens | json }}
+      </div>
+    </div>
+
+    <mat-action-row>
+      <button mat-button color="primary" (click)="save.emit(user)">Save</button>
+      <button mat-button color="warn" (click)="remove.emit(user.id)">
+        Delete
+      </button>
+      <button mat-button (click)="back()">Back</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</div>

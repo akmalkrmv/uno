@@ -25,4 +25,6 @@ export const vgaConstraints: MediaStreamConstraints = {
 export const offerOptions: RTCOfferOptions = {
   offerToReceiveAudio: true,
   offerToReceiveVideo: true,
+  iceRestart: true,
+  voiceActivityDetection: true,
 };
