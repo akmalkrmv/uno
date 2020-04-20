@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { SharedModule } from 'src/app/shared/shared.module';
 import { AdminRoutingModule } from './admin-routing.module';
-import { MaterialImportsModule } from 'src/app/shared/material-imports.module';
 
 import { AdminComponent } from './admin.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
@@ -19,11 +16,6 @@ import { UserComponent } from './pages/user/user.component';
     UsersComponent,
     UserComponent,
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    MaterialImportsModule,
-    AdminRoutingModule,
-  ]
+  imports: [SharedModule, AdminRoutingModule],
 })
 export class AdminModule {}

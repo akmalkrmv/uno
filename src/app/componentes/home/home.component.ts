@@ -38,14 +38,4 @@ export class HomeComponent implements OnInit {
   public joinRoom() {
     this.router.navigate([`/room/${this.roomId}`]);
   }
-
-  public googleSignIn() {
-    this.auth.googleSignIn().pipe(take(1), untilDestroyed(this)).subscribe();
-  }
-  public facebookSignIn() {
-    this.auth.facebookSignIn().pipe(take(1), untilDestroyed(this)).subscribe();
-  }
-  public githubSignIn() {
-    this.auth.githubSignIn().pipe(take(1), untilDestroyed(this)).subscribe();
-  }
 }

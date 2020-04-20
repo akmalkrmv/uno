@@ -13,10 +13,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ArraySortPipe } from '../pipes/sort-by.pipe';
 
 @NgModule({
-  declarations: [ArraySortPipe],
   exports: [
     MatButtonModule,
     MatCardModule,
@@ -30,7 +28,6 @@ import { ArraySortPipe } from '../pipes/sort-by.pipe';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatToolbarModule,
-    ArraySortPipe,
   ],
 })
 export class MaterialImportsModule {}

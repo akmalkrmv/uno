@@ -18,6 +18,8 @@ import { FirestoreImportsModule } from './shared/firestore-imports.module';
 import { AppRoutingModule } from './app-routing.module';
 import { BuraModule } from './componentes/bura/bura.module';
 import { ChatModule } from './componentes/chat/chat.module';
+import { VideoChatModule } from './componentes/video-chat/video-chat.module';
+import { AuthModule } from './componentes/auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { ChatModule } from './componentes/chat/chat.module';
     AppRoutingModule,
     BuraModule,
     ChatModule,
+    VideoChatModule,
+    AuthModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
