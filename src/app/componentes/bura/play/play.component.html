@@ -1,13 +1,13 @@
 <div class="play-container">
   <div class="table-wrapper">
     <app-deck
-      [deck]="game.deck$ | async"
+      [deck]="deck$ | async"
       [trump]="trump$ | async"
       class="deck"
     ></app-deck>
 
     <div class="table">
-      <ng-container *ngIf="beatingCards as table">
+      <ng-container *ngIf="beatingCards$ | async as table">
         <ng-container *ngIf="table.length">
           <app-card
             *ngFor="let item of table"
@@ -19,7 +19,7 @@
     </div>
 
     <div class="table">
-      <ng-container *ngIf="game.table$ | async as table">
+      <ng-container *ngIf="table$ | async as table">
         <app-card class="card" [card]="table[0]" [visible]="false">
           <div class="cards-count">
             {{ table.length }}
@@ -29,68 +29,47 @@
     </div>
   </div>
 
-  <div class="game-info">
+  <!-- <div class="game-info">
     <div class="" *ngIf="stats">
       <div>Раунд: {{ stats.round }}</div>
       {{ stats.points | json }}
       {{ stats.players | json }}
       {{ stats.lastWinners | json }}
     </div>
-    <div *ngIf="currentPlayer">
-      Ходит <span class="moving-player">{{ currentPlayer.name }}</span>
+    <div *ngIf="current">
+      Ходит <span class="moving-player">{{ current.name }}</span>
     </div>
-  </div>
+  </div> -->
 
   <div
     class="hand"
-    *ngFor="let player of players"
-    [class.current-hand]="currentPlayer == player"
+    *ngFor="let player of players$ | async"
+    [class.current]="(current$ | async) == player"
+    [class.beater]="(beater$ | async) == player"
   >
     <div class="hand-deck">
-      <ng-container *ngFor="let item of player.hand">
-        <app-card
-          class="card"
-          [card]="item"
-          (click)="player.select(item, state)"
-        ></app-card>
-      </ng-container>
+      <ng-container *ngIf="state$ | async as state">
+        <ng-container *ngFor="let item of player.sortedHand$ | async">
+          <app-card
+            class="card"
+            [card]="item"
+            (click)="player.select(item, state)"
+          ></app-card> </ng-container
+      ></ng-container>
     </div>
-    <div class="hand-controls">
-      <ng-container *ngIf="player == currentPlayer">
-        <ng-container *ngIf="state == 'move'">
-          <button
-            mat-raised-button
-            color="accent"
-            (click)="move(player)"
-            [disabled]="!player.selected.length"
-          >
-            <mat-icon>send</mat-icon> Ходить
-          </button>
-        </ng-container>
 
-        <ng-container *ngIf="state == 'beat'">
-          <button
-            mat-raised-button
-            color="accent"
-            (click)="beat(player)"
-            [disabled]="!canBeat(player.selected, beatingCards)"
-          >
-            <mat-icon>verified_user</mat-icon> Отбить
-          </button>
-          <button
-            mat-raised-button
-            color="warn"
-            (click)="give(player)"
-            [disabled]="beatingCards.length != player.selected.length"
-          >
-            <mat-icon>arrow_upward</mat-icon> Отдать
-          </button>
-        </ng-container>
-      </ng-container>
-    </div>
+    <app-controls
+      class="hand-controls"
+      [game]="game"
+      [player]="player"
+      [state]="state$ | async"
+      [current]="current$ | async"
+      [selected]="player.selected$ | async"
+      [beatingCards]="beatingCards$ | async"
+    ></app-controls>
   </div>
 
-  <div class="points-info" *ngIf="players[0] as player">
+  <!-- <div class="points-info" *ngIf="players[0] as player">
     <div class="points-data">{{ player.name }}</div>
     <div class="points-data">
       <mat-icon>crop_portrait</mat-icon> {{ player.points }}
@@ -98,5 +77,5 @@
     <div class="points-data">
       <mat-icon>filter_none</mat-icon> {{ player.pointCards$.value.length }}
     </div>
-  </div>
+  </div> -->
 </div>

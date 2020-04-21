@@ -1,0 +1,34 @@
+<div class="hand-controls">
+  <ng-container *ngIf="player == current">
+    <ng-container *ngIf="state == 'move'">
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="move(player)"
+        [disabled]="!canMove"
+      >
+        <mat-icon>send</mat-icon> Ходить
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="state == 'beat'">
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="beat(player)"
+        [disabled]="!canBeat"
+      >
+        <mat-icon>verified_user</mat-icon> Отбить
+      </button>
+
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="give(player)"
+        [disabled]="!canGive"
+      >
+        <mat-icon>arrow_upward</mat-icon> Отдать
+      </button>
+    </ng-container>
+  </ng-container>
+</div>

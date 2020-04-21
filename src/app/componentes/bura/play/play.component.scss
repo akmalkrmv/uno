@@ -59,8 +59,11 @@
   .hand {
     padding: 20px 10px;
 
-    &.current-hand {
+    &.current {
       background-color: #555;
+    }
+    &.beater {
+      border: 1px solid yellowgreen;
     }
 
     .hand-deck {

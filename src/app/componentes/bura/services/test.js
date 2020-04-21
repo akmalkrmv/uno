@@ -1,35 +1,26 @@
-const TRUMP = 'yurek';
+const suits = { club: 0, heart: 1, diamond: 2, spade: 3 };
+const TRUMP = suits.spade;
 
 const table = [
-  { index: 7, suit: 'qarga' },
-  { index: 8, suit: 'qarga' },
-  { index: 9, suit: 'qarga' },
+  { index: 7, suit: suits.heart },
+  { index: 8, suit: suits.heart },
+  { index: 9, suit: suits.heart },
 ];
 const hand = [
-  { index: 10, suit: 'qarga' },
-  { index: 6, suit: 'yurek' },
-  { index: 14, suit: 'qarga' },
+  { index: 6, suit: suits.spade },
+  { index: 10, suit: suits.heart },
+  { index: 14, suit: suits.heart },
 ];
 
 function main() {
-  console.log('bosadi: ', bosadi(hand, table));
+  console.log('beats: ', { hand, table, beats: beats(hand, table) });
 }
 
-function bosadi(hand, table) {
-  // sotirng
-  hand = hand.sort((kartaA, kartaB) => {
-    // algoritm
-    return compare(kartaA, kartaB);
-  });
-
-  // sotirng
-  table = table.sort((kartaA, kartaB) => {
-    // algoritm
-    return compare(kartaA, kartaB);
-  });
+function beats(hand, table) {
+  hand = hand.sort((cardA, cardB) => compare(cardA, cardB));
+  table = table.sort((cardA, cardB) => compare(cardA, cardB));
 
   for (let index = 0; index < hand.length; index++) {
-    // algoritm
     if (!compare(hand[index], table[index])) {
       return false;
     }
@@ -39,36 +30,37 @@ function bosadi(hand, table) {
 }
 
 // Algorithm 1
-// function compare(kartaA, kartaB) {
-//   if (kartaA.suit == kartaB.suit) {
-//     // Agar mast bir hil bo'sa
-//     return kartaA.index > kartaB.index;
+// function compare(cardA, cardB) {
+//   if (cardA.suit == cardB.suit) {
+//     return cardA.index > cardB.index;
 //   }
-
-//    // Agar mast KOZER bo'sa
-//    return kartaA.suit == TRUMP;
+//
+//    return cardA.suit == TRUMP;
 // }
 
 // Algorithm 2
-function compare(kartaA, kartaB) {
-  const indexA = kartaA.suit == TRUMP ? kartaA.index : kartaA.index + 10;
-  const indexB = kartaB.suit == TRUMP ? kartaB.index : kartaB.index + 10;
+function compare(cardA, cardB) {
+  const indexA = cardA.suit == TRUMP ? cardA.index : cardA.index + 10;
+  const indexB = cardB.suit == TRUMP ? cardB.index : cardB.index + 10;
 
   return indexA > indexB;
 }
 
+//
+//
+//
+//
+//
+//
+//
+// Device managements
 navigator.mediaDevices.enumerateDevices().then((devices) => {
   const videoDevices = devices.filter((device) => device.kind == 'videoinput');
   const constaints = {
-    video: {
-      deviceId: {
-        exact: videoDevices[0].deviceId,
-      },
-    },
+    video: { deviceId: { exact: videoDevices[0].deviceId } },
   };
 
   console.log(videoDevices[0]);
-
 
   navigator.mediaDevices.getUserMedia(constaints).then((stream) => {
     const videoTrack = stream.getVideoTracks()[0];

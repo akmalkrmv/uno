@@ -63,8 +63,9 @@ export class BaseFirestoreService {
 
   protected addToCollection<T>(
     collection: AngularFirestoreCollection<T>,
-    item: T
+    payload: T
   ): Observable<string> {
-    return from(collection.add(item)).pipe(map((created) => created.id));
+    payload = { created: Date.now(), ...payload };
+    return from(collection.add(payload)).pipe(map((created) => created.id));
   }
 }

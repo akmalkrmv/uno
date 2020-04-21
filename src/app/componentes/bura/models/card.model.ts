@@ -40,20 +40,30 @@ export class Card {
     this.beatpoint = CardBeatPointMap[index] || index;
   }
 
-  public static compare(first: Card, second: Card, trump?: CardSuit) {
+  public static compare(first: Card, second: Card) {
     // compare beatpoints
-    if (first.beatpoint < second.beatpoint) {
-      return 1;
-    } else if (first.beatpoint > second.beatpoint) {
-      return -1;
-    }
+    if (first.beatpoint < second.beatpoint) return 1;
+    if (first.beatpoint > second.beatpoint) return -1;
 
     // compare names
-    if (first.name < second.name) {
-      return 1;
-    } else if (first.name > second.name) {
-      return -1;
-    }
+    if (first.name < second.name) return 1;
+    if (first.name > second.name) return -1;
+
+    return 0;
+  }
+
+  public static compareTrump(a: Card, b: Card, trump: CardSuit) {
+    // increase beating ponts
+    const pointA = a.suit == trump ? a.beatpoint + 100 : a.beatpoint;
+    const pointB = b.suit == trump ? b.beatpoint + 100 : b.beatpoint;
+
+    // compare beatpoints
+    if (pointA < pointB) return 1;
+    if (pointA > pointB) return -1;
+
+    // compare names
+    if (a.name < b.name) return 1;
+    if (a.name > b.name) return -1;
 
     return 0;
   }
