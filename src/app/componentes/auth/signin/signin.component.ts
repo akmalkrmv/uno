@@ -19,7 +19,10 @@ export class SigninComponent implements OnInit, OnDestroy {
   constructor(private auth: AuthService, private router: Router) {}
 
   ngOnDestroy(): void {}
-  ngOnInit(): void {}
+
+  ngOnInit(): void {
+    this.auth.startUi('#firebaseui-auth-container');
+  }
 
   public googleSignIn() {
     this.auth

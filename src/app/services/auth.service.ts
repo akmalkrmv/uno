@@ -5,6 +5,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { switchMap, map } from 'rxjs/operators';
 import { of, from, Observable } from 'rxjs';
 
+import * as firebaseui from 'firebaseui';
 import * as firebaseApp from 'firebase/app';
 import 'firebase/auth';
 
@@ -33,6 +34,26 @@ export class AuthService extends BaseFirestoreService {
 
   public isSignedIn() {
     return this.user$.pipe(map((user) => user != null));
+  }
+
+  public startUi(element: Element | string) {
+    const ui = new firebaseui.auth.AuthUI(firebaseApp.auth());
+    ui.start(element, {
+      signInOptions: [
+        firebaseApp.auth.PhoneAuthProvider.PROVIDER_ID,
+        firebaseApp.auth.EmailAuthProvider.PROVIDER_ID,
+        firebaseApp.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebaseApp.auth.FacebookAuthProvider.PROVIDER_ID,
+        firebaseApp.auth.GithubAuthProvider.PROVIDER_ID,
+      ],
+      callbacks: {
+        signInSuccessWithAuthResult: (credential) => {
+          this.updateUserData(credential.user);
+          return true;
+        },
+      },
+      // Other config options...
+    });
   }
 
   public googleSignIn() {
@@ -74,10 +95,13 @@ export class AuthService extends BaseFirestoreService {
       email: user.email,
     };
 
-    return userRef.ref.get().then((user) => {
-      return user.exists
-        ? userRef.update(payload)
-        : userRef.set({ ...payload, created: Date.now() }, { merge: true });
-    });
+    return userRef.ref
+      .get()
+      .then((user) => {
+        return user.exists
+          ? userRef.update(payload)
+          : userRef.set({ ...payload, created: Date.now() }, { merge: true });
+      })
+      .then(() => this.router.navigate(['/']));
   }
 }

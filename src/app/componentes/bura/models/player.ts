@@ -10,7 +10,7 @@ export class Player {
   public pointCards$ = new BehaviorSubject<Card[]>([]);
   public points: number = 0;
 
-  constructor(public name: string) {
+  constructor(public id: string, public name: string) {
     this.pointCards$.subscribe((cards) => {
       this.points = cards.reduce((total, card) => (total += card.point), 0);
     });

@@ -7,10 +7,10 @@ import { PlayComponent } from './componentes/bura/play/play.component';
 import { SigninComponent } from './componentes/auth/signin/signin.component';
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   { path: 'login', component: SigninComponent },
-  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'game', component: PlayComponent, canActivate: [AuthGuard] },
-  { path: 'room/:id', component: RoomComponent, canActivate: [AuthGuard] },
+  { path: 'room/:id', component: RoomComponent },
+  { path: 'game/:id', component: PlayComponent },
   {
     path: 'admin',
     canActivate: [AuthGuard],

@@ -6,7 +6,7 @@ import { Player } from '../models/player';
 import { GameState } from '../models/game-state';
 import { GameStats } from '../models/game-stats';
 import { GameOptions } from '../models/game-options';
-import { GameApiService } from './game-api.service';
+import { GameApiService, GameEvent } from './game-api.service';
 import { DeckService } from './deck-service';
 
 @Injectable({ providedIn: 'root' })
@@ -25,18 +25,28 @@ export class GameService {
   public stats = new GameStats();
   public moves = 0;
 
-  constructor(private api: GameApiService, private deck: DeckService) {
-    this.start();
-  }
+  constructor(private api: GameApiService, private deck: DeckService) {}
 
   public stateMove = () => this.state$.next('move');
   public stateBeat = () => this.state$.next('beat');
   public stateTake = () => this.state$.next('take');
   public stateEnd = () => this.state$.next('end');
 
-  public init(options: GameOptions, players: Player[]) {
+  public init(roomId: string, options: GameOptions, player: Player) {
     this.options = options;
-    this.players$.next(players);
+
+    this.api.init(roomId).then(() => {
+      this.api.join(roomId, player.id);
+
+      this.api.changes$.subscribe((changes) => {
+        changes.forEach((change) => this.handleChange(change));
+      });
+      this.api.players$.subscribe((players) => {
+        console.log(players);
+        this.players$.next(players.map((pl) => new Player(pl, 'QWERTY')));
+      });
+
+    });
   }
 
   public start() {
@@ -170,5 +180,37 @@ export class GameService {
 
   public putOnTable(cards: Card[]) {
     this.table$.next([...this.table$.value, ...cards]);
+  }
+
+  public join(id: string, name: string) {
+    const change = { action: 'join', payload: { id, name } };
+    this.api.create(change).subscribe();
+  }
+
+  public fireMove(player: Player) {
+    const change = {
+      action: 'move',
+      payload: {
+        player: player.id,
+        selected: player.move(),
+      },
+    };
+    this.api.create(change).subscribe();
+  }
+
+  public handleChange(change: GameEvent) {
+    console.log('change: ', change);
+    switch (change.action) {
+      case 'join': {
+        const player = new Player(change.payload.id, change.payload.name);
+        this.players$.next([...this.players$.value, player]);
+        break;
+      }
+      case 'move': {
+        const player = this.players$.value.find((p) => p.id == player.id);
+        this.move(player);
+        break;
+      }
+    }
   }
 }
