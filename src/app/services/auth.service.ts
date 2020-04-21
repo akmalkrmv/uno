@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { switchMap } from 'rxjs/operators';
-import { of, from } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
+import { of, from, Observable } from 'rxjs';
 
 import * as firebaseApp from 'firebase/app';
 import 'firebase/auth';
@@ -13,7 +13,7 @@ import { User } from '@models/index';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseFirestoreService {
-  public user$;
+  public user$: Observable<any>;
 
   constructor(
     private router: Router,
@@ -25,12 +25,18 @@ export class AuthService extends BaseFirestoreService {
     this.user$ = this.fireauth.authState.pipe(
       switchMap((user) => {
         if (user) {
-          return this.documentChanges(this.firestore.doc<User>(`users/${user.uid}`));
+          return this.documentChanges(
+            this.firestore.doc<User>(`users/${user.uid}`)
+          );
         } else {
           return of(null);
         }
       })
     );
+  }
+
+  public isSignedIn() {
+    return this.user$.pipe(map((user) => user != null));
   }
 
   public googleSignIn() {
