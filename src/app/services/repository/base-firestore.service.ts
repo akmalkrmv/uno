@@ -4,6 +4,7 @@ import {
   DocumentChangeAction,
   DocumentSnapshot,
   Action,
+  DocumentChangeType,
 } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -11,7 +12,8 @@ import { map, tap } from 'rxjs/operators';
 export class BaseFirestoreService {
   protected collectionChanges<T>(
     collection: AngularFirestoreCollection<T>,
-    logItems = true,
+    changeType?: DocumentChangeType,
+    logItems = false,
     logChanges = false
   ): Observable<T[]> {
     return collection
@@ -23,10 +25,14 @@ export class BaseFirestoreService {
       )
       .pipe(
         map((changes: DocumentChangeAction<T>[]) =>
-          changes.map((change: DocumentChangeAction<T>) => ({
-            ...(change.payload.doc.data() as T),
-            id: change.payload.doc.id,
-          }))
+          changes
+            .filter((change: DocumentChangeAction<T>) =>
+              changeType ? change.type == changeType : true
+            )
+            .map((change: DocumentChangeAction<T>) => ({
+              ...(change.payload.doc.data() as T),
+              id: change.payload.doc.id,
+            }))
         )
       )
       .pipe(
@@ -38,7 +44,7 @@ export class BaseFirestoreService {
 
   protected documentChanges<T>(
     document: AngularFirestoreDocument<T>,
-    logItems = true,
+    logItems = false,
     logChanges = false
   ): Observable<T> {
     return document

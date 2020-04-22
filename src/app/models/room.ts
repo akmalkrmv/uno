@@ -17,3 +17,10 @@ export interface Room {
   offers?: Offer[];
   answers?: Answer[];
 }
+
+export class IceCandidate {
+  id?: string;
+  senderId: string;
+  recieverId: string;
+  candidate: any;
+}

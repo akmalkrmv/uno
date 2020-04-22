@@ -94,7 +94,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         const throttleTimeMs = 2000;
         this.listenToOffers(throttleTimeMs);
         this.listenToAnswers(throttleTimeMs);
-        // this.retryCall();
+        this.listenToIceCandidates();
 
         // this.messaging.requestPermission(this.user.id);
         // this.messaging.monitorRefresh(this.user.id);
@@ -255,8 +255,34 @@ export class RoomComponent implements OnInit, OnDestroy {
           this.offerService
             .handleAnswer(answer, user && user.name)
             .pipe(take(1))
-            .subscribe();
+            .subscribe(() => {
+              // this.offerService
+              //   .createOfferToUser(this.user.id, user.id, user && user.name)
+              //   .pipe(take(1))
+              //   .subscribe();
+            });
         }
+      });
+  }
+
+  private listenToIceCandidates() {
+    this.api.room
+      .userIceCandidates(this.user.id)
+      .pipe(untilDestroyed(this))
+      .subscribe((iceCandidates) => {
+        iceCandidates.map((ice) => {
+          try {
+            console.log('ice.candidate');
+            const connectionRef = this.user.getConnection(ice.recieverId);
+            if (connectionRef.remote.remoteDescription) {
+              console.log('addIceCandidate');
+              const candidate = new RTCIceCandidate(ice.candidate);
+              connectionRef.remote.addIceCandidate(candidate);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        });
       });
   }
 }

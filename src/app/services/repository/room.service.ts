@@ -3,22 +3,28 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
   AngularFirestoreDocument,
+  QuerySnapshot,
+  DocumentData,
 } from '@angular/fire/firestore';
 import { Observable, forkJoin, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
-import { Room, Offer, Answer, IOffer } from '../../models/room';
+import { Room, Offer, Answer, IOffer, IceCandidate } from '../../models/room';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService extends BaseFirestoreService {
   public room: AngularFirestoreDocument<Room>;
+
   public userCollection: AngularFirestoreCollection<any>;
   public offerCollection: AngularFirestoreCollection<Offer>;
   public answerCollection: AngularFirestoreCollection<Answer>;
+  public iceCandidateCollection: AngularFirestoreCollection<IceCandidate>;
+
   public users$: Observable<any[]>;
   public offers$: Observable<Offer[]>;
   public answers$: Observable<Answer[]>;
+  public iceCandidates$: Observable<IceCandidate[]>;
 
   constructor(private firestore: AngularFirestore) {
     super();
@@ -30,10 +36,17 @@ export class RoomService extends BaseFirestoreService {
     this.userCollection = this.room.collection<any>('users');
     this.offerCollection = this.room.collection<Offer>('offers');
     this.answerCollection = this.room.collection<Answer>('answers');
+    this.iceCandidateCollection = this.room.collection<IceCandidate>(
+      'ice-candidates'
+    );
 
     this.users$ = this.collectionChanges(this.userCollection);
-    this.offers$ = this.collectionChanges(this.offerCollection);
-    this.answers$ = this.collectionChanges(this.answerCollection);
+    this.offers$ = this.collectionChanges(this.offerCollection, 'added', true);
+    this.answers$ = this.collectionChanges(this.answerCollection, 'added', true);
+    this.iceCandidates$ = this.collectionChanges(
+      this.iceCandidateCollection,
+      'added'
+    );
   }
 
   public exists(roomId: string): Observable<boolean> {
@@ -76,39 +89,29 @@ export class RoomService extends BaseFirestoreService {
     return this.createOfferByType(answer, 'answers');
   }
 
+  public addIceCandidate(payload: IceCandidate) {
+    return this.addToCollection(this.iceCandidateCollection, payload);
+  }
+
+  public userIceCandidates(userId: string): Observable<IceCandidate[]> {
+    return this.iceCandidates$.pipe(
+      map((items) =>
+        items
+          .filter((item) => item.recieverId == userId)
+          .filter((item) => item.senderId != userId)
+      )
+    );
+  }
+
   public clearConnections(): Observable<any> {
-    // const deleteEach = (array: QuerySnapshot<DocumentData>) =>
-    //   array.forEach((item) => item.ref.delete());
+    const deleteEach = (array: QuerySnapshot<DocumentData>) =>
+      array.forEach((item) => item.ref.delete());
 
-    // return forkJoin(
-    //   this.answerCollection.get().pipe(map((answers) => deleteEach(answers))),
-    //   this.offerCollection.get().pipe(map((offers) => deleteEach(offers)))
-    // );
-
-    const deleteOffers = this.offers$.pipe(
-      switchMap((changes) =>
-        from(
-          changes.map((change) =>
-            this.firestore
-              .doc(`${this.room.ref.path}/offers/${change.id}`)
-              .delete()
-          )
-        )
-      )
+    return forkJoin(
+      this.offerCollection.get().pipe(map((items) => deleteEach(items))),
+      this.answerCollection.get().pipe(map((items) => deleteEach(items))),
+      this.iceCandidateCollection.get().pipe(map((items) => deleteEach(items)))
     );
-
-    const deleteAnswers = this.answers$.pipe(
-      switchMap((changes) =>
-        from(
-          changes.map((change) =>
-            this.firestore
-              .doc(`${this.room.ref.path}/answers/${change.id}`)
-              .delete()
-          )
-        )
-      )
-    );
-    return forkJoin(deleteAnswers, deleteOffers);
   }
 
   public findByUsers(
@@ -149,12 +152,12 @@ export class RoomService extends BaseFirestoreService {
       switchMap((existing) => {
         if (!existing) {
           const message = `from ${payload.from} to ${payload.to} does NOT exists`;
-          console.log(typeof payload, message);
+          console.log(offerType, message);
 
           return this.addToCollection(collection, payload);
         } else {
           const message = `from ${payload.from} to ${payload.to} ALREADY exists`;
-          console.log(typeof payload, message);
+          console.log(offerType, message);
 
           return of(null);
 
