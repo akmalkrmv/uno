@@ -253,14 +253,16 @@ export class RoomComponent implements OnInit, OnDestroy {
       .subscribe((iceCandidates) => {
         iceCandidates.map((ice) => {
           try {
-            console.log('Got iceCandidate');
+            console.log('Got ice candidates');
             const connectionRef = this.user.getConnection(ice.recieverId);
 
             if (connectionRef.canAddIceCandidate) {
-              console.log('addIceCandidate');
-              connectionRef.remote.addIceCandidate(
-                new RTCIceCandidate(ice.candidate)
-              );
+              console.log('Adding ice candidates');
+              ice.candidates.forEach((candidate) => {
+                connectionRef.remote.addIceCandidate(
+                  new RTCIceCandidate(candidate)
+                );
+              });
             }
           } catch (error) {
             console.log(error);

@@ -3,6 +3,7 @@ import { rtcConfiguration } from '../constants/rts-configurations';
 export class Connection {
   public remote: RTCPeerConnection;
   public stream?: MediaStream;
+  public iceCandidates?: RTCIceCandidate[] = [];
 
   constructor(public userId: string, public userName?: string) {
     this.remote = new RTCPeerConnection(rtcConfiguration);
@@ -32,8 +33,19 @@ export class Connection {
   }
 
   public showState() {
-    const { signalingState, connectionState } = this.remote;
-    console.log('State: ', { signalingState, connectionState });
+    const {
+      signalingState,
+      connectionState,
+      iceConnectionState,
+      iceGatheringState,
+    } = this.remote;
+
+    console.table({
+      signalingState,
+      connectionState,
+      iceConnectionState,
+      iceGatheringState,
+    });
   }
 
   private logChanges() {
@@ -49,6 +61,18 @@ export class Connection {
 
     connection.onstatsended = (event: RTCStatsEvent) => {
       console.log('onstatsended', event);
+      this.showState();
+    };
+
+    connection.oniceconnectionstatechange = (event: Event) => {
+      console.log('oniceconnectionstatechange', event);
+      this.showState();
+    };
+
+    connection.onicecandidate = (event) => this.addIceCandidate(event);
+
+    connection.onicegatheringstatechange = (event: Event) => {
+      console.log('onicegatheringstatechange', event);
       this.showState();
     };
 
@@ -75,5 +99,12 @@ export class Connection {
       //   })
       //   .catch((error) => console.log(error));
     };
+  }
+
+  private addIceCandidate(event: RTCPeerConnectionIceEvent) {
+    if (event.candidate) {
+      console.log('onicecandidate');
+      this.iceCandidates.push(event.candidate);
+    }
   }
 }

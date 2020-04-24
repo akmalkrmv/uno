@@ -3,7 +3,7 @@ import { Observable, from, of } from 'rxjs';
 import { switchMap, catchError, take, tap } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
-import { User, Offer, Answer } from '@models/index';
+import { User, Offer, Answer, Connection } from '@models/index';
 import { RoomService } from '@services/repository/room.service';
 import { CallDialogComponent } from '../componentes/video-chat/call-dialog/call-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -85,7 +85,9 @@ export class OfferService {
     connectionRef.showState();
 
     this.user.addTracks(connection);
-    connection.onicecandidate = (event) => this.onIceCandidate(event);
+
+    connection.onicegatheringstatechange = (event) =>
+      this.sendIceCandidates(connectionRef, fromId, toId);
 
     // if (connectionRef.isConnected) {
     //   return of(null);
@@ -112,8 +114,10 @@ export class OfferService {
     connectionRef.showState();
 
     this.user.addTracks(connection);
-    connection.onicecandidate = (event) => this.onIceCandidate(event);
-    
+
+    connection.onicegatheringstatechange = (event) =>
+      this.sendIceCandidates(connectionRef, offer.from, offer.to);
+
     // if (connectionRef.isConnected) {
     //   return of(null);
     // }
@@ -151,15 +155,25 @@ export class OfferService {
     );
   }
 
-  private onIceCandidate(event: RTCPeerConnectionIceEvent) {
-    if (!event.candidate) return;
+  private sendIceCandidates(
+    connection: Connection,
+    senderId: string,
+    recieverId: string
+  ) {
+    if (!connection) return;
+    if (!connection.remote) return;
+    if (connection.remote.iceGatheringState === 'complete') return;
 
-    console.log('onicecandidate');
+    if (!connection.iceCandidates) return;
+    if (!connection.iceCandidates.length) return;
 
-    // this.roomService.addIceCandidate({
-    //   senderId: fromId,
-    //   recieverId: toId,
-    //   candidate: event.candidate.toJSON(),
-    // });
+    if (!senderId) return;
+    if (!recieverId) return;
+
+    const candidates = connection.iceCandidates.map((c) => c.toJSON());
+    const payload = { senderId, recieverId, candidates };
+
+    console.log('sending IceCandidates');
+    this.roomService.addIceCandidate(payload);
   }
 }

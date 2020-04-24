@@ -10,7 +10,8 @@
   </button>
 
   <mat-menu #menu="matMenu">
-    <ng-container *ngIf="!user.connections || !user.connections.length">
+    <!-- <ng-container *ngIf="!user.connections || !user.connections.length"> -->
+    <ng-container>
       <button mat-menu-item color="accent" (click)="call()">
         <mat-icon>phone</mat-icon>
         <span>Подключится</span>
@@ -18,7 +19,8 @@
       <mat-divider></mat-divider>
     </ng-container>
 
-    <ng-container *ngIf="user.connections && user.connections.length">
+    <!-- <ng-container *ngIf="user.connections && user.connections.length"> -->
+    <ng-container>
       <!-- <button mat-menu-item (click)="retryCall()">
         <mat-icon>swap_calls</mat-icon>
         <span>Переподключить</span>

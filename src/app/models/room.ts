@@ -22,5 +22,5 @@ export class IceCandidate {
   id?: string;
   senderId: string;
   recieverId: string;
-  candidate: any;
+  candidates: any;
 }

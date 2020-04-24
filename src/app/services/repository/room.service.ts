@@ -42,7 +42,11 @@ export class RoomService extends BaseFirestoreService {
 
     this.users$ = this.collectionChanges(this.userCollection);
     this.offers$ = this.collectionChanges(this.offerCollection, 'added', true);
-    this.answers$ = this.collectionChanges(this.answerCollection, 'added', true);
+    this.answers$ = this.collectionChanges(
+      this.answerCollection,
+      'added',
+      true
+    );
     this.iceCandidates$ = this.collectionChanges(
       this.iceCandidateCollection,
       'added'
@@ -151,14 +155,10 @@ export class RoomService extends BaseFirestoreService {
     return this.findByUsers(payload.from, payload.to, offerType).pipe(
       switchMap((existing) => {
         if (!existing) {
-          const message = `from ${payload.from} to ${payload.to} does NOT exists`;
-          console.log(offerType, message);
-
+          console.log('Creating: ' + offerType);
           return this.addToCollection(collection, payload);
         } else {
-          const message = `from ${payload.from} to ${payload.to} ALREADY exists`;
-          console.log(offerType, message);
-
+          console.log('Using existing: ' + offerType);
           return of(null);
 
           // const path = `${this.room.ref.path}/${offerType}/${existing.id}`;
