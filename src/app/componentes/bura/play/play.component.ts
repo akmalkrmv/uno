@@ -52,13 +52,15 @@ export class PlayComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.auth.user$.pipe(untilDestroyed(this)).subscribe((user) => {
-      const options = new GameOptions();
-      const player = new Player(user.id, user.name);
+    // this.auth.user$.pipe(untilDestroyed(this)).subscribe((user) => {
+    //   const options = new GameOptions();
+    //   const player = new Player(user.id, user.name);
 
-      this.game.init(this.roomId, options, player);
-      this.game.start();
-    });
+    //   this.game.init(this.roomId, options, player);
+    //   this.game.start();
+    // });
+
+    // this.game.init(this.roomId, new Player('132', 'bob'));
   }
 
   public start() {
