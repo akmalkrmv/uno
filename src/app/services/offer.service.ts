@@ -78,7 +78,18 @@ export class OfferService {
     };
 
     try {
-      await connection.setRemoteDescription(offer.description);
+      const description = offer.description;
+
+      if (connection.signalingState != 'stable') {
+        console.log('rollback');
+        await Promise.all([
+          connection.setLocalDescription({ type: 'rollback' }),
+          connection.setRemoteDescription(description),
+        ]);
+      } else {
+        await connection.setRemoteDescription(description);
+      }
+
       await connection.setLocalDescription(
         await connection.createAnswer(offerOptions)
       );
@@ -101,9 +112,11 @@ export class OfferService {
     const connection = connectionRef.remote;
     connectionRef.showState();
 
-    from(connection.setRemoteDescription(answer.description))
-      .pipe(take(1), catchError(this.handleError))
-      .subscribe();
+    if (connection.signalingState == 'stable') {
+      from(connection.setRemoteDescription(answer.description))
+        .pipe(take(1), catchError(this.handleError))
+        .subscribe();
+    }
   }
 
   private sendIceCandidates(
