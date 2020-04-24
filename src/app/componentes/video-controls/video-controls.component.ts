@@ -48,10 +48,6 @@ export class VideoControlsComponent implements OnInit {
       (index + 1) % this.videoDevices.length
     ];
 
-    this.snackBar.open('Camera: ' + this.currentDevice.label, '', {
-      duration: 2000,
-    });
-
     this.isFront$.next(!this.isFront$.value);
     this.user.toggleCamera(this.currentDevice);
     this.user.isFrontCamera = this.isFront$.value;

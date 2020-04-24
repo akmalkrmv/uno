@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   ngOnDestroy() {}
 
   public createRoom() {
-    this.api.users
+    this.auth
       .authorize()
       .pipe(
         take(1),

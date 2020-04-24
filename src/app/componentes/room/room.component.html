@@ -14,7 +14,7 @@
     <!-- <app-play-cards></app-play-cards> -->
     <!-- <div>{{ messages$ | async | json }}</div> -->
 
-    <app-message-list *ngIf="user" [userId]="user.id" [roomId]="roomId"></app-message-list>
+    <!-- <app-message-list *ngIf="user" [userId]="user.id" [roomId]="roomId"></app-message-list> -->
 
     <div style="padding: 10px;" *ngIf="false">
       <ng-container *ngIf="offers$">
@@ -49,49 +49,10 @@
         <div>userId: {{ item.userId }}</div>
         <div>userName: {{ item.userName }}</div>
         <div>stream:{{ item.stream }}</div>
-        <div>connectionState: {{ item.remote.connectionState }}</div>
-        <div>signalingState: {{ item.remote.signalingState }}</div>
+        <div>connectionState: {{ item.connectionState }}</div>
+        <div>signalingState: {{ item.signalingState }}</div>
         <div>----------------</div>
       </div>
     </div>
   </app-videos-list>
-
-  <div class="videos-contanier" *ngIf="user && false">
-    <div class="users-container">
-      <div class="user-details">
-        <video
-          id="self-video"
-          class="mirrored"
-          *ngIf="user.stream"
-          [srcObject]="user.stream"
-          autoplay
-          muted
-        ></video>
-        <p>{{ user.name }}</p>
-
-        <app-video-controls [user]="user"></app-video-controls>
-      </div>
-
-      <ng-container *ngFor="let connection of user.connections">
-        <div class="user-details">
-          <mat-progress-bar
-            *ngIf="connection.remote.connectionState != 'connected'"
-            mode="indeterminate"
-            class="progress-bar-inverse"
-          ></mat-progress-bar>
-
-          <video
-            *ngIf="connection.stream"
-            [srcObject]="connection.stream"
-            autoplay
-            muted
-          ></video>
-
-          <p *ngIf="connection.userName">{{ connection.userName }}</p>
-          <p>Статус связи: {{ connection.remote.connectionState }}</p>
-          <!-- <p>Статус сигнала: {{ connection.remote.signalingState }}</p> -->
-        </div>
-      </ng-container>
-    </div>
-  </div>
 </div>

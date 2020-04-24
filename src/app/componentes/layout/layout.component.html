@@ -1,0 +1,47 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #drawer
+    mode="over"
+    class="sidenav"
+    fixedInViewport="false"
+    [attr.role]="isHeadset ? 'dialog' : 'navigation'"
+  >
+    <mat-toolbar class="mat-toolbar-dark">
+      <div *ngIf="!(auth.user$ | async)">Menu</div>
+      <div *ngIf="auth.user$ | async as user">
+        <button mat-button [routerLink]="['/admin/users/' + user.uid]">
+          <mat-icon>edit</mat-icon>
+          <span>{{ user.displayName }}</span>
+        </button>
+      </div>
+    </mat-toolbar>
+    <mat-nav-list class="nav-list">
+      <div mat-list-item>Создать комнату</div>
+      <mat-divider></mat-divider>
+      <div mat-list-item>Присоеденится</div>
+      <mat-divider></mat-divider>
+
+      <div mat-list-item *ngIf="auth.user$ | async as user">
+        <button mat-button (click)="auth.signOut()">
+          <mat-icon color="warn">power_settings_new</mat-icon>
+          <span class="warn-color">Выйти</span>
+        </button>
+      </div>
+
+      <ng-container> </ng-container>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="mat-toolbar-dark">
+      <button type="button" mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>Uno</span>
+    </mat-toolbar>
+
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

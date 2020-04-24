@@ -6,39 +6,29 @@
     [matMenuTriggerFor]="menu"
     aria-label="Example icon-button with a menu"
   >
-    <mat-icon>menu</mat-icon>
+    <mat-icon>more_vert</mat-icon>
   </button>
 
   <mat-menu #menu="matMenu">
-    <ng-container *ngIf="auth.user$ | async as user">
-      <button mat-menu-item [routerLink]="['/admin/users/' + user.uid]">
-        <mat-icon>edit</mat-icon>
-        <span>{{ user.displayName }}</span>
+    <ng-container *ngIf="!user.connections || !user.connections.length">
+      <button mat-menu-item color="accent" (click)="call()">
+        <mat-icon>phone</mat-icon>
+        <span>Подключится</span>
       </button>
       <mat-divider></mat-divider>
     </ng-container>
 
-    <!-- <ng-container *ngIf="!user.connections || !user.connections.length"> -->
-    <ng-container>
-      <button mat-menu-item (click)="call()">
-        <mat-icon>phone</mat-icon>
-        <span>Подключится</span>
-      </button>
-    </ng-container>
-
-    <!-- <ng-container *ngIf="user.connections && user.connections.length"> -->
-    <ng-container>
-      <button mat-menu-item (click)="retryCall()">
+    <ng-container *ngIf="user.connections && user.connections.length">
+      <!-- <button mat-menu-item (click)="retryCall()">
         <mat-icon>swap_calls</mat-icon>
         <span>Переподключить</span>
-      </button>
-      <button mat-menu-item (click)="hangup()">
+      </button> -->
+      <button mat-menu-item color="warn" (click)="hangup()">
         <mat-icon>call_end</mat-icon>
         <span>Отключить</span>
       </button>
+      <mat-divider></mat-divider>
     </ng-container>
-
-    <mat-divider></mat-divider>
 
     <button mat-menu-item (click)="copyLink()">
       <mat-icon>link</mat-icon>
@@ -51,13 +41,5 @@
       <mat-icon color="warn"> power_settings_new</mat-icon>
       <span class="warn-color">Покинуть комнату</span>
     </button>
-
-    <ng-container *ngIf="auth.user$ | async as user">
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="auth.signOut()">
-        <mat-icon color="warn">power_settings_new</mat-icon>
-        <span class="warn-color">Выйти</span>
-      </button>
-    </ng-container>
   </mat-menu>
 </mat-toolbar>

@@ -1,56 +1,95 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
-import { switchMap, catchError, tap } from 'rxjs/operators';
+import { switchMap, catchError, take, tap } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
 import { User, Offer, Answer } from '@models/index';
 import { RoomService } from '@services/repository/room.service';
+import { CallDialogComponent } from '../componentes/video-chat/call-dialog/call-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({ providedIn: 'root' })
 export class OfferService {
   public user: User;
 
-  constructor(private roomService: RoomService) {}
+  constructor(private roomService: RoomService, private dialog: MatDialog) {}
 
   public init(user: User) {
     this.user = user;
   }
 
-  public createOfferToUser(
+  public offerAll(callerId: string, users: User[]) {
+    for (const user of users) {
+      this.offer(callerId, user.id, user.name);
+    }
+  }
+
+  public answerAll(offers: Offer[], users: User[]) {
+    for (const offer of offers) {
+      const user = users.find((user) => user.id == offer.from);
+      const caller = user ? user.name : offer.from;
+      this.answer(offer, caller);
+    }
+  }
+
+  public setRemoteAll(answers: Answer[], users: User[]) {
+    for (const answer of answers) {
+      const user = users.find((user) => user.id == answer.from);
+      const caller = user ? user.name : answer.from;
+      this.setRemote(answer, caller);
+      // this.offer(this.user.id, user.id, caller);
+    }
+  }
+
+  public offer(callerId: string, recieverId: string, callerName: string) {
+    return this.createOfferToUser(callerId, recieverId, callerName).subscribe();
+  }
+
+  public answer(offer: Offer, caller: string, dialog = false) {
+    if (!dialog) {
+      return this.answerToOffer(offer, caller).subscribe();
+    }
+
+    this.dialog
+      .open(CallDialogComponent, { data: { from: caller } })
+      .afterClosed()
+      .subscribe((result: boolean) => {
+        if (result) {
+          this.answerToOffer(offer, caller).subscribe();
+        }
+      });
+  }
+
+  public setRemote(offer: Offer, caller: string, dialog = false) {
+    if (!dialog) {
+      return this.handleAnswer(offer, caller).subscribe();
+    }
+
+    this.dialog
+      .open(CallDialogComponent, { data: { from: caller } })
+      .afterClosed()
+      .subscribe((result: boolean) => {
+        if (result) {
+          this.handleAnswer(offer, caller).subscribe();
+        }
+      });
+  }
+
+  private createOfferToUser(
     fromId: string,
     toId: string,
     userName?: string
   ): Observable<string> {
-    const connectionRef = this.user.getConnection(toId);
+    const connectionRef = this.user.getConnection(toId, userName);
     const connection = connectionRef.remote;
-
-    if (userName) {
-      connectionRef.userName = userName;
-    }
+    connectionRef.showState();
 
     this.user.addTracks(connection);
+    connection.onicecandidate = (event) => this.onIceCandidate(event);
 
-    connection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
-      if (!event.candidate) return;
-
-      console.log('onicecandidate');
-
-      this.roomService.addIceCandidate({
-        senderId: fromId,
-        recieverId: toId,
-        candidate: event.candidate.toJSON(),
-      });
-    };
-
-    // if (
-    //   connection.connectionState === 'connected' ||
-    //   connection.connectionState === 'connecting'
-    // ) {
+    // if (connectionRef.isConnected) {
     //   return of(null);
     // }
-
-    const { connectionState, signalingState } = connection;
-    console.log({ connectionState, signalingState });
 
     const action = async () => {
       const offer = await connection.createOffer(offerOptions);
@@ -62,28 +101,22 @@ export class OfferService {
       switchMap((description) =>
         this.roomService.createOffer({ from: fromId, to: toId, description })
       ),
+      take(1),
       catchError((error) => (console.log(error), of(null)))
     );
   }
 
-  public answerToOffer(offer: Offer, userName?: string): Observable<string> {
-    const connectionRef = this.user.getConnection(offer.from);
+  private answerToOffer(offer: Offer, userName?: string): Observable<string> {
+    const connectionRef = this.user.getConnection(offer.from, userName);
     const connection = connectionRef.remote;
+    connectionRef.showState();
 
-    if (userName) {
-      connectionRef.userName = userName;
-    }
-
-    // if (
-    //   connection.currentRemoteDescription !== null ||
-    //   connection.connectionState === 'connected' ||
-    //   connection.connectionState === 'connecting'
-    // ) {
+    this.user.addTracks(connection);
+    connection.onicecandidate = (event) => this.onIceCandidate(event);
+    
+    // if (connectionRef.isConnected) {
     //   return of(null);
     // }
-
-    const { connectionState, signalingState } = connection;
-    console.log({ connectionState, signalingState });
 
     const action = async () => {
       await connection.setRemoteDescription(offer.description);
@@ -98,34 +131,35 @@ export class OfferService {
         const payload = { to: offer.from, from: this.user.id, description };
         return this.roomService.createAnswer(payload);
       }),
+      take(1),
       catchError((error) => (console.log(error), of(null)))
     );
   }
 
-  public handleAnswer(answer: Answer, userName?: string): Observable<void> {
-    const connectionRef = this.user.getConnection(answer.from);
+  private handleAnswer(answer: Answer, userName?: string): Observable<void> {
+    const connectionRef = this.user.getConnection(answer.from, userName);
     const connection = connectionRef.remote;
+    connectionRef.showState();
 
-    connection.currentRemoteDescription;
-
-    if (userName) {
-      connectionRef.userName = userName;
-    }
-
-    if (
-      // connection.currentRemoteDescription !== null ||
-      connection.connectionState === 'new'
-      // connection.connectionState === 'connected' ||
-      // connection.connectionState === 'connecting'
-    ) {
-      return of(null);
-    }
-
-    const { connectionState, signalingState } = connection;
-    console.log({ connectionState, signalingState });
+    // if (connectionRef.isConnected) {
+    //   return of(null);
+    // }
 
     return from(connection.setRemoteDescription(answer.description)).pipe(
+      take(1),
       catchError((error) => (console.log(error), of(null)))
     );
+  }
+
+  private onIceCandidate(event: RTCPeerConnectionIceEvent) {
+    if (!event.candidate) return;
+
+    console.log('onicecandidate');
+
+    // this.roomService.addIceCandidate({
+    //   senderId: fromId,
+    //   recieverId: toId,
+    //   candidate: event.candidate.toJSON(),
+    // });
   }
 }

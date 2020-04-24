@@ -4,10 +4,9 @@ import {
   AngularFirestoreCollection,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
-import { LocalStorageKeys } from '../../constants/local-storage-keys';
 import { User } from '../../models/user';
 
 @Injectable({
@@ -26,8 +25,7 @@ export class UsersService extends BaseFirestoreService {
   }
 
   public createUser(name?: string): Observable<User> {
-    const payload = { name, created: Date.now() };
-    return this.addToCollection(this.userCollection, payload).pipe(
+    return this.addToCollection(this.userCollection, { name }).pipe(
       map((id) => new User(id, name))
     );
   }
@@ -36,22 +34,6 @@ export class UsersService extends BaseFirestoreService {
     const userRef = this.userCollection.doc(userId);
     const tokens = { [token]: true };
     userRef.update({ fcmTokens: tokens });
-  }
-
-  public authorize(): Observable<User> {
-    let userId = localStorage.getItem(LocalStorageKeys.userId);
-
-    if (userId) {
-      return this.findById(userId).pipe(
-        map((user) => new User(user.id, user.name))
-      );
-    }
-
-    const name = prompt('Ваще имя: ');
-
-    return this.createUser(name).pipe(
-      tap((user) => localStorage.setItem(LocalStorageKeys.userId, user.id))
-    );
   }
 
   public getByIds(userIds: string[]): Observable<User[]> {

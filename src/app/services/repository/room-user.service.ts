@@ -53,6 +53,7 @@ export class RoomUserService extends BaseFirestoreService {
 
   // UPDATE
   public joinRoom(roomId: string, userId: string): Observable<string> {
+    console.log('joinRoom ', roomId, userId);
     return this.findByIds(roomId, userId).pipe(
       switchMap((map) =>
         map

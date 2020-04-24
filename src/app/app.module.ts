@@ -20,6 +20,7 @@ import { BuraModule } from './componentes/bura/bura.module';
 import { ChatModule } from './componentes/chat/chat.module';
 import { VideoChatModule } from './componentes/video-chat/video-chat.module';
 import { AuthModule } from './componentes/auth/auth.module';
+import { LayoutComponent } from './componentes/layout/layout.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { AuthModule } from './componentes/auth/auth.module';
     RoomToolbarComponent,
     VideosListComponent,
     VideoControlsComponent,
+    LayoutComponent,
   ],
   imports: [
     BrowserModule,

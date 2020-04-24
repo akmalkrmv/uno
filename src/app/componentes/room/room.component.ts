@@ -16,8 +16,11 @@ import { vgaConstraints } from '@constants/index';
 import { User, MenuItemEvent } from '@models/index';
 import { Offer, Answer, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
+import { AuthService } from '@services/auth.service';
 import { OfferService } from '@services/offer.service';
 import { MessagingService } from '@services/messaging.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CallDialogComponent } from '../video-chat/call-dialog/call-dialog.component';
 
 @Component({
   selector: 'app-room',
@@ -37,6 +40,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeRoute: ActivatedRoute,
     private api: ApiService,
+    private auth: AuthService,
     private offerService: OfferService,
     private messaging: MessagingService
   ) {}
@@ -49,18 +53,24 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.api.room.init(this.roomId);
 
+    console.log('ngOnInit roomId', this.roomId);
+
     this.api.room
       .exists(this.roomId)
       .pipe(
         untilDestroyed(this),
         switchMap((exists) => {
+          console.log('ngOnInit room exists', exists);
+
           if (!exists) {
             this.router.navigate(['']);
             return of(null);
           }
-          return this.api.users.authorize();
+
+          return this.auth.authorize();
         }),
         switchMap((user) => {
+          console.log('user ', user);
           if (!user) return of(null);
 
           return this.api.roomUsers
@@ -129,11 +139,9 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomUsers()
       .pipe(take(1), untilDestroyed(this))
       .subscribe((users) => {
+        console.log(users);
         for (const user of users) {
-          this.offerService
-            .createOfferToUser(this.user.id, user.id, user.name)
-            .pipe(take(1))
-            .subscribe();
+          this.offerService.offer(this.user.id, user.id, user && user.name);
         }
       });
   }
@@ -173,12 +181,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       .subscribe((users) => {
         this.isConnectionOn.next(true);
-        for (const user of users) {
-          this.offerService
-            .createOfferToUser(this.user.id, user.id, user.name)
-            .pipe(take(1))
-            .subscribe();
-        }
+        this.offerService.offerAll(this.user.id, users);
       });
   }
 
@@ -222,16 +225,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           return;
         }
 
-        console.log('got offer');
-
-        offers.map((offer) => {
-          const user = users.find((user) => user.id == offer.from);
-
-          this.offerService
-            .answerToOffer(offer, user.name)
-            .pipe(take(1))
-            .subscribe();
-        });
+        this.offerService.answerAll(offers, users);
       });
   }
 
@@ -248,20 +242,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           return;
         }
 
-        console.log('got answer');
-
-        for (const answer of answers) {
-          const user = users.find((user) => user.id == answer.from);
-          this.offerService
-            .handleAnswer(answer, user && user.name)
-            .pipe(take(1))
-            .subscribe(() => {
-              // this.offerService
-              //   .createOfferToUser(this.user.id, user.id, user && user.name)
-              //   .pipe(take(1))
-              //   .subscribe();
-            });
-        }
+        this.offerService.setRemoteAll(answers, users);
       });
   }
 
@@ -272,12 +253,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       .subscribe((iceCandidates) => {
         iceCandidates.map((ice) => {
           try {
-            console.log('ice.candidate');
+            console.log('Got iceCandidate');
             const connectionRef = this.user.getConnection(ice.recieverId);
-            if (connectionRef.remote.remoteDescription) {
+
+            if (connectionRef.canAddIceCandidate) {
               console.log('addIceCandidate');
-              const candidate = new RTCIceCandidate(ice.candidate);
-              connectionRef.remote.addIceCandidate(candidate);
+              connectionRef.remote.addIceCandidate(
+                new RTCIceCandidate(ice.candidate)
+              );
             }
           } catch (error) {
             console.log(error);

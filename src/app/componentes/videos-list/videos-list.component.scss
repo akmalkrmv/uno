@@ -31,6 +31,24 @@
     }
   }
 
+  .profile-info {
+    width: 100%;
+    height: 100%;
+
+    .profile-pic {
+      max-width: 100%;
+      height: 100px;
+    }
+
+    .profile-name {
+      width: 100%;
+      height: 100%;
+      background-color: indigo;
+      color: #fff;
+      font-size: 3em;
+    }
+  }
+
   .videos {
     display: flex;
     flex-wrap: wrap;

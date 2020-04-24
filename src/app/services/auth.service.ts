@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, take } from 'rxjs/operators';
 import { of, from, Observable } from 'rxjs';
 
 import * as firebaseui from 'firebaseui';
 import * as firebaseApp from 'firebase/app';
 import 'firebase/auth';
 
-import { BaseFirestoreService } from './repository/base-firestore.service';
 import { User } from '@models/index';
+import { BaseFirestoreService } from './repository/base-firestore.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseFirestoreService {
-  public user$: Observable<any>;
+  public user$: Observable<User>;
 
   constructor(
     private router: Router,
@@ -34,6 +34,27 @@ export class AuthService extends BaseFirestoreService {
 
   public isSignedIn() {
     return this.user$.pipe(map((user) => user != null));
+  }
+
+  public authorize(): Observable<User> {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        console.log('authorize ', user);
+        if (user) return of(new User(user.id, user.name));
+
+        const email = Math.floor(Math.random() * 100000) + '-uno@mail.ru';
+        console.log(email);
+
+        firebaseApp
+          .auth()
+          .createUserWithEmailAndPassword(email, 'qweasd123')
+          .then((credential) => {
+            console.log('credential ', credential);
+            this.updateUserData(credential.user, prompt('Ваще имя: '));
+          });
+      })
+    );
   }
 
   public startUi(element: Element | string) {
@@ -83,12 +104,13 @@ export class AuthService extends BaseFirestoreService {
     );
   }
 
-  public updateUserData(user: firebase.User) {
+  public updateUserData(user: firebase.User | User, name?: string) {
+    console.log('updateUserData', user);
     const userRef = this.firestore.doc(`users/${user.uid}`);
     const payload = {
       id: user.uid,
       uid: user.uid,
-      name: user.displayName,
+      name: name || user.displayName,
       displayName: user.displayName,
       phoneNumber: user.phoneNumber,
       photoURL: user.photoURL,

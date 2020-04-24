@@ -13,7 +13,9 @@ export class VideosListComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.user);
+  }
 
   public increment() {
     this.list.push('mock');

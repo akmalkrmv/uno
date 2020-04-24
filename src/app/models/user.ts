@@ -12,6 +12,7 @@ export class User {
   public photoURL?: string;
   public fcmTokens?: any;
 
+  public uid?: string;
   public ref?: string;
   public stream?: MediaStream;
   public connections: Connection[] = [];
@@ -19,43 +20,32 @@ export class User {
 
   constructor(public id: string, public name?: string) {}
 
-  public getConnection(userId: string): Connection {
-    const connection = this.connections.find((item) => item.userId == userId);
-    return connection || this.createConnection(userId);
+  public getConnection(userId: string, userName?: string): Connection {
+    const connection =
+      this.connections.find((item) => item.userId == userId) ||
+      this.createConnection(userId);
+
+    if (userName) {
+      connection.userName = userName;
+    }
+
+    return connection;
   }
 
   public createConnection(userId: string): Connection {
-    const connectionRef = new Connection(userId);
-    const connection = connectionRef.remote;
+    const connection = new Connection(userId);
 
-    connection.onconnectionstatechange = () => {
-      const { signalingState, connectionState } = connection;
-      console.log('createConnection: onconnectionstatechange', {
-        signalingState,
-        connectionState,
-      });
+    connection.remote.onconnectionstatechange = () =>
+      this.onConnectionStateChange(connection);
 
-      if (
-        connection.connectionState == 'failed' ||
-        connection.connectionState == 'closed' ||
-        connection.connectionState == 'disconnected'
-      ) {
-        const index = this.connections.indexOf(connectionRef);
-        if (index > -1) {
-          connection.close();
-          this.connections.splice(index, 1);
-        }
-      }
-    };
+    this.connections.push(connection);
 
-    this.connections.push(connectionRef);
-
-    return connectionRef;
+    return connection;
   }
 
   public closeConnections() {
     for (const connection of this.connections) {
-      connection.remote.close();
+      connection.close();
     }
 
     this.connections = [];
@@ -65,32 +55,31 @@ export class User {
     try {
       console.log('Adding tracks');
 
-      this.stream
-        .getTracks()
-        .forEach((track) => connection.addTrack(track, this.stream));
+      const tracks = this.stream.getTracks();
+      tracks.forEach((track) => connection.addTrack(track, this.stream));
     } catch (error) {}
   }
 
   public toggleVideo() {
-    const videoTracks = this.stream.getVideoTracks();
-    if (videoTracks && videoTracks.length) {
-      for (const track of videoTracks) {
+    if (this.stream) {
+      this.stream.getVideoTracks().forEach((track) => {
         track.enabled = !track.enabled;
-      }
+      });
     }
   }
 
   public toggleAudio() {
-    const audioTracks = this.stream.getAudioTracks();
-    if (audioTracks && audioTracks.length) {
-      for (const track of audioTracks) {
+    if (this.stream) {
+      this.stream.getAudioTracks().forEach((track) => {
         track.enabled = !track.enabled;
-      }
+      });
     }
   }
 
   public toggleCamera(device: MediaDeviceInfo) {
-    this.stream.getVideoTracks().forEach((track) => track.stop());
+    if (this.stream) {
+      this.stream.getVideoTracks().forEach((track) => track.stop());
+    }
 
     const constaints = {
       audio: vgaConstraints.audio,
@@ -112,5 +101,17 @@ export class User {
         sender && sender.replaceTrack(videoTrack);
       });
     });
+  }
+
+  private onConnectionStateChange(connection: Connection) {
+    connection.showState();
+
+    if (!connection.isConnected) {
+      const index = this.connections.indexOf(connection);
+      if (index >= 0) {
+        connection.close();
+        this.connections.splice(index, 1);
+      }
+    }
   }
 }

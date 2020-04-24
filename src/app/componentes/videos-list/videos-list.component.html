@@ -15,6 +15,17 @@
           muted
         ></video>
 
+        <div *ngIf="!user.stream" class="profile-info flex-center">
+          <img
+            *ngIf="user.photoURL"
+            [src]="user.photoURL"
+            class="profile-pic"
+          />
+          <div *ngIf="!user.photoURL" class="profile-name flex-center">
+            <span *ngIf="user.name">{{ user.name[0].toUpperCase() }}</span>
+          </div>
+        </div>
+
         <app-video-controls
           *ngIf="user.stream"
           [user]="user"
@@ -42,6 +53,14 @@
               autoplay
               muted
             ></video>
+
+            <div *ngIf="!connection.stream" class="profile-info flex-center">
+              <div class="profile-name flex-center">
+                <span *ngIf="connection.userName">{{
+                  connection.userName[0].toUpperCase()
+                }}</span>
+              </div>
+            </div>
           </div>
           <div class="video-cover">
             <div class="user-name">
@@ -50,8 +69,8 @@
             <div class="video-controls flex-center"></div>
             <mat-progress-bar
               *ngIf="
-                connection.remote.connectionState != 'connected' &&
-                connection.remote.connectionState != 'connecting'
+                connection.connectionState != 'connected' &&
+                connection.connectionState != 'connecting'
               "
               mode="indeterminate"
               class="progress-bar-inverse"
