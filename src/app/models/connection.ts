@@ -30,6 +30,7 @@ export class Connection {
 
   public close() {
     this.remote.close();
+    this.iceCandidates = [];
   }
 
   public showState() {
