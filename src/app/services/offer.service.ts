@@ -18,7 +18,7 @@ export class OfferService {
 
   public offerAll(callerId: string, users: User[]) {
     for (const user of users) {
-      this.offer(callerId, user.id, user.name);
+      this.offer(callerId, user.id, user.name).then();
     }
   }
 
@@ -26,7 +26,7 @@ export class OfferService {
     for (const offer of offers) {
       const user = users.find((user) => user.id == offer.from);
       const name = user ? user.name : offer.from;
-      this.answer(this.user.id, offer, name);
+      this.answer(this.user.id, offer, name).then();
     }
   }
 
@@ -42,10 +42,12 @@ export class OfferService {
     const connectionRef = this.user.getConnection(reciever, name);
     const connection = connectionRef.remote;
 
+    connectionRef.showState('offer');
+
     this.user.addTracks(connection);
-    connectionRef.showState();
 
     connection.onicegatheringstatechange = () => {
+      connectionRef.showState('offer: onicegatheringstatechange');
       const result$ = this.sendIceCandidates(connectionRef, caller, reciever);
       if (result$) result$.subscribe();
     };
@@ -53,6 +55,8 @@ export class OfferService {
     await connection.setLocalDescription(
       await connection.createOffer(offerOptions)
     );
+
+    connectionRef.showState('offer: setLocalDescription');
 
     this.roomService
       .createOffer({
@@ -69,30 +73,34 @@ export class OfferService {
     const connectionRef = this.user.getConnection(reciever, name);
     const connection = connectionRef.remote;
 
+    connectionRef.showState('answer');
+
     this.user.addTracks(connection);
-    connectionRef.showState();
 
     connection.onicegatheringstatechange = () => {
+      connectionRef.showState('answer: onicegatheringstatechange');
       const result$ = this.sendIceCandidates(connectionRef, caller, reciever);
       if (result$) result$.subscribe();
     };
 
     try {
-      const description = offer.description;
-
       if (connection.signalingState != 'stable') {
         console.log('rollback');
         await Promise.all([
           connection.setLocalDescription({ type: 'rollback' }),
-          connection.setRemoteDescription(description),
+          connection.setRemoteDescription(offer.description),
         ]);
       } else {
-        await connection.setRemoteDescription(description);
+        await connection.setRemoteDescription(offer.description);
       }
+
+      connectionRef.showState('answer: setRemoteDescription');
 
       await connection.setLocalDescription(
         await connection.createAnswer(offerOptions)
       );
+
+      connectionRef.showState('answer: createAnswer, setLocalDescription');
 
       this.roomService
         .createAnswer({
@@ -107,15 +115,18 @@ export class OfferService {
     }
   }
 
-  public setRemote(answer: Answer, name?: string) {
+  public async setRemote(answer: Answer, name?: string) {
     const connectionRef = this.user.getConnection(answer.from, name);
     const connection = connectionRef.remote;
-    connectionRef.showState();
 
-    if (connection.signalingState == 'stable') {
-      from(connection.setRemoteDescription(answer.description))
-        .pipe(take(1), catchError(this.handleError))
-        .subscribe();
+    connectionRef.showState('setRemote');
+
+    try {
+      // if (connection.signalingState == 'stable')
+      await connection.setRemoteDescription(answer.description);
+      connectionRef.showState('setRemote: setRemoteDescription');
+    } catch (error) {
+      console.log(error);
     }
   }
 

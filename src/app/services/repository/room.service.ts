@@ -41,12 +41,8 @@ export class RoomService extends BaseFirestoreService {
     );
 
     this.users$ = this.collectionChanges(this.userCollection);
-    this.offers$ = this.collectionChanges(this.offerCollection, 'added', true);
-    this.answers$ = this.collectionChanges(
-      this.answerCollection,
-      'added',
-      true
-    );
+    this.offers$ = this.collectionChanges(this.offerCollection, 'added');
+    this.answers$ = this.collectionChanges(this.answerCollection, 'added');
     this.iceCandidates$ = this.collectionChanges(
       this.iceCandidateCollection,
       'added'

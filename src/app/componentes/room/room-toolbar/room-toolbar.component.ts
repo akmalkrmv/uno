@@ -21,6 +21,7 @@ import { AuthService } from '@services/auth.service';
 export class RoomToolbarComponent implements OnInit, OnDestroy {
   @Input() user: User;
   @Input() roomId: string;
+  @Input() title: string;
 
   @Output() menuItemClicked = new EventEmitter<MenuItemEvent>();
 

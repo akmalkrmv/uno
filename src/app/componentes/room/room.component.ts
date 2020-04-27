@@ -35,6 +35,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public answers$: Observable<Answer[]>;
   public messages$: Observable<any[]>;
   public isConnectionOn = new BehaviorSubject(true);
+  public title$: Observable<string>;
 
   constructor(
     private router: Router,
@@ -89,6 +90,10 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.onlineUsers$ = this.api.roomUsers.roomUserIds(this.roomId).pipe(
           untilDestroyed(this),
           switchMap((userIds) => this.api.users.getByIds(userIds))
+        );
+
+        this.title$ = this.onlineUsers$.pipe(
+          map((users) => users.map((user) => user.name).join(', '))
         );
 
         this.offers$ = this.api.room.userOffers(this.user.id).pipe(
@@ -193,7 +198,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private compareOffers(before: IOffer[], after: IOffer[]) {
     if (before.length !== after.length) {
-      console.log('Changed', before.length, after.length);
+      console.log('Offers changed', before.length, after.length);
       return false;
     }
 
@@ -203,12 +208,11 @@ export class RoomComponent implements OnInit, OnDestroy {
           second.id == first.id && second.description == first.description
       );
       if (!exists) {
-        console.log('Changed', first);
+        console.log('Offers changed', first);
         return false;
       }
     }
 
-    console.log('Not changed');
     return true;
   }
 

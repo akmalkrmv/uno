@@ -1,9 +1,11 @@
 import { rtcConfiguration } from '../constants/rts-configurations';
+import { RtcStateLogger } from '@services/rtc-state-logger.service';
 
 export class Connection {
   public remote: RTCPeerConnection;
   public stream?: MediaStream;
   public iceCandidates?: RTCIceCandidate[] = [];
+  public stateLogger = new RtcStateLogger();
 
   constructor(public userId: string, public userName?: string) {
     this.remote = new RTCPeerConnection(rtcConfiguration);
@@ -33,20 +35,8 @@ export class Connection {
     this.iceCandidates = [];
   }
 
-  public showState() {
-    const {
-      signalingState,
-      connectionState,
-      iceConnectionState,
-      iceGatheringState,
-    } = this.remote;
-
-    console.table({
-      signalingState,
-      connectionState,
-      iceConnectionState,
-      iceGatheringState,
-    });
+  public showState(caller?: string) {
+    this.stateLogger.showState(this.remote, caller);
   }
 
   private logChanges() {
@@ -61,30 +51,28 @@ export class Connection {
     };
 
     connection.onstatsended = (event: RTCStatsEvent) => {
-      console.log('onstatsended', event);
-      this.showState();
+      this.showState('onstatsended');
     };
 
     connection.oniceconnectionstatechange = (event: Event) => {
-      console.log('oniceconnectionstatechange', event);
-      this.showState();
+      this.showState('oniceconnectionstatechange');
     };
 
     connection.onicecandidate = (event) => this.addIceCandidate(event);
 
     connection.onicegatheringstatechange = (event: Event) => {
-      console.log('onicegatheringstatechange', event);
-      this.showState();
+      this.showState('onicegatheringstatechange');
     };
 
     connection.onsignalingstatechange = (event) => {
-      console.log('onsignalingstatechange');
-      this.showState();
+      this.showState('onsignalingstatechange');
       // Workaround for Chrome: skip nested negotiations
       isNegotiating = connection.signalingState != 'stable';
     };
 
     connection.onnegotiationneeded = (event) => {
+      this.showState('onnegotiationneeded');
+
       if (isNegotiating) {
         console.log('SKIP nested negotiations');
         return;
@@ -104,8 +92,10 @@ export class Connection {
 
   private addIceCandidate(event: RTCPeerConnectionIceEvent) {
     if (event.candidate) {
-      console.log('onicecandidate');
+      console.log('onicecandidate', this.remote.iceGatheringState);
       this.iceCandidates.push(event.candidate);
+    } else {
+      this.showState('onicecandidate');
     }
   }
 }

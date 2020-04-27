@@ -2,6 +2,7 @@
   <app-room-toolbar
     class="header-controls"
     [user]="user"
+    [title]="title$ | async"
     (menuItemClicked)="onMenuItemClicked($event)"
   ></app-room-toolbar>
 

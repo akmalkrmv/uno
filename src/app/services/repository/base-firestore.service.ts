@@ -14,7 +14,7 @@ export class BaseFirestoreService {
     collection: AngularFirestoreCollection<T>,
     changeType?: DocumentChangeType,
     logItems = false,
-    logChanges = true
+    logChanges = false
   ): Observable<T[]> {
     return collection
       .snapshotChanges()
@@ -45,13 +45,14 @@ export class BaseFirestoreService {
   protected documentChanges<T>(
     document: AngularFirestoreDocument<T>,
     logItems = false,
-    logChanges = true
+    logChanges = false
   ): Observable<T> {
     return document
       .snapshotChanges()
       .pipe(
         tap((change: Action<DocumentSnapshot<T>>) => {
-          logChanges && console.log(`${document.ref.path} ${change.type}`, change);
+          logChanges &&
+            console.log(`${document.ref.path} ${change.type}`, change);
         })
       )
       .pipe(
