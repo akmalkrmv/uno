@@ -10,16 +10,14 @@ import {
   throttleTime,
   takeWhile,
   combineLatest,
-  tap,
 } from 'rxjs/operators';
 
 import { vgaConstraints } from '@constants/index';
-import { User, MenuItemEvent, IceCandidate } from '@models/index';
+import { User, MenuItemEvent } from '@models/index';
 import { Offer, Answer, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { ConnectionService } from '@services/connection.service';
-import { MessagingService } from '@services/messaging.service';
 
 @Component({
   selector: 'app-room',
@@ -41,8 +39,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
-    private connectionService: ConnectionService,
-    private messaging: MessagingService
+    private connectionService: ConnectionService
   ) {}
 
   ngOnDestroy() {
@@ -108,11 +105,6 @@ export class RoomComponent implements OnInit, OnDestroy {
         const throttleTimeMs = 2000;
         this.listenToOffers(throttleTimeMs);
         this.listenToAnswers(throttleTimeMs);
-
-        // this.messaging.requestPermission(this.user.id);
-        // this.messaging.monitorRefresh(this.user.id);
-        // this.messaging.receiveMessage();
-        // this.messages$ = this.messaging.message$;
       });
   }
 
@@ -162,7 +154,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.api.room
       .clearConnections()
       .pipe(untilDestroyed(this))
-      .subscribe((result) => {
+      .subscribe(() => {
         this.user.closeConnections();
         this.isConnectionOn.next(true);
       });
@@ -251,5 +243,4 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.connectionService.setRemoteAll(answers, users);
       });
   }
-
 }

@@ -13,47 +13,6 @@
 
   <app-videos-list class="viewport" [user]="user">
     <!-- <app-play-cards></app-play-cards> -->
-    <!-- <div>{{ messages$ | async | json }}</div> -->
-
     <!-- <app-message-list *ngIf="user" [userId]="user.id" [roomId]="roomId"></app-message-list> -->
-
-    <div style="padding: 10px;" *ngIf="false">
-      <ng-container *ngIf="offers$">
-        <div *ngFor="let item of offers$ | async">
-          <div>id: {{ item.id }}, from: {{ item.from }}, to: {{ item.to }}</div>
-          <div>
-            decription:
-            <div class="text-wrap">
-              {{ item.description | json }}
-            </div>
-          </div>
-          <div>----------------</div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngIf="answers$">
-        <div *ngFor="let item of answers$ | async">
-          <div>id: {{ item.id }}, from: {{ item.from }}, to: {{ item.to }}</div>
-          <div>
-            decription:
-            <div class="text-wrap">
-              {{ item.description | json }}
-            </div>
-          </div>
-          <div>----------------</div>
-        </div>
-      </ng-container>
-    </div>
-    <div style="padding: 0 10px;" *ngIf="user && false">
-      Connctions: {{ isConnectionOn | async }}
-      <div *ngFor="let item of user.connections">
-        <div>userId: {{ item.userId }}</div>
-        <div>userName: {{ item.userName }}</div>
-        <div>stream:{{ item.stream }}</div>
-        <div>connectionState: {{ item.connectionState }}</div>
-        <div>signalingState: {{ item.signalingState }}</div>
-        <div>----------------</div>
-      </div>
-    </div>
   </app-videos-list>
 </div>
