@@ -6,11 +6,6 @@
     (menuItemClicked)="onMenuItemClicked($event)"
   ></app-room-toolbar>
 
-  <app-user-list
-    class="online-users"
-    [users]="onlineUsers$ | async"
-  ></app-user-list>
-
   <app-videos-list class="viewport" [user]="user">
     <!-- <app-play-cards></app-play-cards> -->
     <!-- <app-message-list *ngIf="user" [userId]="user.id" [roomId]="roomId"></app-message-list> -->
