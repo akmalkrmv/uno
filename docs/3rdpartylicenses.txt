@@ -334,9 +334,6 @@ Apache-2.0
 @firebase/component
 Apache-2.0
 
-@firebase/database
-Apache-2.0
-
 @firebase/firestore
 Apache-2.0
 
@@ -412,8 +409,6 @@ BSD
 firebase/app
 
 firebase/auth
-
-firebase/database
 
 firebase/firestore
 
