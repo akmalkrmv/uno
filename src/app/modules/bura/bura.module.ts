@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { CardComponent } from './card/card.component';
-import { CardsComponent } from './cards/cards.component';
-import { DeckComponent } from './deck/deck.component';
-import { PlayComponent } from './play/play.component';
-import { ControlsComponent } from './controls/controls.component';
+import { CardComponent } from './components/card/card.component';
+import { CardsComponent } from './components/cards/cards.component';
+import { DeckComponent } from './components/deck/deck.component';
+import { PlayComponent } from './components/play/play.component';
+import { ControlsComponent } from './components/controls/controls.component';
 
 @NgModule({
   imports: [SharedModule],

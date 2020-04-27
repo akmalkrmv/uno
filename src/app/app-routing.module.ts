@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuard } from './guards/auth.guard';
 import { RoomComponent } from './componentes/room/room.component';
-import { PlayComponent } from './modules/bura/play/play.component';
+import { PlayComponent } from './modules/bura/components/play/play.component';
 import { SigninComponent } from './modules/auth/signin/signin.component';
 import { LayoutComponent } from './componentes/layout/layout.component';
 import { HomeComponent } from './componentes/home/home.component';

@@ -4,10 +4,10 @@ import {
   Input,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { GameState } from '../models/game-state';
-import { Player } from '../models/player';
-import { Card } from '../models/card.model';
-import { GameService } from '../services/game.service';
+import { GameState } from '../../models/game-state';
+import { Player } from '../../models/player';
+import { Card } from '../../models/card.model';
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-controls',

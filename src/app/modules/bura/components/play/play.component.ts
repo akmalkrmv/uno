@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { GameService } from '../services/game.service';
-import { GameStats } from '../models/game-stats';
-import { Card } from '../models/card.model';
-import { Player } from '../models/player';
-import { GameOptions } from '../models/game-options';
+import { GameService } from '../../services/game.service';
+import { GameStats } from '../../models/game-stats';
+import { Card } from '../../models/card.model';
+import { Player } from '../../models/player';
+import { GameOptions } from '../../models/game-options';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { map } from 'rxjs/operators';
 import { AuthService } from '@services/auth.service';
