@@ -11,16 +11,16 @@ import { UserListComponent } from './componentes/user-list/user-list.component';
 import { RoomToolbarComponent } from './componentes/room/room-toolbar/room-toolbar.component';
 import { VideosListComponent } from './componentes/videos-list/videos-list.component';
 import { VideoControlsComponent } from './componentes/video-controls/video-controls.component';
+import { LayoutComponent } from './componentes/layout/layout.component';
 
 // Modules
 import { MaterialImportsModule } from './shared/material-imports.module';
 import { FirestoreImportsModule } from './shared/firestore-imports.module';
 import { AppRoutingModule } from './app-routing.module';
-import { BuraModule } from './componentes/bura/bura.module';
-import { ChatModule } from './componentes/chat/chat.module';
-import { VideoChatModule } from './componentes/video-chat/video-chat.module';
-import { AuthModule } from './componentes/auth/auth.module';
-import { LayoutComponent } from './componentes/layout/layout.component';
+import { AuthModule } from './modules/auth/auth.module';
+import { BuraModule } from './modules/bura/bura.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { VideoChatModule } from './modules/video-chat/video-chat.module';
 
 @NgModule({
   declarations: [
