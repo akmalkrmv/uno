@@ -6,6 +6,7 @@ export class Connection {
   public stream?: MediaStream;
   public iceCandidates?: RTCIceCandidate[] = [];
   public stateLogger = new RtcStateLogger();
+  public queueTimeout: any; //NodeJS.Timeout
 
   constructor(public userId: string, public userName?: string) {
     this.remote = new RTCPeerConnection(rtcConfiguration);
@@ -33,6 +34,7 @@ export class Connection {
   public close() {
     this.remote.close();
     this.iceCandidates = [];
+    clearTimeout(this.queueTimeout);
   }
 
   public showState(caller?: string) {
@@ -47,7 +49,7 @@ export class Connection {
       });
     } else {
       console.log('Ice candidates queued');
-      setTimeout(() => {
+      this.queueTimeout = setTimeout(() => {
         this.addIceCandidatesToQueue(candidates);
       }, 3000);
     }
