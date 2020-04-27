@@ -4,7 +4,14 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  
+
+  .title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 85%;
+    white-space: nowrap;
+  }
+
   .fill-remaining-space {
     flex: 1 1 auto;
   }
