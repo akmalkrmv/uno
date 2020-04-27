@@ -40,29 +40,17 @@ export class Connection {
   }
 
   public addIceCandidatesToQueue(candidates: any[]) {
-    try {
+    if (this.canAddIceCandidate) {
       console.log('Adding ice candidates');
       candidates.forEach((candidate) => {
         this.remote.addIceCandidate(new RTCIceCandidate(candidate));
       });
-    } catch (error) {
+    } else {
       console.log('Ice candidates queued');
       setTimeout(() => {
         this.addIceCandidatesToQueue(candidates);
-      }, 3000)
+      }, 3000);
     }
-    
-    // if (this.canAddIceCandidate) {
-    //   console.log('Adding ice candidates');
-    //   candidates.forEach((candidate) => {
-    //     this.remote.addIceCandidate(new RTCIceCandidate(candidate));
-    //   });
-    // } else {
-    //   console.log('Ice candidates queued');
-    //   setTimeout(() => {
-    //     this.addIceCandidatesToQueue(candidates);
-    //   }, 3000);
-    // }
   }
 
   private logChanges() {
