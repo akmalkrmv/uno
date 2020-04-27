@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable, BehaviorSubject, empty, of } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import {
   switchMap,
   take,
@@ -10,17 +10,16 @@ import {
   throttleTime,
   takeWhile,
   combineLatest,
+  tap,
 } from 'rxjs/operators';
 
 import { vgaConstraints } from '@constants/index';
-import { User, MenuItemEvent } from '@models/index';
+import { User, MenuItemEvent, IceCandidate } from '@models/index';
 import { Offer, Answer, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
-import { OfferService } from '@services/offer.service';
+import { ConnectionService } from '@services/connection.service';
 import { MessagingService } from '@services/messaging.service';
-import { MatDialog } from '@angular/material/dialog';
-import { CallDialogComponent } from '../video-chat/call-dialog/call-dialog.component';
 
 @Component({
   selector: 'app-room',
@@ -42,7 +41,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
-    private offerService: OfferService,
+    private connectionService: ConnectionService,
     private messaging: MessagingService
   ) {}
 
@@ -85,7 +84,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.user = user;
         this.setStream(user);
 
-        this.offerService.init(user);
+        this.connectionService.init(user);
 
         this.onlineUsers$ = this.api.roomUsers.roomUserIds(this.roomId).pipe(
           untilDestroyed(this),
@@ -109,7 +108,6 @@ export class RoomComponent implements OnInit, OnDestroy {
         const throttleTimeMs = 2000;
         this.listenToOffers(throttleTimeMs);
         this.listenToAnswers(throttleTimeMs);
-        this.listenToIceCandidates();
 
         // this.messaging.requestPermission(this.user.id);
         // this.messaging.monitorRefresh(this.user.id);
@@ -146,7 +144,11 @@ export class RoomComponent implements OnInit, OnDestroy {
       .subscribe((users) => {
         console.log(users);
         for (const user of users) {
-          this.offerService.offer(this.user.id, user.id, user && user.name);
+          this.connectionService.offer(
+            this.user.id,
+            user.id,
+            user && user.name
+          );
         }
       });
   }
@@ -186,7 +188,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       .subscribe((users) => {
         this.isConnectionOn.next(true);
-        this.offerService.offerAll(this.user.id, users);
+        this.connectionService.offerAll(this.user.id, users);
       });
   }
 
@@ -229,7 +231,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           return;
         }
 
-        this.offerService.answerAll(offers, users);
+        this.connectionService.answerAll(offers, users);
       });
   }
 
@@ -246,32 +248,8 @@ export class RoomComponent implements OnInit, OnDestroy {
           return;
         }
 
-        this.offerService.setRemoteAll(answers, users);
+        this.connectionService.setRemoteAll(answers, users);
       });
   }
 
-  private listenToIceCandidates() {
-    this.api.room
-      .userIceCandidates(this.user.id)
-      .pipe(untilDestroyed(this))
-      .subscribe((iceCandidates) => {
-        iceCandidates.map((ice) => {
-          try {
-            console.log('Got ice candidates');
-            const connectionRef = this.user.getConnection(ice.recieverId);
-
-            if (connectionRef.canAddIceCandidate) {
-              console.log('Adding ice candidates');
-              ice.candidates.forEach((candidate) => {
-                connectionRef.remote.addIceCandidate(
-                  new RTCIceCandidate(candidate)
-                );
-              });
-            }
-          } catch (error) {
-            console.log(error);
-          }
-        });
-      });
-  }
 }

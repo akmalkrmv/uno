@@ -26,7 +26,16 @@ export class RtcStateLogger {
     addState(this.states.iceConnectionState, connection.iceConnectionState);
     addState(this.states.iceGatheringState, connection.iceGatheringState);
 
+    const localDescription = connection.localDescription
+      ? connection.localDescription.type
+      : 'null';
+    const remoteDesccription = connection.remoteDescription
+      ? connection.remoteDescription.type
+      : 'null';
+
     const state = {
+      localDescription,
+      remoteDesccription,
       signalingState: this.states.signalingState.join(' => '),
       connectionState: this.states.connectionState.join(' => '),
       iceConnectionStates: this.states.iceConnectionState.join(' => '),

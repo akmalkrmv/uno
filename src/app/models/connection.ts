@@ -39,6 +39,32 @@ export class Connection {
     this.stateLogger.showState(this.remote, caller);
   }
 
+  public addIceCandidatesToQueue(candidates: any[]) {
+    try {
+      console.log('Adding ice candidates');
+      candidates.forEach((candidate) => {
+        this.remote.addIceCandidate(new RTCIceCandidate(candidate));
+      });
+    } catch (error) {
+      console.log('Ice candidates queued');
+      setTimeout(() => {
+        this.addIceCandidatesToQueue(candidates);
+      }, 3000)
+    }
+    
+    // if (this.canAddIceCandidate) {
+    //   console.log('Adding ice candidates');
+    //   candidates.forEach((candidate) => {
+    //     this.remote.addIceCandidate(new RTCIceCandidate(candidate));
+    //   });
+    // } else {
+    //   console.log('Ice candidates queued');
+    //   setTimeout(() => {
+    //     this.addIceCandidatesToQueue(candidates);
+    //   }, 3000);
+    // }
+  }
+
   private logChanges() {
     let isNegotiating = false; // Workaround for Chrome: skip nested negotiations
 
@@ -80,13 +106,7 @@ export class Connection {
 
       isNegotiating = true;
 
-      // connection
-      //   .createOffer()
-      //   .then((offer) => connection.setLocalDescription(offer))
-      //   .then(() => {
-      //     // Send the offer to the remote peer through the signaling server
-      //   })
-      //   .catch((error) => console.log(error));
+      // Reconnect to remote
     };
   }
 

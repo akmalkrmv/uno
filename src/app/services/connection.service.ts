@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { from, of } from 'rxjs';
-import { switchMap, catchError, take } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, take, tap } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
-import { User, Offer, Answer, Connection } from '@models/index';
+import { User, Offer, Answer, Connection, IceCandidate } from '@models/index';
 import { RoomService } from '@services/repository/room.service';
 
 @Injectable({ providedIn: 'root' })
-export class OfferService {
+export class ConnectionService {
   public user: User;
 
   constructor(private roomService: RoomService) {}
@@ -34,7 +34,7 @@ export class OfferService {
     for (const answer of answers) {
       const user = users.find((user) => user.id == answer.from);
       const caller = user ? user.name : answer.from;
-      this.setRemote(answer, caller);
+      this.setRemote(answer, caller).then();
     }
   }
 
@@ -49,7 +49,11 @@ export class OfferService {
     connection.onicegatheringstatechange = () => {
       connectionRef.showState('offer: onicegatheringstatechange');
       const result$ = this.sendIceCandidates(connectionRef, caller, reciever);
-      if (result$) result$.subscribe();
+      if (result$) {
+        result$.subscribe(() => {
+          this.sendOffer(caller, reciever, connection);
+        });
+      }
     };
 
     await connection.setLocalDescription(
@@ -58,14 +62,7 @@ export class OfferService {
 
     connectionRef.showState('offer: setLocalDescription');
 
-    this.roomService
-      .createOffer({
-        from: caller,
-        to: reciever,
-        description: connection.localDescription.toJSON(),
-      })
-      .pipe(take(1), catchError(this.handleError))
-      .subscribe();
+    // this.sendOffer(caller, reciever, connection);
   }
 
   public async answer(caller: string, offer: Offer, name?: string) {
@@ -102,14 +99,9 @@ export class OfferService {
 
       connectionRef.showState('answer: createAnswer, setLocalDescription');
 
-      this.roomService
-        .createAnswer({
-          to: reciever,
-          from: caller,
-          description: connection.localDescription.toJSON(),
-        })
-        .pipe(take(1), catchError(this.handleError))
-        .subscribe();
+      this.addIceCandidatesIfExists().subscribe(async () => {
+        this.sendAnswer(caller, reciever, connection);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -122,12 +114,41 @@ export class OfferService {
     connectionRef.showState('setRemote');
 
     try {
-      // if (connection.signalingState == 'stable')
       await connection.setRemoteDescription(answer.description);
       connectionRef.showState('setRemote: setRemoteDescription');
     } catch (error) {
       console.log(error);
     }
+  }
+
+  private sendOffer(
+    caller: string,
+    reciever: string,
+    connection: RTCPeerConnection
+  ) {
+    this.roomService
+      .createOffer({
+        from: caller,
+        to: reciever,
+        description: connection.localDescription.toJSON(),
+      })
+      .pipe(take(1), catchError(this.handleError))
+      .subscribe();
+  }
+
+  private sendAnswer(
+    caller: string,
+    reciever: string,
+    connection: RTCPeerConnection
+  ) {
+    this.roomService
+      .createAnswer({
+        from: caller,
+        to: reciever,
+        description: connection.localDescription.toJSON(),
+      })
+      .pipe(take(1), catchError(this.handleError))
+      .subscribe();
   }
 
   private sendIceCandidates(
@@ -137,7 +158,7 @@ export class OfferService {
   ) {
     if (!connection) return;
     if (!connection.remote) return;
-    if (connection.remote.iceGatheringState === 'complete') return;
+    if (connection.remote.iceGatheringState !== 'complete') return;
 
     if (!connection.iceCandidates) return;
     if (!connection.iceCandidates.length) return;
@@ -152,6 +173,28 @@ export class OfferService {
     return this.roomService
       .addIceCandidate(payload)
       .pipe(take(1), catchError(this.handleError));
+  }
+
+  private addIceCandidatesIfExists() {
+    return this.roomService
+      .userIceCandidates(this.user.id)
+      .pipe(take(1))
+      .pipe(
+        tap((iceCandidates) => {
+          if (iceCandidates && iceCandidates.length) {
+            this.addIceCandidates(iceCandidates);
+          }
+        })
+      );
+  }
+
+  private addIceCandidates(iceCandidates: IceCandidate[]) {
+    console.log('Got ice candidates', iceCandidates);
+
+    iceCandidates.map((ice) => {
+      const connectionRef = this.user.getConnection(ice.recieverId);
+      connectionRef.addIceCandidatesToQueue(ice.candidates);
+    });
   }
 
   private handleError(error) {
