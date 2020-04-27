@@ -83,30 +83,5 @@
   <!-- 
     <button mat-raised-button (click)="decrement()">remove video -</button>
     <button mat-raised-button (click)="increment()">add video +</button> -->
-  <div class="games">
-    <ng-content></ng-content>
-  </div>
+  <ng-content class="content"></ng-content>
 </div>
-
-<ng-template #videoContainer let-user>
-  <div
-    class="video-container flex-center"
-    [style.min-width]="user.connections.length < 5 ? '50%' : '30%'"
-  >
-    <div class="video-wrapper flex-center">
-      <div class="video flex-center">
-        <video></video>
-      </div>
-      <div class="video-cover">
-        <div class="user-name">
-          Video
-        </div>
-        <div class="video-controls flex-center"></div>
-        <mat-progress-bar
-          mode="indeterminate"
-          class="progress-bar-inverse"
-        ></mat-progress-bar>
-      </div>
-    </div>
-  </div>
-</ng-template>
