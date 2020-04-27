@@ -7,7 +7,7 @@ import { GameState } from '../models/game-state';
 import { GameStats } from '../models/game-stats';
 import { GameOptions } from '../models/game-options';
 import { GameApiService, GameEvent } from './game-api.service';
-import { DeckService } from './deck-service';
+import { DeckService } from './deck.service';
 import { GameLocalService } from './game-local.service';
 
 @Injectable({ providedIn: 'root' })
