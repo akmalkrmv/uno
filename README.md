@@ -21,3 +21,4 @@ Firebase as backend, data management, push notifications.
 - Administrating user data, CRUD operations
 - Live editing same code or text by multiple users with or without calls
 - Simple multiplayer games
+- Localization for multiple languages
