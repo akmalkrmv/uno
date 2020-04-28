@@ -21,4 +21,8 @@ export class HandComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+
+  public selectCard(player: Player, card: Card) {
+    player.select(card, this.state);
+  }
 }
