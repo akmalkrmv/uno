@@ -1,0 +1,43 @@
+.hand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px 10px;
+  min-height: 160px;
+  border: 1px solid orange;
+
+  &.current {
+    background-color: #555;
+    border: 1px solid yellowgreen;
+  }
+
+  .beater {
+    color: yellowgreen;
+  }
+
+  .card {
+    margin-right: -20px;
+    z-index: 1;
+  }
+
+  .hand-deck {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hand-controls {
+    min-width: 140px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      margin: 10px;
+    }
+  }
+}
