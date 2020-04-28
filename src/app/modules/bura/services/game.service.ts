@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { Card } from '../models/card.model';
@@ -6,7 +6,6 @@ import { Player } from '../models/player';
 import { GameState } from '../models/game-state';
 import { GameStats } from '../models/game-stats';
 import { GameOptions } from '../models/game-options';
-import { GameApiService, GameEvent } from './game-api.service';
 import { DeckService } from './deck.service';
 import { GameLocalService } from './game-local.service';
 
@@ -18,13 +17,14 @@ export class GameService {
 
   public deck$ = new BehaviorSubject<Card[]>([]);
   public table$ = new BehaviorSubject<Card[]>([]);
-  public beatingCards$ = new BehaviorSubject<Card[]>([]);
   public trump$ = new BehaviorSubject<Card>(null);
+  public beatingCards$ = new BehaviorSubject<Card[]>([]);
 
+  public moves$ = new BehaviorSubject<number>(0);
+  public changed$: EventEmitter<any>;
   public state$ = new BehaviorSubject<GameState>('move');
   public options = new GameOptions();
   public stats = new GameStats();
-  public moves = 0;
 
   constructor(private api: GameLocalService, private deck: DeckService) {}
 
@@ -33,23 +33,25 @@ export class GameService {
   public stateTake = () => this.state$.next('take');
   public stateEnd = () => this.state$.next('end');
 
-  public init(roomId: string, options: GameOptions, player: Player) {
+  public init(
+    roomId: string,
+    options: GameOptions,
+    player: Player,
+    isCreator = false
+  ) {
     this.options = options;
+    this.api.register(this, player.id, isCreator);
+    this.changed$ = this.api.changed$;
+  }
 
-    // this.api.init(roomId).then(() => {
-    //   this.api.join(roomId, player.id);
+  public join(player: Player) {
+    const players = this.players$.value;
+    const hasJoined = players && players.find((item) => item.id === player.id);
 
-    //   this.api.changes$.subscribe((changes) => {
-    //     changes.forEach((change) => this.handleChange(change));
-    //   });
-    //   this.api.players$.subscribe((players) => {
-    //     console.log(players);
-    //     this.players$.next(players.map((pl) => new Player(pl, 'QWERTY')));
-    //   });
-    // });
+    if (hasJoined) return;
 
-    this.api.init(roomId);
-    this.api.create(new GameEvent());
+    this.players$.next([...this.players$.value, player]);
+    this.api.notifyChanges();
   }
 
   public start() {
@@ -64,6 +66,7 @@ export class GameService {
 
     this.fillHands();
     this.stateMove();
+    this.api.notifyChanges();
   }
 
   public end(stats: GameStats) {
@@ -86,6 +89,7 @@ export class GameService {
 
     stats.lastWinners = winners;
     stats.round++;
+    this.api.notifyChanges();
   }
 
   public move(player: Player) {
@@ -97,6 +101,7 @@ export class GameService {
     this.putOnTable(selected);
     this.nextPlayer();
     this.stateBeat();
+    this.api.notifyChanges();
   }
 
   public beat(player: Player) {
@@ -110,6 +115,7 @@ export class GameService {
 
     this.putOnTable(selected);
     this.nextPlayer();
+    this.api.notifyChanges();
   }
 
   public give(player: Player) {
@@ -117,9 +123,11 @@ export class GameService {
 
     this.putOnTable(selected);
     this.nextPlayer();
+    this.api.notifyChanges();
   }
 
   public endCirlce() {
+    console.log('edn circle');
     const beater = this.beater$.value;
     const table = this.table$.value;
 
@@ -136,6 +144,8 @@ export class GameService {
       this.stateEnd();
       this.end(this.stats);
     }
+
+    this.api.notifyChanges();
   }
 
   public fillHands() {
@@ -156,24 +166,27 @@ export class GameService {
         }
       });
     }
+
+    this.api.notifyChanges();
   }
 
   public nextPlayer(): void {
     const players = this.players$.value;
     const current = this.current$.value;
+    const moves = this.moves$.value + 1;
 
-    this.moves++;
-
-    if (this.moves === players.length) {
-      this.moves = 0;
+    if (moves === players.length) {
+      this.moves$.next(0);
       this.endCirlce();
       return;
     }
 
-    const index = players.indexOf(current);
+    const index = players.findIndex((player) => player.id === current.id);
     const nextPlayer = players[(index + 1) % players.length];
 
     this.current$.next(nextPlayer);
+    this.moves$.next(moves);
+    this.api.notifyChanges();
   }
 
   public canBeat(current: Card[], target: Card[]) {
@@ -183,37 +196,5 @@ export class GameService {
 
   public putOnTable(cards: Card[]) {
     this.table$.next([...this.table$.value, ...cards]);
-  }
-
-  public join(id: string, name: string) {
-    const change = { action: 'join', payload: { id, name } };
-    this.api.create(change).subscribe();
-  }
-
-  public fireMove(player: Player) {
-    const change = {
-      action: 'move',
-      payload: {
-        player: player.id,
-        selected: player.move(),
-      },
-    };
-    this.api.create(change).subscribe();
-  }
-
-  public handleChange(change: GameEvent) {
-    console.log('change: ', change);
-    switch (change.action) {
-      case 'join': {
-        const player = new Player(change.payload.id, change.payload.name);
-        this.players$.next([...this.players$.value, player]);
-        break;
-      }
-      case 'move': {
-        const player = this.players$.value.find((p) => p.id == player.id);
-        this.move(player);
-        break;
-      }
-    }
   }
 }

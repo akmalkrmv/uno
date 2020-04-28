@@ -1,0 +1,28 @@
+<div
+  class="hand"
+  *ngIf="player$ | async as player"
+  [class.current]="isCurrent$ | async"
+>
+  <div class="hand-deck">
+    <div *ngIf="isBeater$ | async">
+      <mat-icon>verified_user</mat-icon>
+    </div>
+    <ng-container *ngFor="let item of player.hand$ | async">
+      <app-card
+        class="card"
+        [card]="item"
+        (click)="selectCard(player, item)"
+      ></app-card>
+    </ng-container>
+  </div>
+
+  <app-controls
+    class="hand-controls"
+    [game]="game"
+    [player]="player"
+    [state]="state$ | async"
+    [current]="current$ | async"
+    [selected]="player.selected$ | async"
+    [beatingCards]="beatingCards$ | async"
+  ></app-controls>
+</div>

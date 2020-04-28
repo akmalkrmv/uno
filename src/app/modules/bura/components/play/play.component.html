@@ -45,17 +45,18 @@
     class="hand"
     *ngFor="let player of players$ | async"
     [class.current]="(current$ | async) == player"
-    [class.beater]="(beater$ | async) == player"
   >
     <div class="hand-deck">
-      <ng-container *ngIf="state$ | async as state">
-        <ng-container *ngFor="let item of player.sortedHand$ | async">
-          <app-card
-            class="card"
-            [card]="item"
-            (click)="player.select(item, state)"
-          ></app-card> </ng-container
-      ></ng-container>
+      <div *ngIf="isBeater$ | async">
+        <mat-icon>verified_user</mat-icon>
+      </div>
+      <ng-container *ngFor="let item of player.sortedHand$ | async">
+        <app-card
+          class="card"
+          [card]="item"
+          (click)="selectCard(player, item)"
+        ></app-card>
+      </ng-container>
     </div>
 
     <app-controls
@@ -68,11 +69,41 @@
       [beatingCards]="beatingCards$ | async"
     ></app-controls>
   </div>
+<!-- 
+  <div
+    class="hand"
+    *ngIf="player$ | async as player"
+    [class.current]="isCurrent$ | async"
+  >
+    <div class="hand-deck">
+      <div *ngIf="isBeater$ | async">
+        <mat-icon>verified_user</mat-icon>
+      </div>
+      <ng-container *ngFor="let item of player.hand$ | async">
+        <app-card
+          class="card"
+          [card]="item"
+          (click)="selectCard(player, item)"
+        ></app-card>
+      </ng-container>
+    </div>
+
+    <app-controls
+      class="hand-controls"
+      [game]="game"
+      [player]="player"
+      [state]="state$ | async"
+      [current]="current$ | async"
+      [selected]="player.selected$ | async"
+      [beatingCards]="beatingCards$ | async"
+    ></app-controls>
+  </div> -->
 
   <div>
     <button mat-raised-button (click)="start()">start</button>
+    <button mat-raised-button (click)="join()">join</button>
   </div>
-  
+
   <!-- <div class="points-info" *ngIf="players[0] as player">
     <div class="points-data">{{ player.name }}</div>
     <div class="points-data">

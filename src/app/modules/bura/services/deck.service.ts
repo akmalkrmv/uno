@@ -77,8 +77,6 @@ export class DeckService {
     const pointA = a.suit == trump ? a.beatpoint + 100 : a.beatpoint;
     const pointB = b.suit == trump ? b.beatpoint + 100 : b.beatpoint;
 
-    console.log(a.name, b.name, pointA, pointB);
-
     if (pointA > pointB) return 1;
     if (pointA < pointB) return -1;
 

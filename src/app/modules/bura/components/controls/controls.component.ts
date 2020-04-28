@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { GameState } from '../../models/game-state';
 import { Player } from '../../models/player';
 import { Card } from '../../models/card.model';
@@ -13,7 +8,6 @@ import { GameService } from '../../services/game.service';
   selector: 'app-controls',
   templateUrl: './controls.component.html',
   styleUrls: ['./controls.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ControlsComponent implements OnInit {
   @Input() game: GameService;

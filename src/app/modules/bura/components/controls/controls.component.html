@@ -1,5 +1,5 @@
 <div class="hand-controls">
-  <ng-container *ngIf="player == current">
+  <ng-container *ngIf="player && current && player.id == current.id">
     <ng-container *ngIf="state == 'move'">
       <button
         mat-raised-button
