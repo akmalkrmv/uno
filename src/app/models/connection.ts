@@ -1,11 +1,11 @@
 import { rtcConfiguration } from '../constants/rts-configurations';
-import { ConnectionStateLogger } from '@services/connection/rtc-state-logger.service';
+import { ConnectionLogger } from '@services/connection/connection-logger.service';
 
 export class Connection {
   public remote: RTCPeerConnection;
   public stream?: MediaStream;
   public iceCandidates?: RTCIceCandidate[] = [];
-  public stateLogger = new ConnectionStateLogger();
+  public stateLogger = new ConnectionLogger();
   public queueTimeout: any; //NodeJS.Timeout
 
   constructor(public userId: string, public userName?: string) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class ConnectionStateLogger {
+export class ConnectionLogger {
   private states = {
     signalingState: [],
     connectionState: [],
@@ -28,10 +28,10 @@ export class ConnectionStateLogger {
 
     const localDescription = connection.localDescription
       ? connection.localDescription.type
-      : 'null';
+      : '';
     const remoteDesccription = connection.remoteDescription
       ? connection.remoteDescription.type
-      : 'null';
+      : '';
 
     const state = {
       localDescription,
