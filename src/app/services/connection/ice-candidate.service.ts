@@ -30,13 +30,18 @@ export class IceCandidateService {
     if (!recieverId) return;
     if (!connection) return;
     if (!connection.iceCandidates) return;
+    if (!connection.iceCandidates.length) return;
 
-    const candidates = connection.iceCandidates.map((c) => c.toJSON());
-    const payload = { senderId, recieverId, candidates };
+    const candidates = [];
+
+    while (connection.iceCandidates.length) {
+      const candidate = connection.iceCandidates.pop();
+      candidates.push(candidate.toJSON());
+    }
 
     console.log('sending IceCandidates');
     this.roomService
-      .addIceCandidate(payload)
+      .addIceCandidate({ senderId, recieverId, candidates })
       .pipe(take(1), catchError(this.handleError))
       .subscribe();
   }

@@ -42,6 +42,9 @@ export class Connection {
   }
 
   public addIceCandidatesToQueue(candidates: any[]) {
+    if (!candidates) return;
+    if (!candidates.length) return;
+
     if (this.canAddIceCandidate) {
       console.log('Adding ice candidates');
       candidates.forEach((candidate) => {
