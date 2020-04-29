@@ -48,12 +48,7 @@ export class ConnectionService {
 
     connection.onicegatheringstatechange = () => {
       connectionRef.showState('offer: onicegatheringstatechange');
-      const result$ = this.sendIceCandidates(connectionRef, caller, reciever);
-      if (result$) {
-        result$.subscribe(() => {
-          this.sendOffer(caller, reciever, connection);
-        });
-      }
+      this.sendIceCandidates(connectionRef, caller, reciever);
     };
 
     await connection.setLocalDescription(
@@ -62,7 +57,7 @@ export class ConnectionService {
 
     connectionRef.showState('offer: setLocalDescription');
 
-    // this.sendOffer(caller, reciever, connection);
+    this.sendOffer(caller, reciever, connection);
   }
 
   public async answer(caller: string, offer: Offer, name?: string) {
@@ -76,8 +71,7 @@ export class ConnectionService {
 
     connection.onicegatheringstatechange = () => {
       connectionRef.showState('answer: onicegatheringstatechange');
-      const result$ = this.sendIceCandidates(connectionRef, caller, reciever);
-      if (result$) result$.subscribe();
+      this.sendIceCandidates(connectionRef, caller, reciever);
     };
 
     try {
@@ -170,9 +164,10 @@ export class ConnectionService {
     const payload = { senderId, recieverId, candidates };
 
     console.log('sending IceCandidates');
-    return this.roomService
+    this.roomService
       .addIceCandidate(payload)
-      .pipe(take(1), catchError(this.handleError));
+      .pipe(take(1), catchError(this.handleError))
+      .subscribe();
   }
 
   private addIceCandidatesIfExists() {
