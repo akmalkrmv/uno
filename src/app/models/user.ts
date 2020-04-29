@@ -21,6 +21,10 @@ export class User {
   constructor(public id: string, public name?: string) {}
 
   public getConnection(userId: string, userName?: string): Connection {
+    if (this.id === userId) {
+      throw new Error('Connection Error: Attempt to connect yourself');
+    }
+
     const connection =
       this.connections.find((item) => item.userId == userId) ||
       this.createConnection(userId);

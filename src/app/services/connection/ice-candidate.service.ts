@@ -7,13 +7,42 @@ import { Connection, IceCandidate, User } from '@models/index';
 
 @Injectable({ providedIn: 'root' })
 export class IceCandidateService {
+  private iceSendingId: any; // NodeJS.Timeout
+
   constructor(private roomService: RoomService) {}
+
+  public sendIceCandidatesByGatheringState(
+    connectionRef: Connection,
+    senderId: string,
+    recieverId: string
+  ) {
+    if (!senderId) return;
+    if (!recieverId) return;
+    if (!connectionRef) return;
+    if (!connectionRef.remote) return;
+
+    this.iceSendingId && clearInterval(this.iceSendingId);
+
+    const connection = connectionRef.remote;
+
+    if (connection.iceGatheringState === 'complete') {
+      this.sendIceCandidates(connectionRef, senderId, recieverId);
+    }
+
+    if (connection.iceGatheringState === 'gathering') {
+      this.iceSendingId = setInterval(() => {
+        this.sendIceCandidates(connectionRef, senderId, recieverId);
+      }, 1000);
+    }
+  }
 
   public sendIceCandidatesIfCompleted(
     connection: Connection,
     senderId: string,
     recieverId: string
   ) {
+    if (!senderId) return;
+    if (!recieverId) return;
     if (!connection) return;
     if (!connection.remote) return;
     if (connection.remote.iceGatheringState !== 'complete') return;
@@ -63,7 +92,7 @@ export class IceCandidateService {
     console.log('Got ice candidates', iceCandidates);
 
     iceCandidates.map((ice) => {
-      const connectionRef = user.getConnection(ice.recieverId);
+      const connectionRef = user.getConnection(ice.senderId);
       connectionRef.addIceCandidatesToQueue(ice.candidates);
     });
   }

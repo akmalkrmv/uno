@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
-import { catchError, take, tap } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
-import { User, Offer, Answer, Connection, IceCandidate } from '@models/index';
+import { User, Offer, Answer } from '@models/index';
 import { RoomService } from '@services/repository/room.service';
 import { IceCandidateService } from './ice-candidate.service';
 
@@ -51,7 +51,12 @@ export class ConnectionService {
     this.user.addTracks(connection);
 
     connection.onicegatheringstatechange = () => {
-      this.handleIceGatheringStateChange(connectionRef, caller, reciever);
+      connectionRef.showState('offer: onicegatheringstatechange');
+      this.iceCandidateService.sendIceCandidatesByGatheringState(
+        connectionRef,
+        caller,
+        reciever
+      );
     };
 
     await connection.setLocalDescription(
@@ -150,35 +155,6 @@ export class ConnectionService {
       })
       .pipe(take(1), catchError(this.handleError))
       .subscribe();
-  }
-
-  private handleIceGatheringStateChange(
-    connectionRef: Connection,
-    caller: string,
-    reciever: string
-  ) {
-    let iceSendingIntervalId: any; // NodeJS.Timeout
-    const connection = connectionRef.remote;
-
-    connectionRef.showState('offer: onicegatheringstatechange');
-
-    this.iceCandidateService.sendIceCandidatesIfCompleted(
-      connectionRef,
-      caller,
-      reciever
-    );
-
-    iceSendingIntervalId && clearInterval(iceSendingIntervalId);
-
-    if (connection.iceGatheringState === 'gathering') {
-      iceSendingIntervalId = setInterval(() => {
-        this.iceCandidateService.sendIceCandidates(
-          connectionRef,
-          caller,
-          reciever
-        );
-      }, 1000);
-    }
   }
 
   private handleError(error) {
