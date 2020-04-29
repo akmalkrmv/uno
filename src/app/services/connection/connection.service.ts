@@ -5,12 +5,16 @@ import { catchError, take, tap } from 'rxjs/operators';
 import { offerOptions } from '@constants/index';
 import { User, Offer, Answer, Connection, IceCandidate } from '@models/index';
 import { RoomService } from '@services/repository/room.service';
+import { IceCandidateService } from './ice-candidate.service';
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionService {
   public user: User;
 
-  constructor(private roomService: RoomService) {}
+  constructor(
+    private roomService: RoomService,
+    private iceCandidateService: IceCandidateService
+  ) {}
 
   public init(user: User) {
     this.user = user;
@@ -47,8 +51,7 @@ export class ConnectionService {
     this.user.addTracks(connection);
 
     connection.onicegatheringstatechange = () => {
-      connectionRef.showState('offer: onicegatheringstatechange');
-      this.sendIceCandidates(connectionRef, caller, reciever);
+      this.handleIceGatheringStateChange(connectionRef, caller, reciever);
     };
 
     await connection.setLocalDescription(
@@ -71,7 +74,11 @@ export class ConnectionService {
 
     connection.onicegatheringstatechange = () => {
       connectionRef.showState('answer: onicegatheringstatechange');
-      this.sendIceCandidates(connectionRef, caller, reciever);
+      this.iceCandidateService.sendIceCandidatesIfCompleted(
+        connectionRef,
+        caller,
+        reciever
+      );
     };
 
     try {
@@ -93,9 +100,9 @@ export class ConnectionService {
 
       connectionRef.showState('answer: createAnswer, setLocalDescription');
 
-      this.addIceCandidatesIfExists().subscribe(async () => {
-        this.sendAnswer(caller, reciever, connection);
-      });
+      this.iceCandidateService
+        .addIceCandidatesIfExists(this.user)
+        .subscribe(() => this.sendAnswer(caller, reciever, connection));
     } catch (error) {
       console.log(error);
     }
@@ -145,51 +152,33 @@ export class ConnectionService {
       .subscribe();
   }
 
-  private sendIceCandidates(
-    connection: Connection,
-    senderId: string,
-    recieverId: string
+  private handleIceGatheringStateChange(
+    connectionRef: Connection,
+    caller: string,
+    reciever: string
   ) {
-    if (!connection) return;
-    if (!connection.remote) return;
-    if (connection.remote.iceGatheringState !== 'complete') return;
+    let iceSendingIntervalId: any; // NodeJS.Timeout
+    const connection = connectionRef.remote;
 
-    if (!connection.iceCandidates) return;
-    if (!connection.iceCandidates.length) return;
+    connectionRef.showState('offer: onicegatheringstatechange');
 
-    if (!senderId) return;
-    if (!recieverId) return;
+    this.iceCandidateService.sendIceCandidatesIfCompleted(
+      connectionRef,
+      caller,
+      reciever
+    );
 
-    const candidates = connection.iceCandidates.map((c) => c.toJSON());
-    const payload = { senderId, recieverId, candidates };
+    iceSendingIntervalId && clearInterval(iceSendingIntervalId);
 
-    console.log('sending IceCandidates');
-    this.roomService
-      .addIceCandidate(payload)
-      .pipe(take(1), catchError(this.handleError))
-      .subscribe();
-  }
-
-  private addIceCandidatesIfExists() {
-    return this.roomService
-      .userIceCandidates(this.user.id)
-      .pipe(take(1))
-      .pipe(
-        tap((iceCandidates) => {
-          if (iceCandidates && iceCandidates.length) {
-            this.addIceCandidates(iceCandidates);
-          }
-        })
-      );
-  }
-
-  private addIceCandidates(iceCandidates: IceCandidate[]) {
-    console.log('Got ice candidates', iceCandidates);
-
-    iceCandidates.map((ice) => {
-      const connectionRef = this.user.getConnection(ice.recieverId);
-      connectionRef.addIceCandidatesToQueue(ice.candidates);
-    });
+    if (connection.iceGatheringState === 'gathering') {
+      iceSendingIntervalId = setInterval(() => {
+        this.iceCandidateService.sendIceCandidates(
+          connectionRef,
+          caller,
+          reciever
+        );
+      }, 1000);
+    }
   }
 
   private handleError(error) {

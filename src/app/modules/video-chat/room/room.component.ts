@@ -17,7 +17,7 @@ import { User, MenuItemEvent } from '@models/index';
 import { Offer, Answer, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
-import { ConnectionService } from '@services/connection.service';
+import { ConnectionService } from '@services/connection/connection.service';
 
 @Component({
   selector: 'app-room',

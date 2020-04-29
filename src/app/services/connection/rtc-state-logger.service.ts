@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class RtcStateLogger {
+export class ConnectionStateLogger {
   private states = {
     signalingState: [],
     connectionState: [],
@@ -47,6 +47,8 @@ export class RtcStateLogger {
       ...state,
     };
 
+    console.groupCollapsed('connection');
     console.table(table);
+    console.groupEnd();
   }
 }
