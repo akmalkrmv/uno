@@ -41,63 +41,16 @@
     </div>
   </div> -->
 
-  <div
-    class="hand"
-    *ngFor="let player of players$ | async"
-    [class.current]="(current$ | async) == player"
-  >
-    <div class="hand-deck">
-      <div *ngIf="isBeater$ | async">
-        <mat-icon>verified_user</mat-icon>
-      </div>
-      <ng-container *ngFor="let item of player.sortedHand$ | async">
-        <app-card
-          class="card"
-          [card]="item"
-          (click)="selectCard(player, item)"
-        ></app-card>
-      </ng-container>
-    </div>
-
-    <app-controls
-      class="hand-controls"
-      [game]="game"
-      [player]="player"
-      [state]="state$ | async"
-      [current]="current$ | async"
-      [selected]="player.selected$ | async"
-      [beatingCards]="beatingCards$ | async"
-    ></app-controls>
-  </div>
-<!-- 
-  <div
-    class="hand"
-    *ngIf="player$ | async as player"
-    [class.current]="isCurrent$ | async"
-  >
-    <div class="hand-deck">
-      <div *ngIf="isBeater$ | async">
-        <mat-icon>verified_user</mat-icon>
-      </div>
-      <ng-container *ngFor="let item of player.hand$ | async">
-        <app-card
-          class="card"
-          [card]="item"
-          (click)="selectCard(player, item)"
-        ></app-card>
-      </ng-container>
-    </div>
-
-    <app-controls
-      class="hand-controls"
-      [game]="game"
-      [player]="player"
-      [state]="state$ | async"
-      [current]="current$ | async"
-      [selected]="player.selected$ | async"
-      [beatingCards]="beatingCards$ | async"
-    ></app-controls>
-  </div> -->
+  <app-hand
+    [game]="game"
+    [state]="state$ | async"
+    [player]="player$ | async"
+    [current]="current$ | async"
+    [isBeater]="isBeater$ | async"
+    [isCurrent]="isCurrent$ | async"
+    [beatingCards]="beatingCards$ | async"
+    (cardSelect)="selectCard($event)"
+  ></app-hand>
 
   <div>
     <button mat-raised-button (click)="start()">start</button>

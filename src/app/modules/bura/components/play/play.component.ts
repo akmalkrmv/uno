@@ -49,15 +49,15 @@ export class PlayComponent implements OnInit, OnDestroy {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.isCreator = this.activeRoute.snapshot.fragment === 'init';
 
-    // this.auth.user$.pipe(untilDestroyed(this)).subscribe((user) => {
-    //   this.init(user.id, user.name);
-    // });
+    this.auth.user$.pipe(untilDestroyed(this)).subscribe((user) => {
+      // this.init(user.id, user.name);
 
-    const id = Math.floor(Math.random() * 100000).toString();
-    this.init(id, id);
+      const id = Math.floor(Math.random() * 100000).toString();
+      this.init(id, id);
+    });
   }
 
-  public init(userId, userName) {
+  public init(userId: string, userName: string) {
     const options = new GameOptions();
     const player = new Player(userId, userName);
 
@@ -94,8 +94,8 @@ export class PlayComponent implements OnInit, OnDestroy {
     return this.game.canBeat(current, target);
   }
 
-  public selectCard(player: Player, card: Card) {
-    player.select(card, this.state$.value);
+  public selectCard(card: Card) {
+    this.player.select(card, this.state$.value);
     this.changeDetectorRef.detectChanges();
   }
 

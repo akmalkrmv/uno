@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { Player } from '../../models/player';
 import { Card } from '../../models/card.model';
 import { GameState } from '../../models/game-state';
@@ -18,11 +18,13 @@ export class HandComponent implements OnInit {
   @Input() game: GameService;
   @Input() state: GameState;
 
+  @Output() cardSelect = new EventEmitter<Card>();
+
   constructor() {}
 
   ngOnInit(): void {}
 
-  public selectCard(player: Player, card: Card) {
-    player.select(card, this.state);
+  public selectCard(card: Card) {
+    this.cardSelect.emit(card);
   }
 }
