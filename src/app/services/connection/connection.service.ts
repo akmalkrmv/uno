@@ -3,13 +3,15 @@ import { of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
-import { User, Offer, Answer } from '@models/index';
+import { User, Offer, Answer, Connection } from '@models/index';
 import { RoomService } from '@services/repository/room.service';
 import { IceCandidateService } from './ice-candidate.service';
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionService {
   public user: User;
+
+  private timeoutId = null;
 
   constructor(
     private roomService: RoomService,
@@ -86,49 +88,14 @@ export class ConnectionService {
       );
     };
 
-    try {
-      if (connection.signalingState != 'stable') {
-        console.log('rollback');
-        await Promise.all([
-          connection.setLocalDescription({ type: 'rollback' }),
-          connection.setRemoteDescription(offer.description),
-        ]);
-      } else {
-        await connection.setRemoteDescription(offer.description);
-      }
+    await this.trySetRemote(connectionRef, offer);
 
-      connectionRef.showState('answer: setRemoteDescription');
-    } catch (error) {
-      console.log(error);
-    }
-
-    let timeoutId = null;
     const retryCount = 3;
-    const tryCreateAnswer = (retry) => {
-      timeoutId && clearTimeout(timeoutId);
-
-      if (retry <= 0) {
-        return;
-      }
-
-      timeoutId = setTimeout(async () => {
-        try {
-          await connection.setLocalDescription(
-            await connection.createAnswer(offerOptions)
-          );
-          connectionRef.showState('answer: createAnswer, setLocalDescription');
-
-          this.iceCandidateService
-            .addIceCandidatesIfExists(this.user)
-            .subscribe(() => this.sendAnswer(caller, reciever, connection));
-        } catch (error) {
-          console.log(error);
-          tryCreateAnswer(retry);
-        }
-      }, 1000);
-
-      tryCreateAnswer(retryCount);
-    };
+    this.tryCreateAnswer(connectionRef, retryCount, () => {
+      this.iceCandidateService
+        .addIceCandidatesIfExists(this.user)
+        .subscribe(() => this.sendAnswer(caller, reciever, connection));
+    });
   }
 
   public async setRemote(answer: Answer, name?: string) {
@@ -158,6 +125,52 @@ export class ConnectionService {
       })
       .pipe(take(1), catchError(this.handleError))
       .subscribe();
+  }
+
+  private async trySetRemote(connectionRef: Connection, offer: Offer) {
+    try {
+      const connection = connectionRef.remote;
+      if (connection.signalingState != 'stable') {
+        console.log('rollback');
+        await Promise.all([
+          connection.setLocalDescription({ type: 'rollback' }),
+          connection.setRemoteDescription(offer.description),
+        ]);
+      } else {
+        await connection.setRemoteDescription(offer.description);
+      }
+      connectionRef.showState('answer: setRemoteDescription');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  private tryCreateAnswer(
+    connectionRef: Connection,
+    retry: number,
+    callBack: Function
+  ) {
+    this.timeoutId && clearTimeout(this.timeoutId);
+
+    if (retry <= 0) {
+      return;
+    }
+
+    const connection = connectionRef.remote;
+
+    this.timeoutId = setTimeout(async () => {
+      try {
+        await connection.setLocalDescription(
+          await connection.createAnswer(offerOptions)
+        );
+        connectionRef.showState('answer: createAnswer, setLocalDescription');
+
+        callBack();
+      } catch (error) {
+        console.log(error);
+        this.tryCreateAnswer(connectionRef, --retry, callBack);
+      }
+    }, 1000);
   }
 
   private sendAnswer(
