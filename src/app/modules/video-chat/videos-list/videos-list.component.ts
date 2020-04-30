@@ -9,22 +9,7 @@ import { User } from 'src/app/models/user';
 export class VideosListComponent implements OnInit {
   @Input() user: User;
 
-  public list = ['mock'];
-
   constructor() {}
 
-  ngOnInit(): void {
-    console.log(this.user);
-  }
-
-  public increment() {
-    this.list.push('mock');
-  }
-
-  public decrement() {
-    if (this.list.length > 1) {
-      this.list.pop();
-    }
-  }
-
+  ngOnInit(): void {}
 }

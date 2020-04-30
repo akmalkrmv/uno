@@ -1,0 +1,23 @@
+<div class="video-wrapper flex-center">
+  <video
+    *ngIf="user.stream"
+    [srcObject]="user.stream"
+    [class.mirrored]="user.isFrontCamera"
+    class="video"
+    id="self-video"
+    autoplay
+    muted
+  ></video>
+
+  <div *ngIf="!user.stream" class="profile-info flex-center">
+    <img *ngIf="user.photoURL" [src]="user.photoURL" class="profile-pic" />
+    <div *ngIf="!user.photoURL" class="profile-name flex-center">
+      <span *ngIf="user.name">{{ user.name[0].toUpperCase() }}</span>
+    </div>
+  </div>
+
+  <div class="video-cover flex-center">
+    <div class="user-name">{{ user.name }}</div>
+    <div class="video-controls flex-center"></div>
+  </div>
+</div>

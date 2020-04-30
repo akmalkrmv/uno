@@ -1,16 +1,27 @@
 import { rtcConfiguration } from '../constants/rts-configurations';
 import { ConnectionLogger } from '@services/connection/connection-logger.service';
+import { SoundMeter } from '@services/soundometer';
+import { BehaviorSubject } from 'rxjs';
 
 export class Connection {
   public remote: RTCPeerConnection;
   public stream?: MediaStream;
   public iceCandidates?: RTCIceCandidate[] = [];
-  public stateLogger = new ConnectionLogger();
-  public queueTimeout: any; //NodeJS.Timeout
+  public audioLevel: number;
+  public soundometer: SoundMeter;
+  public volume$ = new BehaviorSubject(0);
+  public isMuted$ = new BehaviorSubject(false);
+
+  private stateLogger = new ConnectionLogger();
+  private queueTimeout: any; //NodeJS.Timeout
+  private soundTimeout: any; //NodeJS.Timeout
+  private isAlive = false;
 
   constructor(public userId: string, public userName?: string) {
     this.remote = new RTCPeerConnection(rtcConfiguration);
+    this.soundometer = new SoundMeter();
     this.logChanges();
+    this.isAlive = true;
   }
 
   public get connectionState() {
@@ -35,6 +46,8 @@ export class Connection {
     this.remote.close();
     this.iceCandidates = [];
     clearTimeout(this.queueTimeout);
+    clearTimeout(this.soundTimeout);
+    this.isAlive = false;
   }
 
   public showState(caller?: string) {
@@ -65,8 +78,17 @@ export class Connection {
 
     // Registering remote stream
     connection.ontrack = (event: RTCTrackEvent) => {
-      console.log('ontrack', this.userId, event.streams);
+      console.log('ontrack', event.streams);
       this.stream = event.streams[0];
+
+      this.stream.getAudioTracks().forEach((track) => {
+        track.onmute = () => this.isMuted$.next(true);
+        track.onunmute = () => this.isMuted$.next(false);
+      });
+
+      if (event.track.kind === 'audio') {
+        this.connectSoundometer();
+      }
     };
 
     connection.onstatsended = (event: RTCStatsEvent) => {
@@ -110,5 +132,16 @@ export class Connection {
     } else {
       this.showState('onicecandidate');
     }
+  }
+
+  private connectSoundometer() {
+    const updateVolume = () => {
+      const volume = Math.floor(this.soundometer.instant * 1000);
+      this.volume$.next(volume);
+      this.isMuted$.next(volume === 0);
+      this.isAlive && requestAnimationFrame(updateVolume);
+    };
+
+    this.soundometer.connectToSource(this.stream, () => updateVolume());
   }
 }

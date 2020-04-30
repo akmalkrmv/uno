@@ -14,6 +14,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -32,6 +33,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
+    MatSliderModule,
     MatSnackBarModule,
     MatToolbarModule,
   ],

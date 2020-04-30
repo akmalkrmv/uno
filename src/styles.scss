@@ -1,4 +1,3 @@
-
 @import '~firebaseui/dist/firebaseui.css';
 
 /* You can add global styles to this file, and also import other style files */
@@ -72,5 +71,32 @@ body {
   }
   .mat-progress-bar-fill::after {
     background-color: rgba(50, 50, 50, 0.8);
+  }
+}
+
+.video-container .video-wrapper {
+  min-height: 300px !important;
+  .video {
+    max-height: 300px;
+  }
+}
+
+/* Portrait */
+@media screen and (max-width: 420px) and (orientation: portrait) {
+  .video-container .video-wrapper {
+    min-height: 220px !important;
+    .video {
+      max-height: 220px;
+    }
+  }
+}
+
+/* Landscape */
+@media screen and (max-width: 780px) and (orientation: landscape) {
+  .video-container .video-wrapper {
+    min-height: 200px !important;
+    .video {
+      max-height: 200px;
+    }
   }
 }

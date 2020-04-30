@@ -1,0 +1,51 @@
+<div class="video-wrapper flex-center">
+  <div class="video flex-center">
+    <video
+      #video
+      *ngIf="connection.stream"
+      [srcObject]="connection.stream"
+      class="video"
+      autoplay
+      muted
+    ></video>
+
+    <div *ngIf="!connection.stream" class="profile-info flex-center">
+      <div class="profile-name flex-center">
+        <span *ngIf="connection.userName">
+          {{ connection.userName[0].toUpperCase() }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-cover">
+    <div class="user-name">
+      {{ connection.userName || connection.userId }}
+    </div>
+    <div *ngIf="connection.stream" class="stream-controls">
+      <!-- <button mat-icon-button disabled>
+        <mat-icon *ngIf="connection.isMuted$ | async">mic_off</mat-icon>
+        <mat-icon *ngIf="!(connection.isMuted$ | async)">mic</mat-icon>
+      </button> -->
+
+      <button mat-icon-button (click)="fullscreen()">
+        <mat-icon>fullscreen</mat-icon>
+      </button>
+      <button mat-icon-button (click)="pictureInPicture()">
+        <mat-icon>picture_in_picture</mat-icon>
+      </button>
+
+      <!-- <mat-slider
+        vertical
+        [max]="100"
+        [value]="connection.volume$ | async"
+      ></mat-slider> -->
+    </div>
+
+    <mat-progress-bar
+      *ngIf="!connection.isConnected"
+      mode="indeterminate"
+      class="progress-bar-inverse"
+    ></mat-progress-bar>
+  </div>
+</div>

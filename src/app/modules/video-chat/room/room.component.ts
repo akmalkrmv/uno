@@ -156,7 +156,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.user.closeConnections();
-        this.isConnectionOn.next(true);
       });
   }
 
@@ -219,7 +218,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       .subscribe(([offers, users]) => {
         if (!offers || !offers.length) {
-          // this.user.closeConnections();
+          this.user.closeConnections();
           return;
         }
 
@@ -236,7 +235,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       .subscribe(([answers, users]) => {
         if (!answers || !answers.length) {
-          // this.user.closeConnections();
+          this.user.closeConnections();
           return;
         }
 

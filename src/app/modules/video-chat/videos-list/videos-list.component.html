@@ -1,87 +1,18 @@
 <div class="viewport">
   <div class="videos" *ngIf="user">
-    <div
+    <app-self-video
       class="video-container flex-center"
-      [style.min-width]="list.length < 5 ? '50%' : '30%'"
-    >
-      <div class="video-wrapper flex-center">
-        <video
-          *ngIf="user.stream"
-          [srcObject]="user.stream"
-          [class.mirrored]="user.isFrontCamera"
-          class="video"
-          id="self-video"
-          autoplay
-          muted
-        ></video>
-
-        <div *ngIf="!user.stream" class="profile-info flex-center">
-          <img
-            *ngIf="user.photoURL"
-            [src]="user.photoURL"
-            class="profile-pic"
-          />
-          <div *ngIf="!user.photoURL" class="profile-name flex-center">
-            <span *ngIf="user.name">{{ user.name[0].toUpperCase() }}</span>
-          </div>
-        </div>
-
-        <app-video-controls
-          *ngIf="user.stream"
-          [user]="user"
-          class="stream-controls"
-        ></app-video-controls>
-
-        <div class="video-cover flex-center">
-          <div class="user-name">{{ user.name }}</div>
-          <div class="video-controls flex-center"></div>
-        </div>
-      </div>
-    </div>
+      [user]="user"
+      [style.min-width]="user.connections.length < 5 ? '50%' : '30%'"
+    ></app-self-video>
 
     <ng-container *ngFor="let connection of user.connections">
-      <div
+      <app-video-item
         class="video-container flex-center"
+        [connection]="connection"
         [style.min-width]="user.connections.length < 5 ? '50%' : '30%'"
-      >
-        <div class="video-wrapper flex-center">
-          <div class="video flex-center">
-            <video
-              *ngIf="connection.stream"
-              [srcObject]="connection.stream"
-              class="video"
-              autoplay
-              muted
-            ></video>
-
-            <div *ngIf="!connection.stream" class="profile-info flex-center">
-              <div class="profile-name flex-center">
-                <span *ngIf="connection.userName">{{
-                  connection.userName[0].toUpperCase()
-                }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="video-cover">
-            <div class="user-name">
-              {{ connection.userName || connection.userId }}
-            </div>
-            <div class="video-controls flex-center"></div>
-            <mat-progress-bar
-              *ngIf="
-                connection.connectionState != 'connected' &&
-                connection.connectionState != 'connecting'
-              "
-              mode="indeterminate"
-              class="progress-bar-inverse"
-            ></mat-progress-bar>
-          </div>
-        </div>
-      </div>
+      ></app-video-item>
     </ng-container>
   </div>
-  <!-- 
-    <button mat-raised-button (click)="decrement()">remove video -</button>
-    <button mat-raised-button (click)="increment()">add video +</button> -->
   <ng-content class="content"></ng-content>
 </div>

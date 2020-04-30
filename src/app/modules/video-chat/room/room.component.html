@@ -1,6 +1,6 @@
 <div class="room-container">
   <app-room-toolbar
-    class="header-controls"
+    class="header"
     [user]="user"
     [title]="title$ | async"
     (menuItemClicked)="onMenuItemClicked($event)"
@@ -10,4 +10,12 @@
     <!-- <app-play-cards></app-play-cards> -->
     <!-- <app-message-list *ngIf="user" [userId]="user.id" [roomId]="roomId"></app-message-list> -->
   </app-videos-list>
+
+  <footer class="footer">
+    <app-video-controls
+      *ngIf="user && user.stream"
+      [user]="user"
+      class="stream-controls"
+    ></app-video-controls>
+  </footer>
 </div>
