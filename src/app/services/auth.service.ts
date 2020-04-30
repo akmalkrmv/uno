@@ -40,7 +40,6 @@ export class AuthService extends BaseFirestoreService {
     return this.user$.pipe(
       take(1),
       switchMap((user) => {
-        console.log('authorize ', user);
         if (user) return of(new User(user.id, user.name));
 
         const email = 'user-' + Math.floor(Math.random() * 100000) + '@uno.com';
@@ -49,7 +48,6 @@ export class AuthService extends BaseFirestoreService {
           .auth()
           .createUserWithEmailAndPassword(email, 'qweasd123')
           .then((credential) => {
-            console.log('credential ', credential);
             const name = prompt('Ваще имя: ');
             this.updateUserData(credential.user, name);
           });
