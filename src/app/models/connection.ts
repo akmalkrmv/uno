@@ -1,6 +1,6 @@
 import { rtcConfiguration } from '../constants/rts-configurations';
 import { ConnectionLogger } from '@services/connection/connection-logger.service';
-import { SoundMeter } from '@services/soundometer';
+import { SoundMeter } from '@utils/soundometer';
 import { BehaviorSubject } from 'rxjs';
 
 export class Connection {

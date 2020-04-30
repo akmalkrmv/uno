@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '@services/auth.service';
-import { ClipboardService } from '@services/clipboard.service';
+import { copyToClipboard } from '@utils/index';
 import { MenuItemEvent } from '@models/index';
 
 @Component({
@@ -34,7 +34,7 @@ export class RoomControlsComponent implements OnInit {
   }
 
   public copyLink() {
-    ClipboardService.copyTextToClipboard(location.href);
+    copyToClipboard(location.href);
     this.snackBar.open(`Cсылка скопирована: ${location.href}`, '', {
       duration: 2000,
     });

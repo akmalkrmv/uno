@@ -6,6 +6,7 @@
       "@constants/*": ["./src/app/constants/*"],
       "@models/*": ["./src/app/models/*"],
       "@services/*": ["./src/app/services/*"],
+      "@utils/*": ["./src/app/utils/*"],
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
