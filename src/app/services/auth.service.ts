@@ -43,15 +43,15 @@ export class AuthService extends BaseFirestoreService {
         console.log('authorize ', user);
         if (user) return of(new User(user.id, user.name));
 
-        const email = Math.floor(Math.random() * 100000) + '-uno@mail.ru';
-        console.log(email);
+        const email = 'user-' + Math.floor(Math.random() * 100000) + '@uno.com';
 
         firebaseApp
           .auth()
           .createUserWithEmailAndPassword(email, 'qweasd123')
           .then((credential) => {
             console.log('credential ', credential);
-            this.updateUserData(credential.user, prompt('Ваще имя: '));
+            const name = prompt('Ваще имя: ');
+            this.updateUserData(credential.user, name);
           });
       })
     );
