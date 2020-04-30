@@ -96,21 +96,39 @@ export class ConnectionService {
       } else {
         await connection.setRemoteDescription(offer.description);
       }
+
       connectionRef.showState('answer: setRemoteDescription');
-
-      setTimeout(async () => {
-        await connection.setLocalDescription(
-          await connection.createAnswer(offerOptions)
-        );
-        connectionRef.showState('answer: createAnswer, setLocalDescription');
-
-        this.iceCandidateService
-          .addIceCandidatesIfExists(this.user)
-          .subscribe(() => this.sendAnswer(caller, reciever, connection));
-      }, 1000);
     } catch (error) {
       console.log(error);
     }
+
+    let timeoutId = null;
+    const retryCount = 3;
+    const tryCreateAnswer = (retry) => {
+      timeoutId && clearTimeout(timeoutId);
+
+      if (retry <= 0) {
+        return;
+      }
+
+      timeoutId = setTimeout(async () => {
+        try {
+          await connection.setLocalDescription(
+            await connection.createAnswer(offerOptions)
+          );
+          connectionRef.showState('answer: createAnswer, setLocalDescription');
+
+          this.iceCandidateService
+            .addIceCandidatesIfExists(this.user)
+            .subscribe(() => this.sendAnswer(caller, reciever, connection));
+        } catch (error) {
+          console.log(error);
+          tryCreateAnswer(retry);
+        }
+      }, 1000);
+
+      tryCreateAnswer(retryCount);
+    };
   }
 
   public async setRemote(answer: Answer, name?: string) {
