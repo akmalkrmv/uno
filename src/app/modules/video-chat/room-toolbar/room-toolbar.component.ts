@@ -8,9 +8,8 @@ import {
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { ClipboardService } from 'src/app/services/clipboard.service';
-import { MenuItemEvent } from 'src/app/models/menu-item-event';
-import { User } from 'src/app/models/user';
+import { copyToClipboard } from '@utils/index';
+import { User, MenuItemEvent } from '@models/index';
 import { AuthService } from '@services/auth.service';
 
 @Component({
@@ -47,7 +46,7 @@ export class RoomToolbarComponent implements OnInit, OnDestroy {
   }
 
   public copyLink() {
-    ClipboardService.copyTextToClipboard(location.href);
+    copyToClipboard(location.href);
     this.snackBar.open(`Cсылка скопирована: ${location.href}`, '', {
       duration: 2000,
     });
