@@ -242,4 +242,5 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.connectionService.setRemoteAll(answers, users);
       });
   }
+
 }

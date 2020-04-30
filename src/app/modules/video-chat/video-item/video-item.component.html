@@ -19,27 +19,29 @@
   </div>
 
   <div class="video-cover">
-    <div class="user-name">
-      {{ connection.userName || connection.userId }}
-    </div>
-    <div *ngIf="connection.stream" class="stream-controls">
-      <!-- <button mat-icon-button disabled>
-        <mat-icon *ngIf="connection.isMuted$ | async">mic_off</mat-icon>
-        <mat-icon *ngIf="!(connection.isMuted$ | async)">mic</mat-icon>
-      </button> -->
+    <div class="info-block">
+      <div class="user-name">
+        {{ connection.userName || connection.userId }}
+      </div>
+      <div *ngIf="connection.stream" class="stream-controls">
+        <!-- <button mat-icon-button disabled>
+          <mat-icon *ngIf="connection.isMuted$ | async">mic_off</mat-icon>
+          <mat-icon *ngIf="!(connection.isMuted$ | async)">mic</mat-icon>
+        </button> -->
 
-      <button mat-icon-button (click)="fullscreen()">
-        <mat-icon>fullscreen</mat-icon>
-      </button>
-      <button mat-icon-button (click)="pictureInPicture()">
-        <mat-icon>picture_in_picture</mat-icon>
-      </button>
+        <button mat-icon-button (click)="fullscreen()">
+          <mat-icon>fullscreen</mat-icon>
+        </button>
+        <button mat-icon-button (click)="pictureInPicture()">
+          <mat-icon>picture_in_picture</mat-icon>
+        </button>
 
-      <!-- <mat-slider
-        vertical
-        [max]="100"
-        [value]="connection.volume$ | async"
-      ></mat-slider> -->
+        <!-- <mat-slider
+          vertical
+          [max]="100"
+          [value]="connection.volume$ | async"
+        ></mat-slider> -->
+      </div>
     </div>
 
     <mat-progress-bar

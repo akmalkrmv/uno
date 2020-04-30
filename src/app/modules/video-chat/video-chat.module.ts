@@ -9,6 +9,7 @@ import { VideoControlsComponent } from './video-controls/video-controls.componen
 import { CallDialogComponent } from './call-dialog/call-dialog.component';
 import { VideoItemComponent } from './video-item/video-item.component';
 import { SelfVideoComponent } from './self-video/self-video.component';
+import { RoomControlsComponent } from './room-controls/room-controls.component';
 
 @NgModule({
   entryComponents: [CallDialogComponent],
@@ -21,6 +22,7 @@ import { SelfVideoComponent } from './self-video/self-video.component';
     CallDialogComponent,
     VideoItemComponent,
     SelfVideoComponent,
+    RoomControlsComponent,
   ],
   imports: [SharedModule],
 })

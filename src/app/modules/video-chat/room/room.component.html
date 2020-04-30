@@ -12,10 +12,15 @@
   </app-videos-list>
 
   <footer class="footer">
+    <div></div>
     <app-video-controls
       *ngIf="user && user.stream"
       [user]="user"
       class="stream-controls"
     ></app-video-controls>
+    <div>
+      <!-- <app-room-controls (menuItemClicked)="onMenuItemClicked($event)">
+      </app-room-controls> -->
+    </div>
   </footer>
 </div>
