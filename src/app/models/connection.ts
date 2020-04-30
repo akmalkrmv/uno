@@ -4,7 +4,7 @@ import { SoundMeter } from '@services/soundometer';
 import { BehaviorSubject } from 'rxjs';
 
 export class Connection {
-  public remote: RTCPeerConnection;
+  public peer: RTCPeerConnection;
   public stream?: MediaStream;
   public iceCandidates?: RTCIceCandidate[] = [];
   public audioLevel: number;
@@ -18,32 +18,32 @@ export class Connection {
   private isAlive = false;
 
   constructor(public userId: string, public userName?: string) {
-    this.remote = new RTCPeerConnection(rtcConfiguration);
+    this.peer = new RTCPeerConnection(rtcConfiguration);
     this.soundometer = new SoundMeter();
     this.logChanges();
     this.isAlive = true;
   }
 
   public get connectionState() {
-    return this.remote.connectionState;
+    return this.peer.connectionState;
   }
   public get signalingState() {
-    return this.remote.signalingState;
+    return this.peer.signalingState;
   }
 
   public get isConnected() {
     return (
-      this.remote.connectionState == 'connecting' ||
-      this.remote.connectionState == 'connected'
+      this.peer.connectionState == 'connecting' ||
+      this.peer.connectionState == 'connected'
     );
   }
 
   public get canAddIceCandidate() {
-    return this.remote.remoteDescription != null;
+    return this.peer.remoteDescription != null;
   }
 
   public close() {
-    this.remote.close();
+    this.peer.close();
     this.iceCandidates = [];
     clearTimeout(this.queueTimeout);
     clearTimeout(this.soundTimeout);
@@ -51,7 +51,7 @@ export class Connection {
   }
 
   public showState(caller?: string) {
-    this.stateLogger.showState(this.remote, caller);
+    this.stateLogger.showState(this.peer, caller);
   }
 
   public addIceCandidatesToQueue(candidates: any[]) {
@@ -61,7 +61,7 @@ export class Connection {
     if (this.canAddIceCandidate) {
       console.log('Adding ice candidates');
       candidates.forEach((candidate) => {
-        this.remote.addIceCandidate(new RTCIceCandidate(candidate));
+        this.peer.addIceCandidate(new RTCIceCandidate(candidate));
       });
     } else {
       console.log('Ice candidates queued');
@@ -74,7 +74,7 @@ export class Connection {
   private logChanges() {
     let isNegotiating = false; // Workaround for Chrome: skip nested negotiations
 
-    const connection = this.remote;
+    const connection = this.peer;
 
     // Registering remote stream
     connection.ontrack = (event: RTCTrackEvent) => {
@@ -127,7 +127,7 @@ export class Connection {
 
   private addIceCandidate(event: RTCPeerConnectionIceEvent) {
     if (event.candidate) {
-      console.log('onicecandidate', this.remote.iceGatheringState);
+      console.log('onicecandidate', this.peer.iceGatheringState);
       this.iceCandidates.push(event.candidate);
     } else {
       this.showState('onicecandidate');

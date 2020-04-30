@@ -45,68 +45,71 @@ export class ConnectionService {
   }
 
   public async offer(caller: string, reciever: string, name?: string) {
-    const connectionRef = this.user.getConnection(reciever, name);
-    const connection = connectionRef.remote;
+    const connection = this.user.getConnection(reciever, name);
+    const peer = connection.peer;
 
-    connectionRef.showState('offer');
+    if (connection.isConnected) {
+      // Dont create offer to connected peer
+      return;
+    }
 
-    this.user.addTracks(connection);
+    connection.showState('offer');
 
-    connection.onicegatheringstatechange = () => {
-      connectionRef.showState('offer: onicegatheringstatechange');
+    this.user.addTracks(peer);
+
+    peer.onicegatheringstatechange = () => {
+      connection.showState('offer: onicegatheringstatechange');
       this.iceCandidateService.sendIceCandidatesByGatheringState(
-        connectionRef,
+        connection,
         caller,
         reciever
       );
     };
 
-    await connection.setLocalDescription(
-      await connection.createOffer(offerOptions)
-    );
+    await peer.setLocalDescription(await peer.createOffer(offerOptions));
 
-    connectionRef.showState('offer: setLocalDescription');
+    connection.showState('offer: setLocalDescription');
 
-    this.sendOffer(caller, reciever, connection);
+    this.sendOffer(caller, reciever, peer);
   }
 
   public async answer(caller: string, offer: Offer, name?: string) {
     const reciever = offer.from;
-    const connectionRef = this.user.getConnection(reciever, name);
-    const connection = connectionRef.remote;
+    const connection = this.user.getConnection(reciever, name);
+    const peer = connection.peer;
 
-    connectionRef.showState('answer');
+    connection.showState('answer');
 
-    this.user.addTracks(connection);
+    this.user.addTracks(peer);
 
-    connection.onicegatheringstatechange = () => {
-      connectionRef.showState('answer: onicegatheringstatechange');
+    peer.onicegatheringstatechange = () => {
+      connection.showState('answer: onicegatheringstatechange');
       this.iceCandidateService.sendIceCandidatesIfCompleted(
-        connectionRef,
+        connection,
         caller,
         reciever
       );
     };
 
-    await this.trySetRemote(connectionRef, offer);
+    await this.trySetRemote(connection, offer);
 
     const retryCount = 3;
-    this.tryCreateAnswer(connectionRef, retryCount, () => {
+    this.tryCreateAnswer(connection, retryCount, () => {
       this.iceCandidateService
         .addIceCandidatesIfExists(this.user)
-        .subscribe(() => this.sendAnswer(caller, reciever, connection));
+        .subscribe(() => this.sendAnswer(caller, reciever, peer));
     });
   }
 
   public async setRemote(answer: Answer, name?: string) {
-    const connectionRef = this.user.getConnection(answer.from, name);
-    const connection = connectionRef.remote;
+    const connection = this.user.getConnection(answer.from, name);
+    const peer = connection.peer;
 
-    connectionRef.showState('setRemote');
+    connection.showState('setRemote');
 
     try {
-      await connection.setRemoteDescription(answer.description);
-      connectionRef.showState('setRemote: setRemoteDescription');
+      await peer.setRemoteDescription(answer.description);
+      connection.showState('setRemote: setRemoteDescription');
     } catch (error) {
       console.log(error);
     }
@@ -115,38 +118,38 @@ export class ConnectionService {
   private sendOffer(
     caller: string,
     reciever: string,
-    connection: RTCPeerConnection
+    peer: RTCPeerConnection
   ) {
     this.roomService
       .createOffer({
         from: caller,
         to: reciever,
-        description: connection.localDescription.toJSON(),
+        description: peer.localDescription.toJSON(),
       })
       .pipe(take(1), catchError(this.handleError))
       .subscribe();
   }
 
-  private async trySetRemote(connectionRef: Connection, offer: Offer) {
+  private async trySetRemote(connection: Connection, offer: Offer) {
     try {
-      const connection = connectionRef.remote;
-      if (connection.signalingState != 'stable') {
+      const peer = connection.peer;
+      if (peer.signalingState != 'stable') {
         console.log('rollback');
         await Promise.all([
-          connection.setLocalDescription({ type: 'rollback' }),
-          connection.setRemoteDescription(offer.description),
+          peer.setLocalDescription({ type: 'rollback' }),
+          peer.setRemoteDescription(offer.description),
         ]);
       } else {
-        await connection.setRemoteDescription(offer.description);
+        await peer.setRemoteDescription(offer.description);
       }
-      connectionRef.showState('answer: setRemoteDescription');
+      connection.showState('answer: setRemoteDescription');
     } catch (error) {
       console.log(error);
     }
   }
 
   private tryCreateAnswer(
-    connectionRef: Connection,
+    connection: Connection,
     retry: number,
     callBack: Function
   ) {
@@ -156,19 +159,19 @@ export class ConnectionService {
       return;
     }
 
-    const connection = connectionRef.remote;
+    const peer = connection.peer;
 
     this.timeoutId = setTimeout(async () => {
       try {
-        await connection.setLocalDescription(
-          await connection.createAnswer(offerOptions)
+        await peer.setLocalDescription(
+          await peer.createAnswer(offerOptions)
         );
-        connectionRef.showState('answer: createAnswer, setLocalDescription');
+        connection.showState('answer: createAnswer, setLocalDescription');
 
         callBack();
       } catch (error) {
         console.log(error);
-        this.tryCreateAnswer(connectionRef, --retry, callBack);
+        this.tryCreateAnswer(connection, --retry, callBack);
       }
     }, 1000);
   }
@@ -176,13 +179,13 @@ export class ConnectionService {
   private sendAnswer(
     caller: string,
     reciever: string,
-    connection: RTCPeerConnection
+    peer: RTCPeerConnection
   ) {
     this.roomService
       .createAnswer({
         from: caller,
         to: reciever,
-        description: connection.localDescription.toJSON(),
+        description: peer.localDescription.toJSON(),
       })
       .pipe(take(1), catchError(this.handleError))
       .subscribe();

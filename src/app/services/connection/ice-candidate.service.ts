@@ -19,11 +19,11 @@ export class IceCandidateService {
     if (!senderId) return;
     if (!recieverId) return;
     if (!connectionRef) return;
-    if (!connectionRef.remote) return;
+    if (!connectionRef.peer) return;
 
     this.iceSendingId && clearInterval(this.iceSendingId);
 
-    const connection = connectionRef.remote;
+    const connection = connectionRef.peer;
 
     if (connection.iceGatheringState === 'complete') {
       this.sendIceCandidates(connectionRef, senderId, recieverId);
@@ -44,8 +44,8 @@ export class IceCandidateService {
     if (!senderId) return;
     if (!recieverId) return;
     if (!connection) return;
-    if (!connection.remote) return;
-    if (connection.remote.iceGatheringState !== 'complete') return;
+    if (!connection.peer) return;
+    if (connection.peer.iceGatheringState !== 'complete') return;
 
     this.sendIceCandidates(connection, senderId, recieverId);
   }

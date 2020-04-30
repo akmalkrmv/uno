@@ -39,7 +39,7 @@ export class User {
   public createConnection(userId: string): Connection {
     const connection = new Connection(userId);
 
-    connection.remote.onconnectionstatechange = () =>
+    connection.peer.onconnectionstatechange = () =>
       this.onConnectionStateChange(connection);
 
     this.connections.push(connection);
@@ -98,7 +98,7 @@ export class User {
 
       this.stream = stream;
       this.connections.forEach((connection) => {
-        const sender = connection.remote
+        const sender = connection.peer
           .getSenders()
           .find((sender) => sender.track.kind == videoTrack.kind);
 
