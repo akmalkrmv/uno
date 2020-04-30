@@ -102,7 +102,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           takeWhile(() => this.isConnectionOn.value)
         );
 
-        const throttleTimeMs = 2000;
+        const throttleTimeMs = 200;
         this.listenToOffers(throttleTimeMs);
         this.listenToAnswers(throttleTimeMs);
       });

@@ -96,18 +96,18 @@ export class ConnectionService {
       } else {
         await connection.setRemoteDescription(offer.description);
       }
-
       connectionRef.showState('answer: setRemoteDescription');
 
-      await connection.setLocalDescription(
-        await connection.createAnswer(offerOptions)
-      );
+      setTimeout(async () => {
+        await connection.setLocalDescription(
+          await connection.createAnswer(offerOptions)
+        );
+        connectionRef.showState('answer: createAnswer, setLocalDescription');
 
-      connectionRef.showState('answer: createAnswer, setLocalDescription');
-
-      this.iceCandidateService
-        .addIceCandidatesIfExists(this.user)
-        .subscribe(() => this.sendAnswer(caller, reciever, connection));
+        this.iceCandidateService
+          .addIceCandidatesIfExists(this.user)
+          .subscribe(() => this.sendAnswer(caller, reciever, connection));
+      }, 1000);
     } catch (error) {
       console.log(error);
     }
