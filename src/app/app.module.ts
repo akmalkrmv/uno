@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 // Components
 import { AppComponent } from './app.component';
@@ -18,15 +20,14 @@ import { ChatModule } from './modules/chat/chat.module';
 import { VideoChatModule } from './modules/video-chat/video-chat.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    LayoutComponent,
-  ],
+  declarations: [AppComponent, HomeComponent, LayoutComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+    }),
     // Imports
     MaterialImportsModule,
     FirestoreImportsModule,
