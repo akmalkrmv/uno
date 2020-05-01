@@ -12,7 +12,7 @@ platformBrowserDynamic()
   .bootstrapModule(AppModule)
   .then(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/ngsw-worker.js');
+      navigator.serviceWorker.register('/uno/ngsw-worker.js');
     }
   })
   .catch((err) => console.error(err));

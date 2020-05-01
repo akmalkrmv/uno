@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1588350529139,
+  "timestamp": 1588350926336,
   "index": "https://akmalkrmv.github.io/uno/index.html",
   "assetGroups": [
     {
@@ -14,8 +14,8 @@
         "https://akmalkrmv.github.io/uno/6-es5.06b2ad319dcbc8081ae4.js",
         "https://akmalkrmv.github.io/uno/favicon.ico",
         "https://akmalkrmv.github.io/uno/index.html",
-        "https://akmalkrmv.github.io/uno/main-es2015.5ad6745fe533b715f3be.js",
-        "https://akmalkrmv.github.io/uno/main-es5.5ad6745fe533b715f3be.js",
+        "https://akmalkrmv.github.io/uno/main-es2015.d75d369cbee3c50d8cca.js",
+        "https://akmalkrmv.github.io/uno/main-es5.d75d369cbee3c50d8cca.js",
         "https://akmalkrmv.github.io/uno/manifest.webmanifest",
         "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js",
         "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js",
@@ -67,9 +67,9 @@
     "https://akmalkrmv.github.io/uno/fontawesome-webfont.af7ae505a9eed503f8b8.woff2": "d6f48cba7d076fb6f2fd6ba993a75b9dc1ecbf0c",
     "https://akmalkrmv.github.io/uno/fontawesome-webfont.b06871f281fee6b241d6.ttf": "13b1eab65a983c7a73bc7997c479d66943f7c6cb",
     "https://akmalkrmv.github.io/uno/fontawesome-webfont.fee66e712a8a08eef580.woff": "28b782240b3e76db824e12c02754a9731a167527",
-    "https://akmalkrmv.github.io/uno/index.html": "56e9dbec43b59684d93c9504318a79e2b39beac8",
-    "https://akmalkrmv.github.io/uno/main-es2015.5ad6745fe533b715f3be.js": "908e5fbc2b141091539e6c20b3db952518f2ca68",
-    "https://akmalkrmv.github.io/uno/main-es5.5ad6745fe533b715f3be.js": "a29c30bc749d57eb3ba737a54c8c9446aa559c1d",
+    "https://akmalkrmv.github.io/uno/index.html": "447eea289827ce4eb003cec5d4ecee8d1759ab8f",
+    "https://akmalkrmv.github.io/uno/main-es2015.d75d369cbee3c50d8cca.js": "3c069ad772a1a0c44bc09c854f1fa0876b4db5b4",
+    "https://akmalkrmv.github.io/uno/main-es5.d75d369cbee3c50d8cca.js": "d58bc4af6730827953e388995b88bcfe68ec0efd",
     "https://akmalkrmv.github.io/uno/manifest.webmanifest": "e9b013cced0b4964516ca761add6e7241d798889",
     "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js": "72ad4ccc0a3916ae4598199447cdeadd6d380570",
     "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js": "e5472003c8575a8fca7583648df3905038faeb18",
