@@ -89,6 +89,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         );
 
         this.title$ = this.onlineUsers$.pipe(
+          untilDestroyed(this),
           map((users) => users.map((user) => user.name).join(', '))
         );
 
@@ -105,6 +106,10 @@ export class RoomComponent implements OnInit, OnDestroy {
         const throttleTimeMs = 200;
         this.listenToOffers(throttleTimeMs);
         this.listenToAnswers(throttleTimeMs);
+
+        this.onlineUsers$
+          .pipe(take(1))
+          .subscribe((users) => users && users.length > 1 && this.call());
       });
   }
 
@@ -125,6 +130,10 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       .catch((error) => console.log(error))
       .finally(() => muteSelfMedia());
+  }
+
+  public requestMedia() {
+    this.setStream(this.user);
   }
 
   public muteVideo(selector: string) {

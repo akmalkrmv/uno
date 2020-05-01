@@ -25,6 +25,10 @@ export class RoomControlsComponent implements OnInit {
     this.menuItemClicked.emit({ type: 'call' });
   }
 
+  public requestMedia() {
+    this.menuItemClicked.emit({ type: 'requestMedia' });
+  }
+  
   public hangup() {
     this.menuItemClicked.emit({ type: 'hangup' });
   }

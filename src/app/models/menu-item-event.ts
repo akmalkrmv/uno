@@ -1,3 +1,3 @@
 export class MenuItemEvent {
-  type: 'call' | 'hangup' | 'leaveRoom' | 'retryCall';
+  type: 'call' | 'hangup' | 'leaveRoom' | 'retryCall' | 'requestMedia';
 }

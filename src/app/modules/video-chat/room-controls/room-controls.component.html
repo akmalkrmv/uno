@@ -34,13 +34,20 @@
     <mat-icon>share</mat-icon>
     <span>Поделиться ссылкой</span>
   </button>
+  <mat-divider></mat-divider>
 
   <button mat-menu-item (click)="copyLink()">
     <mat-icon>link</mat-icon>
     <span>Скопировать ссылку</span>
   </button>
-
   <mat-divider></mat-divider>
+  
+  <button mat-menu-item (click)="requestMedia()">
+    <mat-icon>perm_camera_mic</mat-icon>
+    <span>Включить камеру/микрофон</span>
+  </button>
+  <mat-divider></mat-divider>
+
 
   <button mat-menu-item (click)="leaveRoom()">
     <mat-icon color="warn"> power_settings_new</mat-icon>
