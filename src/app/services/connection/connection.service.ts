@@ -78,6 +78,11 @@ export class ConnectionService {
     const connection = this.user.getConnection(reciever, name);
     const peer = connection.peer;
 
+    if (connection.isConnected) {
+      // Dont create answer to connected peer
+      return;
+    }
+
     connection.showState('answer');
 
     this.user.addTracks(peer);
@@ -105,6 +110,11 @@ export class ConnectionService {
     const connection = this.user.getConnection(answer.from, name);
     const peer = connection.peer;
 
+    if (connection.isConnected) {
+      // Dont setRemote to connected peer
+      return;
+    }
+
     connection.showState('setRemote');
 
     try {
@@ -115,11 +125,7 @@ export class ConnectionService {
     }
   }
 
-  private sendOffer(
-    caller: string,
-    reciever: string,
-    peer: RTCPeerConnection
-  ) {
+  private sendOffer(caller: string, reciever: string, peer: RTCPeerConnection) {
     this.roomService
       .createOffer({
         from: caller,
@@ -163,9 +169,7 @@ export class ConnectionService {
 
     this.timeoutId = setTimeout(async () => {
       try {
-        await peer.setLocalDescription(
-          await peer.createAnswer(offerOptions)
-        );
+        await peer.setLocalDescription(await peer.createAnswer(offerOptions));
         connection.showState('answer: createAnswer, setLocalDescription');
 
         callBack();

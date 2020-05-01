@@ -107,9 +107,13 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.listenToOffers(throttleTimeMs);
         this.listenToAnswers(throttleTimeMs);
 
-        this.onlineUsers$
-          .pipe(take(1))
-          .subscribe((users) => users && users.length > 1 && this.call());
+        this.onlineUsers$.pipe(take(1)).subscribe((users) => {
+          if (users && users.length > 1) {
+            if (confirm('Готовы подключиться к звонку?')) {
+              this.call();
+            }
+          }
+        });
       });
   }
 
