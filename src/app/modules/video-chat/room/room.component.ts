@@ -50,71 +50,70 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.api.room.init(this.roomId);
 
-    console.log('ngOnInit roomId', this.roomId);
+    const roomExists$ = this.api.room.exists(this.roomId).pipe(
+      take(1),
+      untilDestroyed(this),
+      map((exists) => {
+        if (!exists) this.router.navigate(['']);
+        return exists;
+      })
+    );
 
-    this.api.room
-      .exists(this.roomId)
+    const authorize$ = this.auth
+      .authorize()
+      .pipe(take(1), untilDestroyed(this));
+
+    roomExists$
       .pipe(
-        untilDestroyed(this),
-        switchMap((exists) => {
-          console.log('ngOnInit room exists', exists);
-
-          if (!exists) {
-            this.router.navigate(['']);
-            return of(null);
-          }
-
-          return this.auth.authorize();
-        }),
-        switchMap((user) => {
-          console.log('user ', user);
-          if (!user) return of(null);
-
-          return this.api.roomUsers
-            .joinRoom(this.roomId, user.id)
-            .pipe(map(() => user));
-        })
+        switchMap((exists) => (exists ? authorize$ : of(null))),
+        switchMap((user) => (user ? this.joinRoom(user) : of(null)))
       )
+      .pipe(take(1), untilDestroyed(this))
       .subscribe((user) => {
         if (!user) return;
-
-        this.user = user;
-        this.setStream(user);
-
-        this.connectionService.init(user);
-
-        this.onlineUsers$ = this.api.roomUsers.roomUserIds(this.roomId).pipe(
-          untilDestroyed(this),
-          switchMap((userIds) => this.api.users.getByIds(userIds))
-        );
-
-        this.title$ = this.onlineUsers$.pipe(
-          untilDestroyed(this),
-          map((users) => users.map((user) => user.name).join(', '))
-        );
-
-        this.offers$ = this.api.room.userOffers(this.user.id).pipe(
-          untilDestroyed(this),
-          takeWhile(() => this.isConnectionOn.value)
-        );
-
-        this.answers$ = this.api.room.userAnswers(this.user.id).pipe(
-          untilDestroyed(this),
-          takeWhile(() => this.isConnectionOn.value)
-        );
-
-        const throttleTimeMs = 200;
-        this.listenToOffers(throttleTimeMs);
-        this.listenToAnswers(throttleTimeMs);
-
-        this.onlineUsers$.pipe(take(1)).subscribe((users) => {
-          if (users && users.length > 1) {
-            if (confirm('Готовы подключиться к звонку?')) {
-              this.call();
-            }
-          }
-        });
+        this.initialize(user);
       });
+  }
+
+  public initialize(user: User) {
+    this.user = user;
+    this.setStream(user);
+
+    this.connectionService.init(user);
+
+    this.onlineUsers$ = this.api.roomUsers.roomUserIds(this.roomId).pipe(
+      untilDestroyed(this),
+      switchMap((userIds) => this.api.users.getByIds(userIds))
+    );
+
+    this.title$ = this.onlineUsers$.pipe(
+      untilDestroyed(this),
+      map((users) => users.map((user) => user.name).join(', '))
+    );
+
+    this.offers$ = this.api.room.userOffers(this.user.id).pipe(
+      untilDestroyed(this),
+      takeWhile(() => this.isConnectionOn.value)
+    );
+
+    this.answers$ = this.api.room.userAnswers(this.user.id).pipe(
+      untilDestroyed(this),
+      takeWhile(() => this.isConnectionOn.value)
+    );
+
+    this.listenToOffers();
+    this.listenToAnswers();
+    this.confirmJoinCall();
+  }
+
+  public confirmJoinCall() {
+    this.onlineUsers$.pipe(take(1), untilDestroyed(this)).subscribe((users) => {
+      if (users && users.length > 1) {
+        if (confirm('Готовы подключиться к звонку?')) {
+          this.call();
+        }
+      }
+    });
   }
 
   public setStream(user: User) {
@@ -158,16 +157,9 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     this.roomUsers()
       .pipe(take(1), untilDestroyed(this))
-      .subscribe((users) => {
-        console.log(users);
-        for (const user of users) {
-          this.connectionService.offer(
-            this.user.id,
-            user.id,
-            user && user.name
-          );
-        }
-      });
+      .subscribe((users) =>
+        this.connectionService.offerAll(this.user.id, users)
+      );
   }
 
   public hangup() {
@@ -214,6 +206,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       .pipe(switchMap((userIds) => this.api.users.getByIds(userIds)));
   }
 
+  private joinRoom(user: User) {
+    return this.api.roomUsers.joinRoom(this.roomId, user.id).pipe(
+      take(1),
+      untilDestroyed(this),
+      map(() => user)
+    );
+  }
+
   private compareOffers(before: IOffer[], after: IOffer[]) {
     if (before.length !== after.length) {
       console.log('Offers changed', before.length, after.length);
@@ -234,37 +234,37 @@ export class RoomComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  private listenToOffers(throttleTimeMs: number) {
+  private listenToOffers() {
     this.offers$
-      .pipe(
-        throttleTime(throttleTimeMs),
-        distinctUntilChanged(this.compareOffers),
-        combineLatest(this.roomUsers())
-      )
-      .subscribe(([offers, users]) => {
+      .pipe(distinctUntilChanged(this.compareOffers))
+      .subscribe((offers) => {
         if (!offers || !offers.length) {
           this.user.closeConnections();
           return;
         }
 
-        this.connectionService.answerAll(offers, users);
+        this.roomUsers()
+          .pipe(take(1), untilDestroyed(this))
+          .subscribe((users) =>
+            this.connectionService.answerAll(offers, users)
+          );
       });
   }
 
-  private listenToAnswers(throttleTimeMs: number) {
+  private listenToAnswers() {
     this.answers$
-      .pipe(
-        throttleTime(throttleTimeMs),
-        distinctUntilChanged(this.compareOffers),
-        combineLatest(this.roomUsers())
-      )
-      .subscribe(([answers, users]) => {
+      .pipe(distinctUntilChanged(this.compareOffers))
+      .subscribe((answers) => {
         if (!answers || !answers.length) {
           this.user.closeConnections();
           return;
         }
 
-        this.connectionService.setRemoteAll(answers, users);
+        this.roomUsers()
+          .pipe(take(1), untilDestroyed(this))
+          .subscribe((users) =>
+            this.connectionService.setRemoteAll(answers, users)
+          );
       });
   }
 }
