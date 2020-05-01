@@ -7,9 +7,7 @@ import {
   take,
   map,
   distinctUntilChanged,
-  throttleTime,
   takeWhile,
-  combineLatest,
 } from 'rxjs/operators';
 
 import { videoConstraints } from '@constants/index';
