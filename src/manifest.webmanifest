@@ -1,8 +1,8 @@
 {
-  "name": "uno",
-  "short_name": "uno",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "Uno",
+  "short_name": "Uno",
+  "theme_color": "#666666",
+  "background_color": "#666666",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

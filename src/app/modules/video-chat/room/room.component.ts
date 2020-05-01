@@ -108,25 +108,23 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
   }
 
-  public async setStream(user: User) {
-    try {
-      const audioStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
+  public setStream(user: User) {
+    const muteSelfMedia = () => this.muteVideo('#self-video');
 
-      const videoStream = await navigator.mediaDevices.getUserMedia({
-        video: videoConstraints,
-      });
-
-      if (videoStream) {
-        videoStream.getTracks().forEach((track) => audioStream.addTrack(track));
-      }
-
-      user.stream = audioStream;
-      this.muteVideo('#self-video');
-    } catch (error) {
-      console.log(error);
-    }
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => (user.stream = stream))
+      .then(() => muteSelfMedia())
+      .then(() =>
+        navigator.mediaDevices.getUserMedia({
+          video: videoConstraints,
+        })
+      )
+      .then((stream) =>
+        stream.getTracks().forEach((track) => user.stream.addTrack(track))
+      )
+      .catch((error) => console.log(error))
+      .finally(() => muteSelfMedia());
   }
 
   public muteVideo(selector: string) {
