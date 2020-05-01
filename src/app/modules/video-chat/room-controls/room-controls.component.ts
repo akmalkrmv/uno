@@ -42,7 +42,7 @@ export class RoomControlsComponent implements OnInit {
       (navigator as any)
         .share({
           title: 'Uno',
-          text: 'Поделится ссылкой',
+          text: 'Присоединяйтесь к видео звонку: ',
           url: location.href,
         })
         .then(() => console.log('Successful share'))
