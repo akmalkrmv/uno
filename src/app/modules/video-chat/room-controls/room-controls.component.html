@@ -29,6 +29,12 @@
     <mat-divider></mat-divider>
   </ng-container>
 
+  
+  <button *ngIf="canShare" mat-menu-item (click)="shareLink()">
+    <mat-icon>share</mat-icon>
+    <span>Поделиться ссылкой</span>
+  </button>
+
   <button mat-menu-item (click)="copyLink()">
     <mat-icon>link</mat-icon>
     <span>Скопировать ссылку</span>

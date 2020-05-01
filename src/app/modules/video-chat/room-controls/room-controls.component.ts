@@ -14,6 +14,10 @@ export class RoomControlsComponent implements OnInit {
 
   constructor(private snackBar: MatSnackBar, public auth: AuthService) {}
 
+  public get canShare() {
+    return 'share' in navigator;
+  }
+
   ngOnInit(): void {}
   ngOnDestroy(): void {}
 
@@ -31,6 +35,19 @@ export class RoomControlsComponent implements OnInit {
 
   public retryCall() {
     this.menuItemClicked.emit({ type: 'retryCall' });
+  }
+
+  public shareLink() {
+    if ('share' in navigator) {
+      (navigator as any)
+        .share({
+          title: 'Uno',
+          text: 'Поделится ссылкой',
+          url: location.href,
+        })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing:', error));
+    }
   }
 
   public copyLink() {
