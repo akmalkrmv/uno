@@ -56,7 +56,7 @@ export class RoomControlsComponent implements OnInit {
 
   public copyLink() {
     copyToClipboard(location.href);
-    this.snackBar.open(`Cсылка скопирована: ${location.href}`, '', {
+    this.snackBar.open(`Cсылка скопирована`, '', {
       duration: 2000,
     });
   }
