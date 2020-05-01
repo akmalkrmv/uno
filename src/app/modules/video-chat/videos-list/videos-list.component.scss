@@ -19,16 +19,27 @@
 
     .video-container {
       flex-grow: 1;
-      flex-basis: auto;
-      min-width: 30%;
+      flex-basis: 0;
       border: 1px solid #222;
     }
   }
 
   .content {
     flex-grow: 1;
-    min-height: 300px;
-    max-height: 300px;
     overflow: auto;
+  }
+}
+
+/* Portrait */
+@media screen and (orientation: portrait) {
+  .viewport .videos .video-container {
+    min-width: 50%;
+  }
+}
+
+/* Landscape */
+@media screen and (orientation: landscape) {
+  .viewport .videos .video-container {
+    min-width: 0;
   }
 }

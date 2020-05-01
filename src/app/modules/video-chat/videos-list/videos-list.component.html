@@ -3,14 +3,12 @@
     <app-self-video
       class="video-container flex-center"
       [user]="user"
-      [style.min-width]="user.connections.length < 5 ? '50%' : '30%'"
     ></app-self-video>
 
     <ng-container *ngFor="let connection of user.connections">
       <app-video-item
         class="video-container flex-center"
         [connection]="connection"
-        [style.min-width]="user.connections.length < 5 ? '50%' : '30%'"
       ></app-video-item>
     </ng-container>
   </div>
