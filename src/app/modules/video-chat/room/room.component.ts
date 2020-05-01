@@ -12,7 +12,7 @@ import {
   combineLatest,
 } from 'rxjs/operators';
 
-import { vgaConstraints } from '@constants/index';
+import { videoConstraints } from '@constants/index';
 import { User, MenuItemEvent } from '@models/index';
 import { Offer, Answer, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
@@ -108,11 +108,25 @@ export class RoomComponent implements OnInit, OnDestroy {
       });
   }
 
-  public setStream(user: User) {
-    navigator.mediaDevices.getUserMedia(vgaConstraints).then((stream) => {
-      user.stream = stream;
+  public async setStream(user: User) {
+    try {
+      const audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+
+      const videoStream = await navigator.mediaDevices.getUserMedia({
+        video: videoConstraints,
+      });
+
+      if (videoStream) {
+        videoStream.getTracks().forEach((track) => audioStream.addTrack(track));
+      }
+
+      user.stream = audioStream;
       this.muteVideo('#self-video');
-    });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public muteVideo(selector: string) {
@@ -242,5 +256,4 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.connectionService.setRemoteAll(answers, users);
       });
   }
-
 }
