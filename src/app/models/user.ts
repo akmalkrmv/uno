@@ -14,6 +14,7 @@ export class User {
 
   public uid?: string;
   public ref?: string;
+  public role?: string;
   public stream?: MediaStream;
   public connections: Connection[] = [];
   public isFrontCamera = true;

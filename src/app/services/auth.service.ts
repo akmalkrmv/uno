@@ -36,6 +36,10 @@ export class AuthService extends BaseFirestoreService {
     return this.user$.pipe(map((user) => user != null));
   }
 
+  public hasRole(role: string) {
+    return this.user$.pipe(map((user) => user && user.role === role));
+  }
+
   public authorize(): Observable<User> {
     return this.user$.pipe(
       take(1),

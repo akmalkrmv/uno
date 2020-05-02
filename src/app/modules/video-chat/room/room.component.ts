@@ -8,6 +8,7 @@ import {
   map,
   distinctUntilChanged,
   takeWhile,
+  throttleTime,
 } from 'rxjs/operators';
 
 import { videoConstraints } from '@constants/index';
@@ -101,7 +102,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     this.listenToOffers();
     this.listenToAnswers();
-    this.confirmJoinCall();
+    // this.confirmJoinCall();
   }
 
   public confirmJoinCall() {
@@ -234,7 +235,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private listenToOffers() {
     this.offers$
-      .pipe(distinctUntilChanged(this.compareOffers))
+      .pipe(throttleTime(300), distinctUntilChanged(this.compareOffers))
       .subscribe((offers) => {
         if (!offers || !offers.length) {
           this.user.closeConnections();
@@ -251,7 +252,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private listenToAnswers() {
     this.answers$
-      .pipe(distinctUntilChanged(this.compareOffers))
+      .pipe(throttleTime(300), distinctUntilChanged(this.compareOffers))
       .subscribe((answers) => {
         if (!answers || !answers.length) {
           this.user.closeConnections();

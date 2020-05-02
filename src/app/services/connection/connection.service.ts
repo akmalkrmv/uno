@@ -11,8 +11,6 @@ import { IceCandidateService } from './ice-candidate.service';
 export class ConnectionService {
   public user: User;
 
-  private timeoutId = null;
-
   constructor(
     private roomService: RoomService,
     private iceCandidateService: IceCandidateService
@@ -159,15 +157,13 @@ export class ConnectionService {
     retry: number,
     callBack: Function
   ) {
-    this.timeoutId && clearTimeout(this.timeoutId);
-
     if (retry <= 0) {
       return;
     }
 
     const peer = connection.peer;
 
-    this.timeoutId = setTimeout(async () => {
+    setTimeout(async () => {
       try {
         await peer.setLocalDescription(await peer.createAnswer(offerOptions));
         connection.showState('answer: createAnswer, setLocalDescription');
