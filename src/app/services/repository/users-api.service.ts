@@ -6,8 +6,8 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { User } from '@models/user';
 import { BaseFirestoreService } from './base-firestore.service';
-import { User } from '../../models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +33,7 @@ export class UsersApiService extends BaseFirestoreService {
   public saveToken(userId: string, token: string) {
     const userRef = this.userCollection.doc(userId);
     const tokens = { [token]: true };
-    userRef.update({ fcmTokens: tokens });
+    return userRef.update({ fcmTokens: tokens });
   }
 
   public getByIds(userIds: string[]): Observable<User[]> {

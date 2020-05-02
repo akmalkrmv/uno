@@ -89,7 +89,7 @@ export class RoomApiService extends BaseFirestoreService {
     return this.createOfferByType(answer, 'answers');
   }
 
-  public addIceCandidate(payload: IceCandidate) {
+  public addIceCandidate(payload: IceCandidate): Observable<string> {
     return this.addToCollection(this.iceCandidateCollection, payload);
   }
 
