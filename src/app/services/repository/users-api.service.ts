@@ -12,7 +12,7 @@ import { User } from '../../models/user';
 @Injectable({
   providedIn: 'root',
 })
-export class UsersService extends BaseFirestoreService {
+export class UsersApiService extends BaseFirestoreService {
   public userCollection: AngularFirestoreCollection<any>;
   public users$: Observable<any[]>;
   public path = 'users';

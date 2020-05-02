@@ -13,7 +13,7 @@ import { BaseFirestoreService } from './base-firestore.service';
 import { Room, Offer, Answer, IOffer, IceCandidate } from '../../models/room';
 
 @Injectable({ providedIn: 'root' })
-export class RoomService extends BaseFirestoreService {
+export class RoomApiService extends BaseFirestoreService {
   public room: AngularFirestoreDocument<Room>;
 
   public userCollection: AngularFirestoreCollection<any>;

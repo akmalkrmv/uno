@@ -4,7 +4,7 @@ import { catchError, take } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
 import { User, Offer, Answer, Connection } from '@models/index';
-import { RoomService } from '@services/repository/room.service';
+import { RoomApiService } from '@services/repository/room-api.service';
 import { IceCandidateService } from './ice-candidate.service';
 
 @Injectable({ providedIn: 'root' })
@@ -12,7 +12,7 @@ export class ConnectionService {
   public user: User;
 
   constructor(
-    private roomService: RoomService,
+    private roomService: RoomApiService,
     private iceCandidateService: IceCandidateService
   ) {}
 

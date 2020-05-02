@@ -12,7 +12,7 @@ import { RommUserMap } from '../../models/room-user';
 @Injectable({
   providedIn: 'root',
 })
-export class RoomUserService extends BaseFirestoreService {
+export class RoomUserApiService extends BaseFirestoreService {
   public collection: AngularFirestoreCollection<RommUserMap>;
   public maps$: Observable<RommUserMap[]>;
   private path = 'room-user-map';

@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { take, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { RoomService } from '@services/repository/room.service';
+import { RoomApiService } from '@services/repository/room-api.service';
 import { Connection, IceCandidate, User } from '@models/index';
 
 @Injectable({ providedIn: 'root' })
 export class IceCandidateService {
   private iceSendingId: any; // NodeJS.Timeout
 
-  constructor(private roomService: RoomService) {}
+  constructor(private roomService: RoomApiService) {}
 
   public sendIceCandidatesByGatheringState(
     connectionRef: Connection,
