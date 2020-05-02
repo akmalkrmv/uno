@@ -4,15 +4,15 @@ import { catchError, take } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
 import { User, Offer, Answer, Connection } from '@models/index';
-import { RoomApiService } from '@services/repository/room-api.service';
 import { IceCandidateService } from './ice-candidate.service';
+import { ApiService } from '@services/repository/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionService {
   public user: User;
 
   constructor(
-    private roomService: RoomApiService,
+    private api: ApiService,
     private iceCandidateService: IceCandidateService
   ) {}
 
@@ -124,7 +124,7 @@ export class ConnectionService {
   }
 
   private sendOffer(caller: string, reciever: string, peer: RTCPeerConnection) {
-    this.roomService
+    this.api.room
       .createOffer({
         from: caller,
         to: reciever,
@@ -181,7 +181,7 @@ export class ConnectionService {
     reciever: string,
     peer: RTCPeerConnection
   ) {
-    this.roomService
+    this.api.room
       .createAnswer({
         from: caller,
         to: reciever,

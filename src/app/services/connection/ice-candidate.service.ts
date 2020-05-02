@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { take, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { RoomApiService } from '@services/repository/room-api.service';
 import { Connection, IceCandidate, User } from '@models/index';
+import { ApiService } from '@services/repository/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class IceCandidateService {
   private iceSendingId: any; // NodeJS.Timeout
 
-  constructor(private roomService: RoomApiService) {}
+  constructor(private api: ApiService) {}
 
   public sendIceCandidatesByGatheringState(
     connectionRef: Connection,
@@ -69,14 +69,14 @@ export class IceCandidateService {
     }
 
     console.log('sending IceCandidates');
-    this.roomService
+    this.api.room
       .addIceCandidate({ senderId, recieverId, candidates })
       .pipe(take(1), catchError(this.handleError))
       .subscribe();
   }
 
   public addIceCandidatesIfExists(user: User) {
-    return this.roomService
+    return this.api.room
       .userIceCandidates(user.id)
       .pipe(take(1))
       .pipe(
