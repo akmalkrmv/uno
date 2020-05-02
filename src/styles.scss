@@ -73,3 +73,30 @@ body {
     background-color: rgba(50, 50, 50, 0.8);
   }
 }
+
+@media screen and (orientation: portrait) {
+  .viewport .videos .video-container {
+    .video {
+      max-height: 40vh;
+    }
+
+    min-width: 33%;
+    &-0,
+    &-1 {
+      min-width: 100%;
+    }
+    &-2,
+    &-3 {
+      min-width: 50%;
+    }
+  }
+}
+
+@media screen and (orientation: landscape) {
+  .viewport .videos .video-container {
+    .video {
+      max-height: 60vh;
+    }
+    min-width: 0;
+  }
+}

@@ -29,17 +29,3 @@
     overflow: auto;
   }
 }
-
-/* Portrait */
-@media screen and (orientation: portrait) {
-  .viewport .videos .video-container {
-    min-width: 50%;
-  }
-}
-
-/* Landscape */
-@media screen and (orientation: landscape) {
-  .viewport .videos .video-container {
-    min-width: 0;
-  }
-}
