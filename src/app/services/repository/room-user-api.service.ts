@@ -84,7 +84,7 @@ export class RoomUserApiService extends BaseFirestoreService {
       .pipe(map((values) => values.map((value) => this.remove(value.id))));
   }
 
-  public remove(userId: string) {
-    return this.firestore.doc(`users/${userId}`).ref.delete();
+  public remove(id: string) {
+    return this.firestore.doc(`${this.path}/${id}`).ref.delete();
   }
 }
