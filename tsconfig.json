@@ -7,6 +7,7 @@
       "@models/*": ["./src/app/models/*"],
       "@services/*": ["./src/app/services/*"],
       "@utils/*": ["./src/app/utils/*"],
+      "@interfaces/*": ["./src/app/interfaces/*"],
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

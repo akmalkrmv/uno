@@ -4,6 +4,7 @@ import {
   videoConstraints,
 } from '../constants/rts-configurations';
 
+// TODO: A BIG TODO!!!
 export class User {
   public created?: number;
   public email?: string;
