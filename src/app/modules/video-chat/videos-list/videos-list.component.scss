@@ -1,6 +1,8 @@
 .viewport {
   width: 100%;
   height: 100%;
+  position: relative;
+  overflow: hidden;
 
   display: flex;
   flex-direction: column;
@@ -12,20 +14,39 @@
   }
 
   .videos {
+    flex-wrap: wrap;
+    flex-grow: 0;
+    height: 100%;
+    overflow: hidden;
+
     display: flex;
     align-items: stretch;
-    flex-wrap: wrap;
-    flex-grow: 1;
 
     .video-container {
+      max-height: 100%;
       flex-grow: 1;
       flex-basis: 0;
       border: 1px solid #222;
     }
   }
 
-  .content {
+  .divider {
+    height: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    button {
+      position: fixed;
+      cursor: grab;
+    }
+  }
+
+  .content-wapper {
     flex-grow: 1;
     overflow: auto;
+    .content {
+      height: 100%;
+    }
   }
 }

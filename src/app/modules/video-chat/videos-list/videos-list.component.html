@@ -1,16 +1,29 @@
 <div class="viewport">
-  <div class="videos" *ngIf="user">
-    <app-self-video
-      class="video-container video-container-{{ user.connections.length }}"
-      [user]="user"
-    ></app-self-video>
-
-    <ng-container *ngFor="let connection of user.connections">
-      <app-video-item
+  <div #videos class="videos" >
+    <ng-container *ngIf="user">
+      <app-self-video
         class="video-container video-container-{{ user.connections.length }}"
-        [connection]="connection"
-      ></app-video-item>
+        [user]="user"
+      ></app-self-video>
+
+      <ng-container *ngFor="let connection of user.connections">
+        <app-video-item
+          class="video-container video-container-{{ user.connections.length }}"
+          [connection]="connection"
+        ></app-video-item>
+      </ng-container>
     </ng-container>
   </div>
-  <ng-content class="content"></ng-content>
+
+  <div #divider class="divider">
+    <button #handle mat-icon-button>
+      <mat-icon>drag_handle</mat-icon>
+    </button>
+  </div>
+
+  <div #content class="content-wapper">
+    <div class="content" *ngIf="isContentVisible">
+      <ng-content></ng-content>
+    </div>
+  </div>
 </div>
