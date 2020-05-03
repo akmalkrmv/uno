@@ -31,9 +31,15 @@ export class Connection {
     return this.peer.signalingState;
   }
 
-  public get isConnected() {
+  public get isConnectedOrConnecting() {
     return (
       this.peer.connectionState == 'connecting' ||
+      this.peer.connectionState == 'connected'
+    );
+  }
+
+  public get isConnected() {
+    return (
       this.peer.connectionState == 'connected'
     );
   }

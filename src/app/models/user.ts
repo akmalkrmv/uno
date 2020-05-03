@@ -112,7 +112,9 @@ export class User {
   private onConnectionStateChange(connection: Connection) {
     connection.showState();
 
-    if (!connection.isConnected) {
+    const state = connection.peer.connectionState;
+
+    if (state === 'disconnected' || state === 'failed' || state === 'closed') {
       const index = this.connections.indexOf(connection);
       if (index >= 0) {
         connection.close();

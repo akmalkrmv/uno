@@ -115,12 +115,14 @@ export class ConnectionService {
 
     connection.showState('setRemote');
 
-    try {
-      await peer.setRemoteDescription(answer.description);
-      connection.showState('setRemote: setRemoteDescription');
-    } catch (error) {
-      console.log(error);
-    }
+    this.trySetRemoteWithRetry(connection, answer, 3);
+
+    // try {
+    //   await peer.setRemoteDescription(answer.description);
+    //   connection.showState('setRemote: setRemoteDescription');
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   private sendOffer(caller: string, reciever: string, peer: RTCPeerConnection) {
@@ -146,6 +148,7 @@ export class ConnectionService {
       } else {
         await peer.setRemoteDescription(offer.description);
       }
+      await peer.setRemoteDescription(offer.description);
       connection.showState('answer: setRemoteDescription');
     } catch (error) {
       console.log(error);
@@ -162,6 +165,7 @@ export class ConnectionService {
     }
 
     const peer = connection.peer;
+    let successful = false;
 
     setTimeout(async () => {
       try {
@@ -169,9 +173,41 @@ export class ConnectionService {
         connection.showState('answer: createAnswer, setLocalDescription');
 
         callBack();
+        successful = true;
       } catch (error) {
         console.log(error);
+      }
+
+      if (!successful) {
         this.tryCreateAnswer(connection, --retry, callBack);
+      }
+    }, 1000);
+  }
+
+  private trySetRemoteWithRetry(
+    connection: Connection,
+    answer: Answer,
+    retry: number
+  ) {
+    if (retry <= 0) {
+      return;
+    }
+
+    const peer = connection.peer;
+    let successful = false;
+
+    setTimeout(async () => {
+      try {
+        await peer.setRemoteDescription(answer.description);
+        connection.showState('setRemote: setRemoteDescription');
+
+        successful = true;
+      } catch (error) {
+        console.log(error);
+      }
+
+      if (!successful) {
+        this.trySetRemoteWithRetry(connection, answer, --retry);
       }
     }, 1000);
   }
