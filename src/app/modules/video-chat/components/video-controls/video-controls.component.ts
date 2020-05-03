@@ -25,7 +25,7 @@ export class VideoControlsComponent implements OnInit {
       this.videoDevices = devices.filter(
         (device) => device.kind == 'videoinput'
       );
-      this.canFlipCamera = this.videoDevices.length > 1 || true;
+      this.canFlipCamera = this.videoDevices.length > 1;
       this.currentDevice = this.videoDevices[0];
     });
   }
