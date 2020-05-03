@@ -1,14 +1,15 @@
-import { Injectable } from '@angular/core';
-import { untilDestroyed } from 'ngx-take-until-destroy';
-import { filter } from 'rxjs/operators';
-
+import { Injectable, OnDestroy } from '@angular/core';
 import { CommandsService } from '@services/commands.service';
 import { VideoChatCommandGroup } from '@constants/command-groups';
 import { canShareLink } from '@utils/index';
 
 @Injectable({ providedIn: 'root' })
-export class RoomCommandsService {
+export class RoomCommandsService implements OnDestroy {
   constructor(private commands: CommandsService) {}
+
+  ngOnDestroy(): void {
+    this.unregister();
+  }
 
   public register() {
     VideoChatCommandGroup.commands.find(
@@ -16,15 +17,6 @@ export class RoomCommandsService {
     ).visible = canShareLink();
 
     this.commands.registerGroup(VideoChatCommandGroup);
-    this.commands.current$
-      .pipe(untilDestroyed(this, 'unregister'))
-      .pipe(filter((current) => !!current))
-      .subscribe((current) => {
-        const command = this[current.name];
-        if (command && typeof command == 'function') {
-          command();
-        }
-      });
   }
 
   public unregister() {

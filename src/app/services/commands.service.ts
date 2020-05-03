@@ -29,6 +29,7 @@ export class CommandsService {
     const index = this.groups$.value.findIndex(
       (item) => item.name === group.name
     );
-    this.groups$.next(this.groups$.value.splice(index, 1));
+    this.groups$.value.splice(index, 1);
+    this.groups$.next(this.groups$.value);
   }
 }

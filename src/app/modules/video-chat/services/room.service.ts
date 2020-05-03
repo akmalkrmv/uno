@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { Observable, BehaviorSubject, of } from 'rxjs';
@@ -11,6 +11,7 @@ import {
   takeWhile,
   throttleTime,
   tap,
+  filter,
 } from 'rxjs/operators';
 
 import { copyToClipboard, shareLink } from '@utils/index';
@@ -21,9 +22,10 @@ import { TitleService } from '@services/title.service';
 import { ConnectionService } from '@services/connection/connection.service';
 import { RoomCommandsService } from './room-commands.service';
 import { MediaService } from './media.service';
+import { CommandsService } from '@services/commands.service';
 
 @Injectable({ providedIn: 'root' })
-export class RoomService {
+export class RoomService implements OnDestroy {
   public onlineUsers$: Observable<User[]>;
   public offers$: Observable<Offer[]>;
   public answers$: Observable<Answer[]>;
@@ -41,7 +43,8 @@ export class RoomService {
     private auth: AuthService,
     private connectionService: ConnectionService,
     private title: TitleService,
-    private commands: RoomCommandsService,
+    private roomCommands: RoomCommandsService,
+    private commands: CommandsService,
     private media: MediaService,
     private snackBar: MatSnackBar
   ) {}
@@ -50,7 +53,7 @@ export class RoomService {
     this.hangup();
     this.closeStream(this.user);
     this.title.toDefault();
-    this.commands.unregister();
+    this.roomCommands.unregister();
   }
 
   ngOnInit() {
@@ -74,7 +77,16 @@ export class RoomService {
         this.initialize(user);
       });
 
-    this.commands.register();
+    this.roomCommands.register();
+    this.commands.current$
+      .pipe(untilDestroyed(this))
+      .pipe(filter((current) => !!current))
+      .subscribe((current) => {
+        const command: Function = this[current.name];
+        if (command && typeof command == 'function') {
+          command.call(this);
+        }
+      });
   }
 
   public initialize(user: User) {

@@ -12,7 +12,7 @@
       <button
         *ngIf="command.visible"
         mat-menu-item
-        (click)="commands.run(command.name)"
+        (click)="commands.run(command)"
         [disabled]="command.disabled"
       >
         <mat-icon *ngIf="command.icon">{{ command.icon }}</mat-icon>
