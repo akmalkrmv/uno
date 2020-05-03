@@ -1,11 +1,4 @@
 <div class="room-container">
-  <app-room-toolbar
-    class="header"
-    [user]="user"
-    [title]="title$ | async"
-    (menuItemClicked)="onMenuItemClicked($event)"
-  ></app-room-toolbar>
-
   <app-videos-list class="main-content" [user]="user">
     <!-- <router-outlet></router-outlet> -->
     <!-- <app-play-cards></app-play-cards> -->
@@ -17,15 +10,10 @@
   </app-videos-list>
 
   <footer class="footer">
-    <div></div>
     <app-video-controls
       *ngIf="user && user.stream"
       [user]="user"
       class="stream-controls"
     ></app-video-controls>
-    <div>
-      <!-- <app-room-controls (menuItemClicked)="onMenuItemClicked($event)">
-      </app-room-controls> -->
-    </div>
   </footer>
 </div>

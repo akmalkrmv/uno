@@ -3,5 +3,15 @@ import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TitleService {
-  public text$ = new BehaviorSubject('Uno');
+  private default = 'Uno';
+
+  public text$ = new BehaviorSubject(this.default);
+
+  public toDefault() {
+    this.text$.next(this.default);
+  }
+
+  public clear() {
+    this.text$.next(null);
+  }
 }

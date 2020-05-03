@@ -28,12 +28,12 @@ export class RoomControlsComponent implements OnInit {
   public requestMedia() {
     this.menuItemClicked.emit({ type: 'requestMedia' });
   }
-  
+
   public hangup() {
     this.menuItemClicked.emit({ type: 'hangup' });
   }
 
-  public async leaveRoom() {
+  public leaveRoom() {
     this.menuItemClicked.emit({ type: 'leaveRoom' });
   }
 

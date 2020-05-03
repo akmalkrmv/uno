@@ -9,15 +9,19 @@ import {
   distinctUntilChanged,
   takeWhile,
   throttleTime,
+  filter,
+  tap,
 } from 'rxjs/operators';
 
 import { videoConstraints } from '@constants/index';
+import { VideoChatCommandGroup } from '@constants/command-groups';
 import { User, MenuItemEvent } from '@models/index';
 import { Offer, Answer, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { ConnectionService } from '@services/connection/connection.service';
 import { TitleService } from '@services/title.service';
+import { CommandsService } from '@services/commands.service';
 
 @Component({
   selector: 'app-room',
@@ -30,7 +34,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   public onlineUsers$: Observable<User[]>;
   public offers$: Observable<Offer[]>;
   public answers$: Observable<Answer[]>;
-  public messages$: Observable<any[]>;
   public isConnectionOn = new BehaviorSubject(true);
   public title$: Observable<string>;
 
@@ -40,41 +43,48 @@ export class RoomComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private auth: AuthService,
     private connectionService: ConnectionService,
-    private title: TitleService
+    private title: TitleService,
+    private commands: CommandsService
   ) {}
 
   ngOnDestroy() {
     this.hangup();
     this.closeStream(this.user);
-    this.title.text$.next('');
+    this.title.toDefault();
+    this.commands.unregisterGroup(VideoChatCommandGroup);
   }
 
   ngOnInit() {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.api.room.init(this.roomId);
 
-    const roomExists$ = this.api.room.exists(this.roomId).pipe(
-      take(1),
-      untilDestroyed(this),
-      map((exists) => {
-        if (!exists) this.router.navigate(['']);
-        return exists;
-      })
-    );
+    const roomExists$ = this.api.room
+      .exists(this.roomId)
+      .pipe(take(1), untilDestroyed(this))
+      .pipe(tap((exists) => !exists && this.router.navigate([''])));
 
     const authorize$ = this.auth
       .authorize()
       .pipe(take(1), untilDestroyed(this));
 
     roomExists$
-      .pipe(
-        switchMap((exists) => (exists ? authorize$ : of(null))),
-        switchMap((user) => (user ? this.joinRoom(user) : of(null)))
-      )
+      .pipe(switchMap((exists) => (exists ? authorize$ : of(null))))
+      .pipe(switchMap((user) => (user ? this.joinRoom(user) : of(null))))
       .pipe(take(1), untilDestroyed(this))
       .subscribe((user) => {
         if (!user) return;
         this.initialize(user);
+      });
+
+    this.commands.registerGroup(VideoChatCommandGroup);
+    this.commands.current$
+      .pipe(untilDestroyed(this))
+      .pipe(filter((current) => !!current))
+      .subscribe((current) => {
+        const command = this[current.name];
+        if (command && typeof command == 'function') {
+          command();
+        }
       });
   }
 
@@ -161,12 +171,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  public onMenuItemClicked($event: MenuItemEvent) {
-    this[$event.type] &&
-      typeof this[$event.type] == 'function' &&
-      this[$event.type]();
-  }
-
   public call() {
     this.isConnectionOn.next(true);
 
@@ -231,7 +235,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private compareOffers(before: IOffer[], after: IOffer[]) {
     if (before.length !== after.length) {
-      console.log('Offers changed', before.length, after.length);
+      console.log('Offers changed');
       return false;
     }
 
@@ -241,7 +245,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           second.id == first.id && second.description == first.description
       );
       if (!exists) {
-        console.log('Offers changed', first);
+        console.log('Offers changed');
         return false;
       }
     }
