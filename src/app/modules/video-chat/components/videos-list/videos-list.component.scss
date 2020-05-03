@@ -6,53 +6,35 @@
 
   display: flex;
   flex-direction: column;
+}
 
-  .flex-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.videos {
+  flex-wrap: wrap;
+  flex-grow: 0;
+  height: 100%;
+  overflow: hidden;
 
-  .videos {
-    flex-wrap: wrap;
-    flex-grow: 0;
-    height: 100%;
-    overflow: hidden;
+  display: flex;
+  align-items: stretch;
 
-    display: flex;
-    align-items: stretch;
-
-    .video-container {
-      max-height: 100%;
-      flex-grow: 1;
-      flex-basis: 0;
-      border: 1px solid #222;
-    }
-  }
-
-  .divider {
-    height: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    button {
-      position: fixed;
-      cursor: grab;
-    }
-  }
-
-  .content-wapper {
+  .video-container {
+    max-height: 100%;
     flex-grow: 1;
-    overflow: auto;
+    flex-basis: 0;
+    border: 1px solid #222;
+  }
+}
 
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-position-y: bottom;
+.content-wapper {
+  flex-grow: 1;
+  overflow: auto;
 
-    .content {
-      height: 100%;
-    }
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-position-y: bottom;
+
+  .content {
+    height: 100%;
   }
 }

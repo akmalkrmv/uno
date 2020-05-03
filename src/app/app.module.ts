@@ -9,9 +9,6 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './componentes/home/home.component';
 import { LayoutComponent } from './componentes/layout/layout.component';
-import { SidenavComponent } from './componentes/sidenav/sidenav.component';
-import { ProfileComponent } from './componentes/profile/profile.component';
-import { CommandsMenuComponent } from './componentes/commands-menu/commands-menu.component';
 
 // Modules
 import { MaterialImportsModule } from './shared/material-imports.module';
@@ -21,20 +18,14 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BuraModule } from './modules/bura/bura.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { VideoChatModule } from './modules/video-chat/video-chat.module';
+import { SharedComponentsModule } from './componentes/shared-components.module';
 
 // Services
 import { ApiService } from '@services/repository/api.service';
 import { LocalApiService } from '@services/local-repository/api.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    LayoutComponent,
-    SidenavComponent,
-    ProfileComponent,
-    CommandsMenuComponent,
-  ],
+  declarations: [AppComponent, HomeComponent, LayoutComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -51,6 +42,7 @@ import { LocalApiService } from '@services/local-repository/api.service';
     ChatModule,
     VideoChatModule,
     AuthModule,
+    SharedComponentsModule,
   ],
   providers: [
     // { provide: ApiService, useClass: LocalApiService },

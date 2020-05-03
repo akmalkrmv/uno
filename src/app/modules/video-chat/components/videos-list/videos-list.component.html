@@ -1,5 +1,5 @@
-<div class="viewport">
-  <div #videos class="videos" >
+<app-resizable-panes>
+  <div top-pane class="videos">
     <ng-container *ngIf="user">
       <app-self-video
         class="video-container video-container-{{ user.connections.length }}"
@@ -14,16 +14,7 @@
       </ng-container>
     </ng-container>
   </div>
-
-  <div #divider class="divider">
-    <button #handle mat-icon-button>
-      <mat-icon>drag_handle</mat-icon>
-    </button>
+  <div bottom-pane class="">
+    <ng-content></ng-content>
   </div>
-
-  <div #content class="content-wapper">
-    <div class="content" *ngIf="isContentVisible">
-      <ng-content></ng-content>
-    </div>
-  </div>
-</div>
+</app-resizable-panes>

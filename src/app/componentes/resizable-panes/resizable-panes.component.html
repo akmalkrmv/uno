@@ -1,0 +1,15 @@
+<div #viewport class="viewport {{ orientation }}">
+  <div #topPane class="top-pane">
+    <ng-content select="[top-pane]" class="pane-content"></ng-content>
+  </div>
+
+  <div #divider class="divider">
+    <button #handle mat-icon-button>
+      <mat-icon>drag_handle</mat-icon>
+    </button>
+  </div>
+
+  <div #bottomPane class="bottom-pane">
+    <ng-content select="[bottom-pane]" class="pane-content"></ng-content>
+  </div>
+</div>
