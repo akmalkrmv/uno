@@ -1,0 +1,102 @@
+{
+  "configVersion": 1,
+  "timestamp": 1588546751964,
+  "index": "https://akmalkrmv.github.io/uno/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "urls": [
+        "https://akmalkrmv.github.io/uno/5-es2015.64b6217b4d579a652680.js",
+        "https://akmalkrmv.github.io/uno/5-es5.64b6217b4d579a652680.js",
+        "https://akmalkrmv.github.io/uno/6-es2015.95bd2d43d14b5e4fb292.js",
+        "https://akmalkrmv.github.io/uno/6-es5.95bd2d43d14b5e4fb292.js",
+        "https://akmalkrmv.github.io/uno/favicon.ico",
+        "https://akmalkrmv.github.io/uno/index.html",
+        "https://akmalkrmv.github.io/uno/main-es2015.97896601b6d9d6d63acc.js",
+        "https://akmalkrmv.github.io/uno/main-es5.97896601b6d9d6d63acc.js",
+        "https://akmalkrmv.github.io/uno/manifest.webmanifest",
+        "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js",
+        "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js",
+        "https://akmalkrmv.github.io/uno/runtime-es2015.94d013b1820ea1da973b.js",
+        "https://akmalkrmv.github.io/uno/runtime-es5.94d013b1820ea1da973b.js",
+        "https://akmalkrmv.github.io/uno/styles.80212891535e0e6d643b.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "urls": [
+        "https://akmalkrmv.github.io/uno/assets/icons/android-chrome-192x192.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/apple-touch-icon.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/favicon-16x16.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/favicon-32x32.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/favicon.ico",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-128x128.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-144x144.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-152x152.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-192x192.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-384x384.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-512x512.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-72x72.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/icon-96x96.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png",
+        "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "https://akmalkrmv.github.io/uno/5-es2015.64b6217b4d579a652680.js": "eadcac2f7fa2a60f45b25e52231768ea14c22890",
+    "https://akmalkrmv.github.io/uno/5-es5.64b6217b4d579a652680.js": "eadcac2f7fa2a60f45b25e52231768ea14c22890",
+    "https://akmalkrmv.github.io/uno/6-es2015.95bd2d43d14b5e4fb292.js": "2a92426b3c4534c0cd096c14fb999478e3ffa221",
+    "https://akmalkrmv.github.io/uno/6-es5.95bd2d43d14b5e4fb292.js": "918911f8428066a499bcd8d614467ff109baf107",
+    "https://akmalkrmv.github.io/uno/assets/icons/android-chrome-192x192.png": "7e2ad66d858ddba8ac088686cde07ce74acc6852",
+    "https://akmalkrmv.github.io/uno/assets/icons/apple-touch-icon.png": "2178b53154f7923521affa392063622987c2fd6f",
+    "https://akmalkrmv.github.io/uno/assets/icons/favicon-16x16.png": "8844a34ce060af421a615e8aae49f9ff6a568eb5",
+    "https://akmalkrmv.github.io/uno/assets/icons/favicon-32x32.png": "512459b76471763419a4d4a30bca03c7d90427cb",
+    "https://akmalkrmv.github.io/uno/assets/icons/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
+    "https://akmalkrmv.github.io/uno/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
+    "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png": "c9ac061cb348a2dfb85feb38882f5049de3e54e4",
+    "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg": "fd1569dfae47d7e60104bcbd8ebbef362d53e4cb",
+    "https://akmalkrmv.github.io/uno/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
+    "https://akmalkrmv.github.io/uno/index.html": "9c6ffa6f04481dcb4c733cbccd4dca1590b8aaaf",
+    "https://akmalkrmv.github.io/uno/main-es2015.97896601b6d9d6d63acc.js": "2ec22c775a313f4235d2e00f351fe67a7780dde7",
+    "https://akmalkrmv.github.io/uno/main-es5.97896601b6d9d6d63acc.js": "e46ea1ddb52f11c0e5095af198a1904c55c55fa1",
+    "https://akmalkrmv.github.io/uno/manifest.webmanifest": "82eb87ee592d729d993bb6036d8b7285f09e2bb0",
+    "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js": "72ad4ccc0a3916ae4598199447cdeadd6d380570",
+    "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js": "e5472003c8575a8fca7583648df3905038faeb18",
+    "https://akmalkrmv.github.io/uno/runtime-es2015.94d013b1820ea1da973b.js": "6f475c0de732536547cd8130f159d20129a64c4c",
+    "https://akmalkrmv.github.io/uno/runtime-es5.94d013b1820ea1da973b.js": "85177fe59c531d1a7ada194604267435b7188f6b",
+    "https://akmalkrmv.github.io/uno/styles.80212891535e0e6d643b.css": "37ce7084029521e9fd861c0c6523819b3b7d49e3"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ]
+}
