@@ -19,10 +19,7 @@ export class MessagesApiService extends BaseFirestoreService {
   }
 
   public create(payload: Message) {
-    return this.addToCollection(this.collection, {
-      ...payload,
-      created: Date.now(),
-    });
+    return this.addToCollection(this.collection, payload);
   }
 
   public update(data: Message) {

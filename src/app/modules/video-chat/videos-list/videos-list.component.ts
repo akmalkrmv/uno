@@ -41,14 +41,18 @@ export class VideosListComponent implements OnInit, AfterViewInit {
     document.addEventListener('touchcancel', () => this.stopDrag());
 
     document.addEventListener('mousemove', (event) => this.drag(event));
-    document.addEventListener('dragover', (event) => this.drag(event));
+    document.addEventListener('touchmove', (event) => this.drag(event));
   }
 
-  private drag(event: MouseEvent | DragEvent) {
-    const videos = this.videosRef.nativeElement as HTMLDivElement;
-
+  private drag(event: MouseEvent | TouchEvent) {
     if (this.isDragging) {
-      const height = event.clientY - videos.parentElement.offsetTop;
+      const videos = this.videosRef.nativeElement as HTMLDivElement;
+      const clientY =
+        event instanceof TouchEvent
+          ? event.changedTouches[0].clientY
+          : event.clientY;
+
+      const height = clientY - videos.parentElement.offsetTop;
       const parentHeight = videos.parentElement.clientHeight;
       const hasEnoughHeight = parentHeight - height > 50;
       const videosHeight = hasEnoughHeight ? height : parentHeight;

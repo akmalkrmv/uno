@@ -9,7 +9,6 @@ import * as firebaseApp from 'firebase/app';
 import 'firebase/auth';
 
 import { User } from '@models/index';
-import { BaseFirestoreService } from './repository/base-firestore.service';
 import { ApiService } from './repository/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -40,29 +39,26 @@ export class AuthService {
     return this.user$.pipe(
       take(1),
       switchMap((user) => {
-        console.log(user);
-
         if (user) return of(new User(user.id, user.name));
-
-        const email = 'user-' + Math.floor(Math.random() * 100000) + '@uno.com';
-
-        firebaseApp
-          .auth()
-          .createUserWithEmailAndPassword(email, 'qweasd123')
-          .then((credential) => {
-            const name = prompt('Ваще имя: ');
-            this.updateUserData(credential.user, name);
-          });
       })
     );
   }
 
   public startUi(element: Element | string) {
-    const ui = new firebaseui.auth.AuthUI(firebaseApp.auth());
+    const auth = firebaseApp.auth();
+    // auth.useDeviceLanguage();
+    auth.languageCode = 'ru';
+
+    const ui = new firebaseui.auth.AuthUI(auth);
+    const withoutCaptcha = (provider: string) => ({
+      provider,
+      recaptchaParameters: { size: 'invisible' },
+    });
+
     ui.start(element, {
       signInOptions: [
-        firebaseApp.auth.PhoneAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.EmailAuthProvider.PROVIDER_ID,
+        withoutCaptcha(firebaseApp.auth.PhoneAuthProvider.PROVIDER_ID),
+        withoutCaptcha(firebaseApp.auth.EmailAuthProvider.PROVIDER_ID),
         firebaseApp.auth.GoogleAuthProvider.PROVIDER_ID,
         firebaseApp.auth.FacebookAuthProvider.PROVIDER_ID,
         firebaseApp.auth.GithubAuthProvider.PROVIDER_ID,
@@ -70,32 +66,10 @@ export class AuthService {
       callbacks: {
         signInSuccessWithAuthResult: (credential) => {
           this.updateUserData(credential.user);
-          return true;
+          return false;
         },
       },
-      // Other config options...
     });
-  }
-
-  public googleSignIn() {
-    const provider = new firebaseApp.auth.GoogleAuthProvider();
-    return from(this.fireauth.signInWithPopup(provider)).pipe(
-      switchMap((credential) => this.updateUserData(credential.user))
-    );
-  }
-
-  public facebookSignIn() {
-    const provider = new firebaseApp.auth.FacebookAuthProvider();
-    return from(this.fireauth.signInWithPopup(provider)).pipe(
-      switchMap((credential) => this.updateUserData(credential.user))
-    );
-  }
-
-  public githubSignIn() {
-    const provider = new firebaseApp.auth.GithubAuthProvider();
-    return from(this.fireauth.signInWithPopup(provider)).pipe(
-      switchMap((credential) => this.updateUserData(credential.user))
-    );
   }
 
   public signOut() {
@@ -105,7 +79,6 @@ export class AuthService {
   }
 
   public updateUserData(user: firebase.User | User, name?: string) {
-    console.log('updateUserData', user);
     const payload = {
       id: user.uid,
       uid: user.uid,
@@ -117,7 +90,7 @@ export class AuthService {
     };
 
     return this.api.users
-      .addOrUpdate(payload)
+      .addIfNotExists(payload)
       .then(() => this.router.navigate(['/']));
   }
 }

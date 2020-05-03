@@ -149,21 +149,9 @@ export class RoomApiService extends BaseFirestoreService {
       offerType == 'offers' ? this.offerCollection : this.answerCollection;
 
     return this.findByUsers(payload.from, payload.to, offerType).pipe(
-      switchMap((existing) => {
-        if (!existing) {
-          console.log('Creating: ' + offerType);
-          return this.addToCollection(collection, payload);
-        } else {
-          console.log('Using existing: ' + offerType);
-          return of(null);
-
-          // const path = `${this.room.ref.path}/${offerType}/${existing.id}`;
-          // const doc = this.firestore.doc(path);
-          // return from(doc.update({ description: payload.description })).pipe(
-          //   map(() => existing.id)
-          // );
-        }
-      })
+      switchMap((existing) =>
+        !existing ? this.addToCollection(collection, payload) : of(null)
+      )
     );
   }
 }

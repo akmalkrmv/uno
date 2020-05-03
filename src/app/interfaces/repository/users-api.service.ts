@@ -10,7 +10,7 @@ export interface IUsersApiService {
   getByIds(userIds: string[]): Observable<User[]>;
   findById(userId: string): Observable<User>;
 
-  addOrUpdate(user: any): Promise<any>;
+  addIfNotExists(user: any): Promise<any>;
   update(user: User): Promise<void>;
   remove(userId: string): Promise<void>;
 }

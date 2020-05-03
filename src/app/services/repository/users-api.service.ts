@@ -8,11 +8,13 @@ import { map } from 'rxjs/operators';
 
 import { User } from '@models/user';
 import { BaseFirestoreService } from './base-firestore.service';
+import { IUsersApiService } from '@interfaces/repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UsersApiService extends BaseFirestoreService {
+export class UsersApiService extends BaseFirestoreService
+  implements IUsersApiService {
   public userCollection: AngularFirestoreCollection<any>;
   public users$: Observable<any[]>;
   public path = 'users';
@@ -48,13 +50,13 @@ export class UsersApiService extends BaseFirestoreService {
     );
   }
 
-  public addOrUpdate(user: any): Promise<void> {
+  public async addIfNotExists(user: any): Promise<void> {
     const userRef = this.firestore.doc(`users/${user.id}`).ref;
-    return userRef.get().then((user) => {
-      return user.exists
-        ? userRef.update({ ...user })
-        : userRef.set({ ...user, created: Date.now() }, { merge: true });
-    });
+    const doc = await userRef.get();
+    if (!doc.exists) {
+      user = { ...user, created: Date.now() };
+      userRef.set(user, { merge: true });
+    }
   }
 
   public update(user: User) {

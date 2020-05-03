@@ -43,6 +43,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.hangup();
+    this.closeStream(this.user);
   }
 
   ngOnInit() {
@@ -132,6 +133,18 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       .catch((error) => console.log(error))
       .finally(() => muteSelfMedia());
+  }
+
+  public closeStream(user: User) {
+    if (!user) return;
+    if (!user.stream) return;
+
+    user.stream.getTracks().forEach((track) => {
+      track.stop();
+      user.stream.removeTrack(track);
+    });
+
+    user.stream = null;
   }
 
   public requestMedia() {
