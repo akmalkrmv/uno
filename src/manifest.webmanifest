@@ -1,6 +1,7 @@
 {
   "name": "Uno",
   "short_name": "Uno",
+  "gcm_sender_id": "103953800507",
   "theme_color": "#666666",
   "background_color": "#666666",
   "display": "standalone",
