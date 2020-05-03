@@ -1,8 +1,15 @@
+<mat-card>
+  <mat-slide-toggle (change)="toggleCardView()">
+    Card View
+  </mat-slide-toggle>
+</mat-card>
+
 <div class="list">
   <ng-container *ngFor="let user of users$ | async | sort: 'created':'desc'">
     <app-user-card
       class="list-item"
       [user]="user"
+      [isCardView]="isCardView$ | async"
       (save)="save($event)"
       (remove)="remove($event)"
     ></app-user-card>

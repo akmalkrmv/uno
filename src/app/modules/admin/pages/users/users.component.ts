@@ -10,6 +10,7 @@ import { User } from '@models/index';
 })
 export class UsersComponent implements OnInit {
   public users$ = new BehaviorSubject<User[]>([]);
+  public isCardView$ = new BehaviorSubject(true);
 
   constructor(private api: ApiService) {}
 
@@ -30,5 +31,9 @@ export class UsersComponent implements OnInit {
   public remove(roomId: string) {
     this.api.roomUsers.removeByUserId(roomId);
     this.api.users.remove(roomId);
+  }
+
+  public toggleCardView() {
+    this.isCardView$.next(!this.isCardView$.value);
   }
 }
