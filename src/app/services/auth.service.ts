@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { switchMap, map, take } from 'rxjs/operators';
-import { of, from, Observable } from 'rxjs';
+import { of, from, Observable, combineLatest, BehaviorSubject } from 'rxjs';
 
 import * as firebaseui from 'firebaseui';
 import * as firebaseApp from 'firebase/app';
@@ -20,8 +20,8 @@ export class AuthService {
     private fireauth: AngularFireAuth,
     private api: ApiService
   ) {
-    this.user$ = this.fireauth.authState.pipe(
-      switchMap((user) => {
+    this.user$ = combineLatest([fireauth.authState, api.users.users$]).pipe(
+      switchMap(([user]) => {
         return user ? this.api.users.findById(user.uid) : of(null);
       })
     );

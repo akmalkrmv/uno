@@ -9,6 +9,7 @@ import { PlayComponent } from './modules/bura/components/play/play.component';
 import { SigninComponent } from './modules/auth/signin/signin.component';
 import { LayoutComponent } from './componentes/layout/layout.component';
 import { HomeComponent } from './componentes/home/home.component';
+import { NameComponent } from './modules/auth/name/name.component';
 
 const routes: Routes = [
   {
@@ -21,10 +22,8 @@ const routes: Routes = [
       { path: 'game/:id', component: PlayComponent },
     ],
   },
-  {
-    path: 'login',
-    component: SigninComponent,
-  },
+  { path: 'login', component: SigninComponent },
+  { path: 'name', component: NameComponent },
   {
     path: 'admin',
     canActivate: [AdminGuard],

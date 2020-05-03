@@ -59,7 +59,7 @@ export class UsersApiService extends BaseFirestoreService
     }
   }
 
-  public update(user: User) {
+  public update(user: Partial<User>) {
     const userRef = this.firestore.doc(`users/${user.id}`).ref;
     return userRef.update({ ...user });
   }

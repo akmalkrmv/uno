@@ -1,1 +1,19 @@
-<p>name works!</p>
+<div class="container">
+  <form class="form">
+    <mat-form-field class="name-field">
+      <mat-label>Введите ваше имя</mat-label>
+      <input matInput [formControl]="name" required />
+      <mat-error *ngIf="name.invalid">Имя не может быть путым</mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="button"
+      [disabled]="name.invalid"
+      (click)="next()"
+    >
+      Далее
+    </button>
+  </form>
+</div>

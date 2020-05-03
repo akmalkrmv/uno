@@ -1,0 +1,21 @@
+.container {
+  width: 200px;
+  margin: 0 auto;
+  padding-top: 200px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .form {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .name-field {
+      margin-bottom: 10px;
+      color: #fff;
+    }
+  }
+}
