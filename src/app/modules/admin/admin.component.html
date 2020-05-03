@@ -3,15 +3,12 @@
     <div>Admin</div>
     <div class="fill-remaining-space"></div>
     <div>
-      <button mat-button routerLink="/admin/rooms" routerLinkActive="active">
-        Rooms
-      </button>
-      <button mat-button routerLink="/admin/users" routerLinkActive="active">
-        Users
-      </button>
+      <button mat-button routerLink="/">Home</button>
+      <button mat-button routerLink="/admin/rooms">Rooms</button>
+      <button mat-button routerLink="/admin/users">Users</button>
     </div>
   </mat-toolbar>
-  
+
   <div class="admin-content">
     <router-outlet></router-outlet>
   </div>
