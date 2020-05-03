@@ -43,7 +43,7 @@
     </div>
 
     <mat-progress-bar
-      *ngIf="connection.peer.connectionState !== 'connected'"
+      *ngIf="!connection.isConnectedOrConnecting"
       mode="indeterminate"
       class="progress-bar-inverse"
     ></mat-progress-bar>
