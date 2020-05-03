@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1588515917194,
+  "timestamp": 1588520759378,
   "index": "https://akmalkrmv.github.io/uno/index.html",
   "assetGroups": [
     {
@@ -10,18 +10,18 @@
       "urls": [
         "https://akmalkrmv.github.io/uno/5-es2015.64b6217b4d579a652680.js",
         "https://akmalkrmv.github.io/uno/5-es5.64b6217b4d579a652680.js",
-        "https://akmalkrmv.github.io/uno/6-es2015.9bbdff9a663b6d56d16b.js",
-        "https://akmalkrmv.github.io/uno/6-es5.9bbdff9a663b6d56d16b.js",
+        "https://akmalkrmv.github.io/uno/6-es2015.7efd20ffcf42e63d3c00.js",
+        "https://akmalkrmv.github.io/uno/6-es5.7efd20ffcf42e63d3c00.js",
         "https://akmalkrmv.github.io/uno/favicon.ico",
         "https://akmalkrmv.github.io/uno/index.html",
-        "https://akmalkrmv.github.io/uno/main-es2015.dc28ef74ecf4be54c22a.js",
-        "https://akmalkrmv.github.io/uno/main-es5.dc28ef74ecf4be54c22a.js",
+        "https://akmalkrmv.github.io/uno/main-es2015.85697a20d88eb05c80c4.js",
+        "https://akmalkrmv.github.io/uno/main-es5.85697a20d88eb05c80c4.js",
         "https://akmalkrmv.github.io/uno/manifest.webmanifest",
         "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js",
         "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js",
-        "https://akmalkrmv.github.io/uno/runtime-es2015.b010ced2b8b58a22931c.js",
-        "https://akmalkrmv.github.io/uno/runtime-es5.b010ced2b8b58a22931c.js",
-        "https://akmalkrmv.github.io/uno/styles.a562f9197029312e7726.css"
+        "https://akmalkrmv.github.io/uno/runtime-es2015.727f1f637d369da6687c.js",
+        "https://akmalkrmv.github.io/uno/runtime-es5.727f1f637d369da6687c.js",
+        "https://akmalkrmv.github.io/uno/styles.80212891535e0e6d643b.css"
       ],
       "patterns": []
     },
@@ -44,12 +44,7 @@
         "https://akmalkrmv.github.io/uno/assets/icons/icon-72x72.png",
         "https://akmalkrmv.github.io/uno/assets/icons/icon-96x96.png",
         "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png",
-        "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg",
-        "https://akmalkrmv.github.io/uno/fontawesome-webfont.674f50d287a8c48dc19b.eot",
-        "https://akmalkrmv.github.io/uno/fontawesome-webfont.912ec66d7572ff821749.svg",
-        "https://akmalkrmv.github.io/uno/fontawesome-webfont.af7ae505a9eed503f8b8.woff2",
-        "https://akmalkrmv.github.io/uno/fontawesome-webfont.b06871f281fee6b241d6.ttf",
-        "https://akmalkrmv.github.io/uno/fontawesome-webfont.fee66e712a8a08eef580.woff"
+        "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg"
       ],
       "patterns": []
     }
@@ -58,8 +53,8 @@
   "hashTable": {
     "https://akmalkrmv.github.io/uno/5-es2015.64b6217b4d579a652680.js": "eadcac2f7fa2a60f45b25e52231768ea14c22890",
     "https://akmalkrmv.github.io/uno/5-es5.64b6217b4d579a652680.js": "eadcac2f7fa2a60f45b25e52231768ea14c22890",
-    "https://akmalkrmv.github.io/uno/6-es2015.9bbdff9a663b6d56d16b.js": "14d441db9df85f475a6d82927c7bdb587332d70f",
-    "https://akmalkrmv.github.io/uno/6-es5.9bbdff9a663b6d56d16b.js": "ec6bb2a72d8dbc82cbaf12013af2662472cb33c4",
+    "https://akmalkrmv.github.io/uno/6-es2015.7efd20ffcf42e63d3c00.js": "58e7ea36b7c21fa484913bf9a5bac45b0778222a",
+    "https://akmalkrmv.github.io/uno/6-es5.7efd20ffcf42e63d3c00.js": "7a04b0f34d1dbfce82be13c27694e85aeca64fbd",
     "https://akmalkrmv.github.io/uno/assets/icons/android-chrome-192x192.png": "7e2ad66d858ddba8ac088686cde07ce74acc6852",
     "https://akmalkrmv.github.io/uno/assets/icons/apple-touch-icon.png": "2178b53154f7923521affa392063622987c2fd6f",
     "https://akmalkrmv.github.io/uno/assets/icons/favicon-16x16.png": "8844a34ce060af421a615e8aae49f9ff6a568eb5",
@@ -76,20 +71,15 @@
     "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png": "c9ac061cb348a2dfb85feb38882f5049de3e54e4",
     "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg": "fd1569dfae47d7e60104bcbd8ebbef362d53e4cb",
     "https://akmalkrmv.github.io/uno/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
-    "https://akmalkrmv.github.io/uno/fontawesome-webfont.674f50d287a8c48dc19b.eot": "d980c2ce873dc43af460d4d572d441304499f400",
-    "https://akmalkrmv.github.io/uno/fontawesome-webfont.912ec66d7572ff821749.svg": "98a8aa5cf7d62c2eff5f07ede8d844b874ef06ed",
-    "https://akmalkrmv.github.io/uno/fontawesome-webfont.af7ae505a9eed503f8b8.woff2": "d6f48cba7d076fb6f2fd6ba993a75b9dc1ecbf0c",
-    "https://akmalkrmv.github.io/uno/fontawesome-webfont.b06871f281fee6b241d6.ttf": "13b1eab65a983c7a73bc7997c479d66943f7c6cb",
-    "https://akmalkrmv.github.io/uno/fontawesome-webfont.fee66e712a8a08eef580.woff": "28b782240b3e76db824e12c02754a9731a167527",
-    "https://akmalkrmv.github.io/uno/index.html": "26987926e56d77036b8843ab2563c402522a4226",
-    "https://akmalkrmv.github.io/uno/main-es2015.dc28ef74ecf4be54c22a.js": "f64bd1cdbd5372c35b144ea21ac0830c98665d08",
-    "https://akmalkrmv.github.io/uno/main-es5.dc28ef74ecf4be54c22a.js": "d66452e8da102180a7af33824c1040ce899c984e",
+    "https://akmalkrmv.github.io/uno/index.html": "d35ed4df5adfe69c4bcb62975f0a069191023f9d",
+    "https://akmalkrmv.github.io/uno/main-es2015.85697a20d88eb05c80c4.js": "74e1c5ff8f7f461dc4f86db65195ffb822cf96b2",
+    "https://akmalkrmv.github.io/uno/main-es5.85697a20d88eb05c80c4.js": "4e096b9526638fe0001a220d59e25ac90ed133fe",
     "https://akmalkrmv.github.io/uno/manifest.webmanifest": "82eb87ee592d729d993bb6036d8b7285f09e2bb0",
     "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js": "72ad4ccc0a3916ae4598199447cdeadd6d380570",
     "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js": "e5472003c8575a8fca7583648df3905038faeb18",
-    "https://akmalkrmv.github.io/uno/runtime-es2015.b010ced2b8b58a22931c.js": "ccefd487e1e2c27f84c7abfc2863b9da1c4856e4",
-    "https://akmalkrmv.github.io/uno/runtime-es5.b010ced2b8b58a22931c.js": "cbed153bc6caaa7506661c80f37a4a8f41710e19",
-    "https://akmalkrmv.github.io/uno/styles.a562f9197029312e7726.css": "67f4d3a2d1a080c3ec8c9043905c1ab6658e4e42"
+    "https://akmalkrmv.github.io/uno/runtime-es2015.727f1f637d369da6687c.js": "5ce9069ac18de924ed4aae2afff3e87d5977baae",
+    "https://akmalkrmv.github.io/uno/runtime-es5.727f1f637d369da6687c.js": "d67d0ab4807cdd29ee0b86d77621fdcf46f79233",
+    "https://akmalkrmv.github.io/uno/styles.80212891535e0e6d643b.css": "37ce7084029521e9fd861c0c6523819b3b7d49e3"
   },
   "navigationUrls": [
     {
