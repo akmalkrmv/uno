@@ -14,16 +14,17 @@ const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: '', component: HomeComponent },
-      // { path: 'room/:id', component: RoomComponent },
-      // { path: 'game/:id', component: PlayComponent },
+      { path: 'room/:id', component: RoomComponent },
+      { path: 'game/:id', component: PlayComponent },
     ],
   },
-  { path: 'login', component: SigninComponent },
-  { path: 'room/:id', component: RoomComponent },
-  { path: 'game', component: PlayComponent },
-  { path: 'game/:id', component: PlayComponent },
+  {
+    path: 'login',
+    component: SigninComponent,
+  },
   {
     path: 'admin',
     canActivate: [AdminGuard],
