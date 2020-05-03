@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { MaterialImportsModule } from './material-imports.module';
-import { FirestoreImportsModule } from './firestore-imports.module';
+import { FirebaseImportsModule } from './firebase-imports.module';
 import { ArraySortPipe } from 'src/app/pipes/sort-by.pipe';
 
 const pipes = [ArraySortPipe];
@@ -14,7 +14,7 @@ const pipes = [ArraySortPipe];
     CommonModule,
     FormsModule,
     MaterialImportsModule,
-    FirestoreImportsModule,
+    FirebaseImportsModule,
     ...pipes,
   ],
 })

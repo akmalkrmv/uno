@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { switchMap, map, take } from 'rxjs/operators';
 import { of, from, Observable } from 'rxjs';
 
@@ -11,23 +10,20 @@ import 'firebase/auth';
 
 import { User } from '@models/index';
 import { BaseFirestoreService } from './repository/base-firestore.service';
+import { ApiService } from './repository/api.service';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService extends BaseFirestoreService {
+export class AuthService {
   public user$: Observable<User>;
 
   constructor(
     private router: Router,
     private fireauth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private api: ApiService
   ) {
-    super();
-
     this.user$ = this.fireauth.authState.pipe(
       switchMap((user) => {
-        return user
-          ? this.documentChanges(this.firestore.doc<User>(`users/${user.uid}`))
-          : of(null);
+        return user ? this.api.users.findById(user.uid) : of(null);
       })
     );
   }
@@ -44,6 +40,8 @@ export class AuthService extends BaseFirestoreService {
     return this.user$.pipe(
       take(1),
       switchMap((user) => {
+        console.log(user);
+
         if (user) return of(new User(user.id, user.name));
 
         const email = 'user-' + Math.floor(Math.random() * 100000) + '@uno.com';
@@ -108,7 +106,6 @@ export class AuthService extends BaseFirestoreService {
 
   public updateUserData(user: firebase.User | User, name?: string) {
     console.log('updateUserData', user);
-    const userRef = this.firestore.doc(`users/${user.uid}`);
     const payload = {
       id: user.uid,
       uid: user.uid,
@@ -119,13 +116,8 @@ export class AuthService extends BaseFirestoreService {
       email: user.email,
     };
 
-    return userRef.ref
-      .get()
-      .then((user) => {
-        return user.exists
-          ? userRef.update(payload)
-          : userRef.set({ ...payload, created: Date.now() }, { merge: true });
-      })
+    return this.api.users
+      .addOrUpdate(payload)
       .then(() => this.router.navigate(['/']));
   }
 }

@@ -45,6 +45,12 @@ export class UsersApiService extends BaseLocalStoreService {
     );
   }
 
+  public addOrUpdate(user: any): Promise<any> {
+    return this.findById(user.id)
+      ? this.userCollection.update(user.id, user)
+      : this.userCollection.add(user).toPromise();
+  }
+
   public update(user: User) {
     return this.userCollection.update(user.id, user);
   }

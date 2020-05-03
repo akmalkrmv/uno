@@ -48,6 +48,15 @@ export class UsersApiService extends BaseFirestoreService {
     );
   }
 
+  public addOrUpdate(user: any): Promise<void> {
+    const userRef = this.firestore.doc(`users/${user.id}`).ref;
+    return userRef.get().then((user) => {
+      return user.exists
+        ? userRef.update({ ...user })
+        : userRef.set({ ...user, created: Date.now() }, { merge: true });
+    });
+  }
+
   public update(user: User) {
     const userRef = this.firestore.doc(`users/${user.id}`).ref;
     return userRef.update({ ...user });

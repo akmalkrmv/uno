@@ -12,12 +12,16 @@ import { LayoutComponent } from './componentes/layout/layout.component';
 
 // Modules
 import { MaterialImportsModule } from './shared/material-imports.module';
-import { FirestoreImportsModule } from './shared/firestore-imports.module';
+import { FirebaseImportsModule } from './shared/firebase-imports.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BuraModule } from './modules/bura/bura.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { VideoChatModule } from './modules/video-chat/video-chat.module';
+
+// Services
+import { ApiService } from '@services/repository/api.service';
+import { LocalApiService } from '@services/local-repository/api.service';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, LayoutComponent],
@@ -30,7 +34,7 @@ import { VideoChatModule } from './modules/video-chat/video-chat.module';
     }),
     // Imports
     MaterialImportsModule,
-    FirestoreImportsModule,
+    FirebaseImportsModule,
     // App
     AppRoutingModule,
     BuraModule,
@@ -38,7 +42,10 @@ import { VideoChatModule } from './modules/video-chat/video-chat.module';
     VideoChatModule,
     AuthModule,
   ],
-  providers: [],
+  providers: [
+    // { provide: ApiService, useClass: LocalApiService },
+    // ApiService
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

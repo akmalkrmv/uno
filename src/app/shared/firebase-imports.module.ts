@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
     AngularFireAuthModule,
     AngularFireMessagingModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule.enablePersistence()
+    // AngularFirestoreModule.enablePersistence()
   ],
   exports: [
     AngularFirestoreModule,
@@ -19,4 +19,4 @@ import { environment } from 'src/environments/environment';
     AngularFireMessagingModule,
   ],
 })
-export class FirestoreImportsModule {}
+export class FirebaseImportsModule {}
