@@ -42,6 +42,12 @@
         <input matInput [(ngModel)]="user.email" />
       </mat-form-field>
     </div>
+    <div>
+      <mat-form-field>
+        <mat-label>Role</mat-label>
+        <input matInput [(ngModel)]="user.role" />
+      </mat-form-field>
+    </div>
     <div class="tokens" *ngIf="user.fcmTokens">
       Tokens: {{ user.fcmTokens | json }}
     </div>

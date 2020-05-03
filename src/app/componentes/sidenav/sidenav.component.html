@@ -10,7 +10,7 @@
       <mat-icon>group_add</mat-icon>
       <span class="menu-item">Присоеденится</span>
     </a>
-    <a mat-list-item routerLink="/admin/users">
+    <a mat-list-item *ngIf="user.role === 'admin'" routerLink="/admin/users">
       <mat-icon>perm_identity</mat-icon>
       <span class="menu-item">Администрирование</span>
     </a>
