@@ -17,29 +17,7 @@
       <div class="title">{{ title.text$ | async }}</div>
       <div class="fill-remaining-space"></div>
 
-      <button
-        *ngIf="commands.hasGroups$ | async"
-        [matMenuTriggerFor]="menu"
-        mat-icon-button
-        aria-label="menu"
-      >
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <ng-container *ngFor="let group of commands.groups$ | async">
-          <ng-container *ngFor="let command of group.commands">
-            <button
-              *ngIf="command.visible"
-              mat-menu-item
-              (click)="commands.run(command.name)"
-              [disabled]="command.disabled"
-            >
-              <mat-icon *ngIf="command.icon">{{ command.icon }}</mat-icon>
-              <span>{{ command.text }}</span>
-            </button>
-          </ng-container>
-        </ng-container>
-      </mat-menu>
+      <app-commands-menu></app-commands-menu>
 
       <button mat-icon-button (click)="closeApp()">
         <mat-icon>close</mat-icon>

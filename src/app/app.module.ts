@@ -11,6 +11,7 @@ import { HomeComponent } from './componentes/home/home.component';
 import { LayoutComponent } from './componentes/layout/layout.component';
 import { SidenavComponent } from './componentes/sidenav/sidenav.component';
 import { ProfileComponent } from './componentes/profile/profile.component';
+import { CommandsMenuComponent } from './componentes/commands-menu/commands-menu.component';
 
 // Modules
 import { MaterialImportsModule } from './shared/material-imports.module';
@@ -32,6 +33,7 @@ import { LocalApiService } from '@services/local-repository/api.service';
     LayoutComponent,
     SidenavComponent,
     ProfileComponent,
+    CommandsMenuComponent,
   ],
   imports: [
     BrowserModule,

@@ -8,7 +8,6 @@ import {
 import { Observable, BehaviorSubject } from 'rxjs';
 import { AuthService } from '@services/auth.service';
 import { TitleService } from '@services/title.service';
-import { CommandsService } from '@services/commands.service';
 
 @Component({
   selector: 'app-layout',
@@ -22,7 +21,6 @@ export class LayoutComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private router: Router,
-    public commands: CommandsService,
     public auth: AuthService,
     public title: TitleService
   ) {
