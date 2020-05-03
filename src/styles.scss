@@ -25,18 +25,18 @@ body {
   }
 }
 
+.fill-remaining-space {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+}
+
 .warn-color {
   color: #f44336;
 }
 
-.fa-phone-hangup {
-  transform: rotate(135deg) translateY(2px);
-}
-
-.mat-card {
-  .mat-card-header-text {
-    margin: 0;
-  }
+.mat-card .mat-card-header-text {
+  margin: 0;
 }
 
 .mat-toolbar-dark {
