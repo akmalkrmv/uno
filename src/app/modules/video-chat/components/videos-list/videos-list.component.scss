@@ -45,6 +45,12 @@
   .content-wapper {
     flex-grow: 1;
     overflow: auto;
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-position-y: bottom;
+
     .content {
       height: 100%;
     }

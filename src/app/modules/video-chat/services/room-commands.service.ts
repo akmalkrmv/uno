@@ -4,12 +4,17 @@ import { filter } from 'rxjs/operators';
 
 import { CommandsService } from '@services/commands.service';
 import { VideoChatCommandGroup } from '@constants/command-groups';
+import { canShareLink } from '@utils/index';
 
 @Injectable({ providedIn: 'root' })
 export class RoomCommandsService {
   constructor(private commands: CommandsService) {}
 
   public register() {
+    VideoChatCommandGroup.commands.find(
+      (command) => command.name === 'shareLink'
+    ).visible = canShareLink();
+
     this.commands.registerGroup(VideoChatCommandGroup);
     this.commands.current$
       .pipe(untilDestroyed(this, 'unregister'))

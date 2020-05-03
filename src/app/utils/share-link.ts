@@ -1,3 +1,7 @@
+export function canShareLink() {
+  return 'share' in navigator;
+}
+
 export function shareLink(text: string, url: string) {
   if ('share' in navigator) {
     (navigator as any)
