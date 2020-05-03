@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 
-import { RoomComponent } from './modules/video-chat/room/room.component';
+import { RoomComponent } from './modules/video-chat/components/room/room.component';
 import { PlayComponent } from './modules/bura/components/play/play.component';
 import { SigninComponent } from './modules/auth/signin/signin.component';
 import { LayoutComponent } from './componentes/layout/layout.component';

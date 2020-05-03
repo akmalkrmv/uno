@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { CallDialogComponent } from './call-dialog/call-dialog.component';
-import { RoomComponent } from './room/room.component';
-import { RoomControlsComponent } from './room-controls/room-controls.component';
-import { RoomListComponent } from './room-list/room-list.component';
-import { RoomToolbarComponent } from './room-toolbar/room-toolbar.component';
-import { SelfVideoComponent } from './self-video/self-video.component';
-import { UserListComponent } from './user-list/user-list.component';
-import { VideoControlsComponent } from './video-controls/video-controls.component';
-import { VideoItemComponent } from './video-item/video-item.component';
-import { VideosListComponent } from './videos-list/videos-list.component';
+import { CallDialogComponent } from './components/call-dialog/call-dialog.component';
+import { RoomComponent } from './components/room/room.component';
+import { RoomControlsComponent } from './components/room-controls/room-controls.component';
+import { RoomListComponent } from './components/room-list/room-list.component';
+import { RoomToolbarComponent } from './components/room-toolbar/room-toolbar.component';
+import { SelfVideoComponent } from './components/self-video/self-video.component';
+import { UserListComponent } from './components/user-list/user-list.component';
+import { VideoControlsComponent } from './components/video-controls/video-controls.component';
+import { VideoItemComponent } from './components/video-item/video-item.component';
+import { VideosListComponent } from './components/videos-list/videos-list.component';
 
 const routes: Routes = [{ path: '', component: RoomListComponent }];
 
