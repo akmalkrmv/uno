@@ -1,7 +1,28 @@
 .sidenav-container {
-  min-height: 100%;
+  height: 100%;
   background-color: #333;
   color: #fff;
+
+  .title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 70%;
+    white-space: nowrap;
+  }
+
+  .layout-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .mat-toolbar-dark {
+      flex-grow: 0;
+    }
+    .main-content {
+      height: 100%;
+      flex-grow: 1;
+    }
+  }
 }
 
 .sidenav {
@@ -13,8 +34,4 @@
 
 .mat-drawer {
   border-right-color: #222;
-}
-
-.nav-list {
-  padding: 10px;
 }

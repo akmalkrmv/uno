@@ -15,4 +15,12 @@ export class RoomToolbarComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+  
+  public call() {
+    this.menuItemClicked.emit({ type: 'call' });
+  }
+
+  public back(): void {
+    history.back();
+  }
 }

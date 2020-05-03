@@ -1,7 +1,13 @@
 <mat-toolbar class="header-controls" *ngIf="user">
-  <div class="title">{{ title || user.name }}</div>
+  <div>
+    <button mat-icon-button (click)="back()">
+      <mat-icon>arrow_back_ios</mat-icon>
+    </button>
+  </div>
   <div class="fill-remaining-space"></div>
-
+  <!-- <button mat-button color="accent" (click)="call()">
+    <mat-icon>phone</mat-icon>
+  </button> -->
   <app-room-controls (menuItemClicked)="menuItemClicked.emit($event)">
   </app-room-controls>
 </mat-toolbar>

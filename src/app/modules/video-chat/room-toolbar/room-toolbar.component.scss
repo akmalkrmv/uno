@@ -1,6 +1,4 @@
 .header-controls {
-  padding: 10px 10px 10px 20px;
-
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -8,11 +6,7 @@
   .title {
     text-overflow: ellipsis;
     overflow: hidden;
-    max-width: 85%;
+    max-width: 70%;
     white-space: nowrap;
-  }
-
-  .fill-remaining-space {
-    flex: 1 1 auto;
   }
 }

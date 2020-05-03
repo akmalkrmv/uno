@@ -9,6 +9,8 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './componentes/home/home.component';
 import { LayoutComponent } from './componentes/layout/layout.component';
+import { SidenavComponent } from './componentes/sidenav/sidenav.component';
+import { ProfileComponent } from './componentes/profile/profile.component';
 
 // Modules
 import { MaterialImportsModule } from './shared/material-imports.module';
@@ -24,7 +26,13 @@ import { ApiService } from '@services/repository/api.service';
 import { LocalApiService } from '@services/local-repository/api.service';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, LayoutComponent],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    LayoutComponent,
+    SidenavComponent,
+    ProfileComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

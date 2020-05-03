@@ -1,0 +1,10 @@
+<div class="profile-container" *ngIf="user">
+  <div class="profile-avatar">
+    <img *ngIf="user.photoURL" [src]="user.photoURL" class="profile-img" />
+    <mat-icon *ngIf="!user.photoURL">camera_alt</mat-icon>
+  </div>
+  <div class="profile-data">
+    <div class="profile-data__primary">{{ user.name || user.displayName }}</div>
+    <div class="profile-data__secondary">{{ user.phoneNumber || user.email }}</div>
+  </div>
+</div>

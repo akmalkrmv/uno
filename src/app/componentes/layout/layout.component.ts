@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 import {
   BreakpointObserver,
   Breakpoints,
   BreakpointState,
 } from '@angular/cdk/layout';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { AuthService } from '@services/auth.service';
+import { TitleService } from '@services/title.service';
 
 @Component({
   selector: 'app-layout',
@@ -13,14 +15,22 @@ import { AuthService } from '@services/auth.service';
   styleUrls: ['./layout.component.scss'],
 })
 export class LayoutComponent implements OnInit {
-  isHeadset: Observable<BreakpointState> = this.breakpointObserver.observe(
-    Breakpoints.Handset
-  );
+  public isHeadset$: Observable<BreakpointState>;
+  public hasSubmenu$ = new BehaviorSubject(false);
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    public auth: AuthService
-  ) {}
+    private router: Router,
+    public auth: AuthService,
+    public title: TitleService
+  ) {
+    this.isHeadset$ == this.breakpointObserver.observe(Breakpoints.Handset);
+  }
 
   ngOnInit(): void {}
+
+  closeApp(): void {
+    this.router.navigate(['/']);
+    window.close();
+  }
 }

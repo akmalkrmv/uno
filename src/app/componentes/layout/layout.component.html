@@ -4,40 +4,36 @@
     mode="over"
     class="sidenav"
     fixedInViewport="false"
-    [attr.role]="isHeadset ? 'dialog' : 'navigation'"
+    [attr.role]="isHeadset$ ? 'dialog' : 'navigation'"
   >
-    <mat-toolbar class="mat-toolbar-dark">
-      <div *ngIf="!(auth.user$ | async)">Menu</div>
-      <div *ngIf="auth.user$ | async as user">
-        <button mat-button [routerLink]="['/admin/users/' + user.uid]">
-          <mat-icon>edit</mat-icon>
-          <span>{{ user.displayName }}</span>
-        </button>
-      </div>
-    </mat-toolbar>
-    <mat-nav-list class="nav-list">
-      <div mat-list-item>Создать комнату</div>
-      <mat-divider></mat-divider>
-      <div mat-list-item>Присоеденится</div>
-      <mat-divider></mat-divider>
-
-      <div mat-list-item *ngIf="auth.user$ | async as user">
-        <button mat-button (click)="auth.signOut()">
-          <mat-icon color="warn">power_settings_new</mat-icon>
-          <span class="warn-color">Выйти</span>
-        </button>
-      </div>
-
-      <ng-container> </ng-container>
-    </mat-nav-list>
+    <app-sidenav [user]="auth.user$ | async"></app-sidenav>
   </mat-sidenav>
 
-  <mat-sidenav-content>
+  <mat-sidenav-content class="layout-content">
     <mat-toolbar class="mat-toolbar-dark">
       <button type="button" mat-icon-button (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <span>Uno</span>
+      <div class="title">{{ title.text$ | async }}</div>
+      <div class="fill-remaining-space"></div>
+
+      <ng-container *ngIf="!(hasSubmenu$ | async)">
+        <button mat-icon-button (click)="closeApp()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="hasSubmenu$ | async">
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="closeApp()">
+            <mat-icon>close</mat-icon>
+            <span>Закрыть</span>
+          </button>
+        </mat-menu>
+      </ng-container>
     </mat-toolbar>
 
     <div class="main-content">

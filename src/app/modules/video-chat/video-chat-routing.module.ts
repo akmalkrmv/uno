@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { Routes, RouterModule } from '@angular/router';
 
 import { CallDialogComponent } from './call-dialog/call-dialog.component';
 import { RoomComponent } from './room/room.component';
@@ -12,20 +12,10 @@ import { VideoControlsComponent } from './video-controls/video-controls.componen
 import { VideoItemComponent } from './video-item/video-item.component';
 import { VideosListComponent } from './videos-list/videos-list.component';
 
+const routes: Routes = [{ path: '', component: RoomListComponent }];
+
 @NgModule({
-  entryComponents: [CallDialogComponent],
-  declarations: [
-    CallDialogComponent,
-    RoomComponent,
-    RoomControlsComponent,
-    RoomListComponent,
-    RoomToolbarComponent,
-    SelfVideoComponent,
-    UserListComponent,
-    VideoControlsComponent,
-    VideoItemComponent,
-    VideosListComponent,
-  ],
-  imports: [SharedModule],
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
 })
-export class VideoChatModule {}
+export class VideoChatRoutingModule {}

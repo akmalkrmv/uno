@@ -1,0 +1,22 @@
+<ng-container *ngIf="user">
+  <app-profile [user]="user" class="profile-panel"> </app-profile>
+
+  <mat-nav-list class="nav-list">
+    <a mat-list-item>
+      <mat-icon>add</mat-icon>
+      <span class="menu-item">Создать комнату</span>
+    </a>
+    <a mat-list-item>
+      <mat-icon>group_add</mat-icon>
+      <span class="menu-item">Присоеденится</span>
+    </a>
+    <a mat-list-item routerLink="/admin/users">
+      <mat-icon>perm_identity</mat-icon>
+      <span class="menu-item">Администрирование</span>
+    </a>
+    <a mat-list-item (click)="signOut()">
+      <mat-icon>exit_to_app</mat-icon>
+      <span class="menu-item">Выйти</span>
+    </a>
+  </mat-nav-list>
+</ng-container>

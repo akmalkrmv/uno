@@ -17,6 +17,7 @@ import { Offer, Answer, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { ConnectionService } from '@services/connection/connection.service';
+import { TitleService } from '@services/title.service';
 
 @Component({
   selector: 'app-room',
@@ -38,12 +39,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
-    private connectionService: ConnectionService
+    private connectionService: ConnectionService,
+    private title: TitleService
   ) {}
 
   ngOnDestroy() {
     this.hangup();
     this.closeStream(this.user);
+    this.title.text$.next('');
   }
 
   ngOnInit() {
@@ -86,10 +89,10 @@ export class RoomComponent implements OnInit, OnDestroy {
       switchMap((userIds) => this.api.users.getByIds(userIds))
     );
 
-    this.title$ = this.onlineUsers$.pipe(
-      untilDestroyed(this),
-      map((users) => users.map((user) => user.name).join(', '))
-    );
+    this.onlineUsers$.pipe(untilDestroyed(this)).subscribe((users) => {
+      const names = users.map((user) => user.name).join(', ');
+      this.title.text$.next(names);
+    });
 
     this.offers$ = this.api.room.userOffers(this.user.id).pipe(
       untilDestroyed(this),

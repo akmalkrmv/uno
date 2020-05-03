@@ -55,9 +55,9 @@ export class VideosListComponent implements OnInit, AfterViewInit {
       const height = clientY - videos.parentElement.offsetTop;
       const parentHeight = videos.parentElement.clientHeight;
       const hasEnoughHeight = parentHeight - height > 50;
-      const videosHeight = hasEnoughHeight ? height : parentHeight;
+      const videosHeight = hasEnoughHeight ? height + 'px' : '100%';
 
-      videos.style.height = videosHeight + 'px';
+      videos.style.height = videosHeight;
       this.isContentVisible = hasEnoughHeight;
     }
   }
