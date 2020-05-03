@@ -114,7 +114,7 @@ export class User {
 
     const state = connection.peer.connectionState;
 
-    if (state === 'disconnected' || state === 'failed' || state === 'closed') {
+    if (state === 'disconnected' || state === 'failed') {
       const index = this.connections.indexOf(connection);
       if (index >= 0) {
         connection.close();
