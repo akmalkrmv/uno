@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/models/user';
 
@@ -19,7 +18,7 @@ export class VideoControlsComponent implements OnInit {
   private videoDevices: MediaDeviceInfo[] = [];
   private currentDevice: MediaDeviceInfo = null;
 
-  constructor(private snackBar: MatSnackBar) {}
+  constructor() {}
 
   ngOnInit(): void {
     navigator.mediaDevices.enumerateDevices().then((devices) => {

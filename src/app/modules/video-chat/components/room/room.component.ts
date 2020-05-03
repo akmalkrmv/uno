@@ -1,4 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+
 import { User } from '@models/index';
 import { RoomService } from '../../services/room.service';
 
@@ -8,15 +11,16 @@ import { RoomService } from '../../services/room.service';
   styleUrls: ['./room.component.scss'],
 })
 export class RoomComponent implements OnInit, OnDestroy {
-  public user: User;
+  public user$: Observable<User> = this.room.user$;
 
-  constructor(private room: RoomService) {}
+  constructor(private activeRoute: ActivatedRoute, private room: RoomService) {}
 
   ngOnDestroy() {
     this.room.ngOnDestroy();
   }
 
   ngOnInit() {
+    this.room.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.room.ngOnInit();
   }
 }

@@ -1,19 +1,23 @@
 <div class="room-container">
-  <app-videos-list class="main-content" [user]="user">
-    <!-- <router-outlet></router-outlet> -->
-    <!-- <app-play-cards></app-play-cards> -->
-    <!-- <app-message-list
-      *ngIf="user"
-      [userId]="user.id"
-      [roomId]="roomId"
-    ></app-message-list> -->
-  </app-videos-list>
+  <ng-container *ngIf="user$ | async as user">
+    <app-videos-list class="main-content" [user]="user">
+      <!-- <router-outlet></router-outlet> -->
+      <!-- <app-play-cards></app-play-cards> -->
+      <!-- <app-message-list
+        *ngIf="user"
+        [userId]="user.id"
+        [roomId]="roomId"
+      ></app-message-list> -->
+    </app-videos-list>
 
-  <footer class="footer">
-    <app-video-controls
-      *ngIf="user && user.stream"
-      [user]="user"
-      class="stream-controls"
-    ></app-video-controls>
-  </footer>
+    <footer class="footer">
+      <div></div>
+      <app-video-controls
+        *ngIf="user.stream"
+        [user]="user"
+        class="stream-controls"
+      ></app-video-controls>
+      <div></div>
+    </footer>
+  </ng-container>
 </div>

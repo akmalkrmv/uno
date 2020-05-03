@@ -6,7 +6,7 @@ import { User } from '@models/index';
 export class MediaService {
   constructor() {}
 
-  public setStream(user: User) {
+  public async setStream(user: User) {
     if (!user) return;
 
     const userStream = new MediaStream();
@@ -15,21 +15,23 @@ export class MediaService {
     };
 
     // Adding audio tracks
-    navigator.mediaDevices
+    const audioStream = navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => addTracks(stream))
       .catch((error) => console.log(error));
 
     // Adding video tracks
-    navigator.mediaDevices
+    const videoStream = navigator.mediaDevices
       .getUserMedia({ video: videoConstraints })
       .then((stream) => addTracks(stream))
       .catch((error) => console.log(error));
 
-    if (userStream.getTracks().length > 0) {
-      user.stream = userStream;
-      this.muteSelfStream();
-    }
+    Promise.all([audioStream, videoStream]).then(() => {
+      if (userStream.getTracks().length > 0) {
+        user.stream = userStream;
+        this.muteSelfStream();
+      }
+    });
   }
 
   public closeStream(user: User) {

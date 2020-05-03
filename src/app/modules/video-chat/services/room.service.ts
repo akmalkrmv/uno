@@ -24,17 +24,19 @@ import { MediaService } from './media.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService {
-  public user: User;
-  public roomId: string;
   public onlineUsers$: Observable<User[]>;
   public offers$: Observable<Offer[]>;
   public answers$: Observable<Answer[]>;
-  public isConnectionOn = new BehaviorSubject(true);
   public title$: Observable<string>;
+
+  public isConnectionOn = new BehaviorSubject(true);
+  public user$ = new BehaviorSubject<User>(null);
+
+  public roomId: string;
+  public user: User;
 
   constructor(
     private router: Router,
-    private activeRoute: ActivatedRoute,
     private api: ApiService,
     private auth: AuthService,
     private connectionService: ConnectionService,
@@ -52,7 +54,6 @@ export class RoomService {
   }
 
   ngOnInit() {
-    this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.api.room.init(this.roomId);
 
     const roomExists$ = this.api.room
@@ -78,6 +79,7 @@ export class RoomService {
 
   public initialize(user: User) {
     this.user = user;
+    this.user$.next(user);
     this.setStream(user);
 
     this.connectionService.init(user);
