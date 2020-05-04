@@ -114,8 +114,6 @@ export class GameLocalService {
       mapped = mapper(payload);
     }
 
-    // console.log({ [action]: mapped });
-
     subject.next(mapped);
     this.changed$.emit();
   }

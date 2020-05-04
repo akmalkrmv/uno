@@ -37,7 +37,6 @@ export class RoomsComponent implements OnInit, OnDestroy {
         });
 
         this.rooms$.next(rooms);
-        console.log(rooms);
       });
   }
 
