@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1588549387118,
+  "timestamp": 1588550116808,
   "index": "https://akmalkrmv.github.io/uno/index.html",
   "assetGroups": [
     {
@@ -14,8 +14,8 @@
         "https://akmalkrmv.github.io/uno/6-es5.95bd2d43d14b5e4fb292.js",
         "https://akmalkrmv.github.io/uno/favicon.ico",
         "https://akmalkrmv.github.io/uno/index.html",
-        "https://akmalkrmv.github.io/uno/main-es2015.efda2ac54ba3e503866e.js",
-        "https://akmalkrmv.github.io/uno/main-es5.efda2ac54ba3e503866e.js",
+        "https://akmalkrmv.github.io/uno/main-es2015.48928a3a003fc2c63715.js",
+        "https://akmalkrmv.github.io/uno/main-es5.48928a3a003fc2c63715.js",
         "https://akmalkrmv.github.io/uno/manifest.webmanifest",
         "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js",
         "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js",
@@ -71,9 +71,9 @@
     "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png": "c9ac061cb348a2dfb85feb38882f5049de3e54e4",
     "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg": "fd1569dfae47d7e60104bcbd8ebbef362d53e4cb",
     "https://akmalkrmv.github.io/uno/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
-    "https://akmalkrmv.github.io/uno/index.html": "2ebfcc2199d62686056b941739f429939068a7e5",
-    "https://akmalkrmv.github.io/uno/main-es2015.efda2ac54ba3e503866e.js": "77f733fbb1fce54ffe25abaca2ed91bd2e5c56c1",
-    "https://akmalkrmv.github.io/uno/main-es5.efda2ac54ba3e503866e.js": "676fd3b9a4eeb348b2022dfcb8c50442ac836fef",
+    "https://akmalkrmv.github.io/uno/index.html": "d3af0d70443eaca29e258751d7f68fa938af8199",
+    "https://akmalkrmv.github.io/uno/main-es2015.48928a3a003fc2c63715.js": "4ac3f9a3cb25f443cddd3bb639e8086383de8bd7",
+    "https://akmalkrmv.github.io/uno/main-es5.48928a3a003fc2c63715.js": "f878b453a3bb35e1f2a1a34433356f71246f5aa8",
     "https://akmalkrmv.github.io/uno/manifest.webmanifest": "82eb87ee592d729d993bb6036d8b7285f09e2bb0",
     "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js": "72ad4ccc0a3916ae4598199447cdeadd6d380570",
     "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js": "e5472003c8575a8fca7583648df3905038faeb18",

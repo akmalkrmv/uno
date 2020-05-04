@@ -118,7 +118,7 @@ export class RoomService implements OnDestroy {
 
     this.listenToOffers();
     this.listenToAnswers();
-    // this.confirmJoinCall();
+    this.confirmJoinCall();
   }
 
   public confirmJoinCall() {
