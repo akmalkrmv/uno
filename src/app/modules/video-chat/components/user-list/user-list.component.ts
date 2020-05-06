@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { User } from 'src/app/models/user';
 
 @Component({
@@ -9,7 +10,11 @@ import { User } from 'src/app/models/user';
 export class UserListComponent implements OnInit {
   @Input() users: User[] = [];
 
-  constructor() {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    if(data && data.users) {
+      this.users = data.users;
+    }
+  }
 
   ngOnInit(): void {}
 }

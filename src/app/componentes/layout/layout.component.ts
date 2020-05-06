@@ -33,4 +33,8 @@ export class LayoutComponent implements OnInit {
     this.router.navigate(['/']);
     window.close();
   }
+
+  titleClick($event): void {
+    this.title.click$.emit($event);
+  }
 }

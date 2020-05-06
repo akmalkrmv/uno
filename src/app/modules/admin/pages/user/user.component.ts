@@ -13,10 +13,9 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
 
 import { User } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'app-user-card',
+  selector: 'app-admin-user-card',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,7 +25,6 @@ export class UserComponent implements OnInit, OnDestroy {
   @Input() isCardView: boolean;
   @Output() save = new EventEmitter<User>();
   @Output() remove = new EventEmitter<string>();
-
   
   constructor(
     private api: ApiService,

@@ -1,16 +1,8 @@
-<div class="online-users">
-  <mat-expansion-panel class="expansion-panel-inverse">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <span>
-          Люди <span *ngIf="users">({{ users.length }})</span>
-        </span>
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <div *ngIf="users">
-      <p *ngFor="let user of users">
-        <span>{{ user.name }}</span>
-      </p>
+<h1 mat-dialog-title>Участники</h1>
+<div mat-dialog-content>
+  <mat-nav-list class="user-list">
+    <div *ngFor="let user of users" mat-list-item>
+      <app-user [user]="user" class="user-item"></app-user>
     </div>
-  </mat-expansion-panel>
+  </mat-nav-list>
 </div>

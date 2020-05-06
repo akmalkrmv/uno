@@ -14,7 +14,7 @@
       <button type="button" mat-icon-button (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <div class="title">{{ title.text$ | async }}</div>
+      <div class="title" (click)="titleClick($event)">{{ title.text$ | async }}</div>
       <div class="fill-remaining-space"></div>
 
       <app-commands-menu></app-commands-menu>

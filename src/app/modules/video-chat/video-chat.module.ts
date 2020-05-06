@@ -12,7 +12,7 @@ import { VideoItemComponent } from './components/video-item/video-item.component
 import { VideosListComponent } from './components/videos-list/videos-list.component';
 
 @NgModule({
-  entryComponents: [CallDialogComponent],
+  entryComponents: [CallDialogComponent, UserListComponent],
   declarations: [
     CallDialogComponent,
     RoomComponent,
