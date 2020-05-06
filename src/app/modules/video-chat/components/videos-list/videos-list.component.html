@@ -1,4 +1,4 @@
-<app-resizable-panes>
+<app-resizable-panes [autorotate]="false">
   <div top-pane class="videos">
     <ng-container *ngIf="user">
       <app-self-video
@@ -14,7 +14,7 @@
       </ng-container>
     </ng-container>
   </div>
-  <div bottom-pane class="">
+  <div bottom-pane class="content">
     <ng-content></ng-content>
   </div>
 </app-resizable-panes>

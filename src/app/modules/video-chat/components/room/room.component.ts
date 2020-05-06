@@ -12,8 +12,9 @@ import { RoomService } from '../../services/room.service';
 })
 export class RoomComponent implements OnInit, OnDestroy {
   public user$: Observable<User> = this.room.user$;
+  public code$: Observable<string> = this.room.code$;
 
-  constructor(private activeRoute: ActivatedRoute, private room: RoomService) {}
+  constructor(private activeRoute: ActivatedRoute, public room: RoomService) {}
 
   ngOnDestroy() {
     this.room.ngOnDestroy();
@@ -22,5 +23,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.room.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.room.ngOnInit();
+  }
+
+  sendText(text) {
+    this.room.transferText(text);
   }
 }

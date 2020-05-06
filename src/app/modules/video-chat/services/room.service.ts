@@ -30,6 +30,7 @@ export class RoomService implements OnDestroy {
   public offers$: Observable<Offer[]>;
   public answers$: Observable<Answer[]>;
   public title$: Observable<string>;
+  public code$: Observable<string>;
 
   public isConnectionOn = new BehaviorSubject(true);
   public user$ = new BehaviorSubject<User>(null);
@@ -119,14 +120,16 @@ export class RoomService implements OnDestroy {
     this.listenToOffers();
     this.listenToAnswers();
     this.confirmJoinCall();
+
+    this.code$ = this.user.messages$.pipe(tap((data) => console.log(data)));
   }
 
   public confirmJoinCall() {
     this.onlineUsers$.pipe(take(1), untilDestroyed(this)).subscribe((users) => {
       if (users && users.length > 1) {
-        if (confirm('Готовы подключиться к звонку?')) {
-          this.call();
-        }
+        // this.call();
+        // if (confirm('Готовы подключиться к звонку?')) {
+        // }
       }
     });
   }
@@ -141,6 +144,12 @@ export class RoomService implements OnDestroy {
 
   public requestMedia(user: User) {
     this.media.requestMedia(user);
+  }
+
+  public transferText(text: string) {
+    this.user.connections.forEach((connection) => {
+      connection.transfer.send(text);
+    });
   }
 
   public shareLink() {
