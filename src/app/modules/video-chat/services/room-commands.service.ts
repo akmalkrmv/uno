@@ -12,9 +12,10 @@ export class RoomCommandsService implements OnDestroy {
   }
 
   public register() {
-    VideoChatCommandGroup.commands.find(
-      (command) => command.name === 'shareLink'
-    ).visible = canShareLink();
+    const canShare = canShareLink();
+
+    VideoChatCommandGroup.setCommandOptions('shareLink', { visible: canShare });
+    VideoChatCommandGroup.setCommandOptions('copyLink', { visible: !canShare });
 
     this.commands.registerGroup(VideoChatCommandGroup);
   }

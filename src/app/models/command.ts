@@ -18,4 +18,9 @@ export class CommandGroup {
     public text: string,
     public commands: Command[] = []
   ) {}
+
+  public setCommandOptions(name: string, options: Partial<Command>) {
+    const command = this.commands.find((c) => c.name === name);
+    Object.assign(command, options);
+  }
 }
