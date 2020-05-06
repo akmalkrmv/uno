@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export class Connection {
   public peer: RTCPeerConnection;
+  public transfer: RTCDataChannel;
   public stream?: MediaStream;
   public iceCandidates?: RTCIceCandidate[] = [];
   public audioLevel: number;
@@ -19,6 +20,7 @@ export class Connection {
 
   constructor(public userId: string, public userName?: string) {
     this.peer = new RTCPeerConnection(rtcConfiguration);
+    this.transfer = this.peer.createDataChannel('TRANSFER_CHANNEL');
     this.soundometer = new SoundMeter();
     this.logChanges();
     this.isAlive = true;
@@ -39,9 +41,7 @@ export class Connection {
   }
 
   public get isConnected() {
-    return (
-      this.peer.connectionState == 'connected'
-    );
+    return this.peer.connectionState == 'connected';
   }
 
   public get canAddIceCandidate() {
@@ -49,6 +49,7 @@ export class Connection {
   }
 
   public close() {
+    this.transfer.close();
     this.peer.close();
     this.iceCandidates = [];
     clearTimeout(this.queueTimeout);

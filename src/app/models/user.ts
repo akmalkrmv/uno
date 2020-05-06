@@ -1,8 +1,21 @@
+import { BehaviorSubject } from 'rxjs';
 import { Connection } from './connection';
 import {
   vgaConstraints,
   videoConstraints,
 } from '../constants/rts-configurations';
+
+export interface IUser {
+  id?: string;
+  uid?: string;
+  created?: number;
+  displayName?: string;
+  phoneNumber?: string;
+  photoURL?: string;
+  email?: string;
+  role?: string;
+  fcmTokens?: any;
+}
 
 // TODO: A BIG TODO!!!
 export class User {
@@ -19,6 +32,8 @@ export class User {
   public stream?: MediaStream;
   public connections: Connection[] = [];
   public isFrontCamera = true;
+  // TODO: move from here
+  public messages$ = new BehaviorSubject('');
 
   constructor(public id: string, public name?: string) {}
 
@@ -43,6 +58,13 @@ export class User {
 
     connection.peer.onconnectionstatechange = () =>
       this.onConnectionStateChange(connection);
+
+    connection.peer.ondatachannel = (event) => {
+      event.channel.onmessage = (message: MessageEvent) => {
+        console.log('onmessage', message.data);
+        this.messages$.next(message.data);
+      };
+    };
 
     this.connections.push(connection);
 
