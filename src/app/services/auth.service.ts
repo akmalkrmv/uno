@@ -1,11 +1,11 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { switchMap, map, take } from 'rxjs/operators';
-import { of, from, Observable, combineLatest, BehaviorSubject } from 'rxjs';
+import { of, from, Observable, combineLatest } from 'rxjs';
 
 import * as firebaseui from 'firebaseui';
-import * as firebaseApp from 'firebase/app';
+import * as firebase from 'firebase/app';
 import 'firebase/auth';
 
 import { User } from '@models/index';
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   public startUi(element: Element | string) {
-    const auth = firebaseApp.auth();
+    const auth = firebase.auth();
     // auth.useDeviceLanguage();
     auth.languageCode = 'ru';
 
@@ -57,11 +57,11 @@ export class AuthService {
 
     ui.start(element, {
       signInOptions: [
-        withoutCaptcha(firebaseApp.auth.PhoneAuthProvider.PROVIDER_ID),
-        withoutCaptcha(firebaseApp.auth.EmailAuthProvider.PROVIDER_ID),
-        firebaseApp.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.FacebookAuthProvider.PROVIDER_ID,
-        firebaseApp.auth.GithubAuthProvider.PROVIDER_ID,
+        withoutCaptcha(firebase.auth.PhoneAuthProvider.PROVIDER_ID),
+        withoutCaptcha(firebase.auth.EmailAuthProvider.PROVIDER_ID),
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        firebase.auth.GithubAuthProvider.PROVIDER_ID,
       ],
       callbacks: {
         signInSuccessWithAuthResult: (credential) => {
