@@ -1,19 +1,34 @@
-<div class="room-container">
+<!-- <div class="room-container">
   <ng-container *ngIf="user$ | async as user">
     <app-videos-list class="main-content" [user]="user">
-      <!-- <router-outlet></router-outlet> -->
-      <!-- <app-play-cards></app-play-cards> -->
-      <!-- <app-message-list
-        *ngIf="user"
-        [userId]="user.id"
-        [roomId]="roomId"
-      ></app-message-list> -->
-      <!-- <app-code-editor
-        class="code-editor"
-        [text]="room.code$ | async"
-        (type)="sendText($event)"
-      ></app-code-editor> -->
+      // content
     </app-videos-list>
+
+    <footer class="footer">
+      <div></div>
+      <app-video-controls
+        *ngIf="user.stream"
+        [user]="user"
+        class="stream-controls"
+      ></app-video-controls>
+      <div></div>
+    </footer>
+  </ng-container>
+</div> -->
+
+<div class="room-container">
+  <ng-container *ngIf="user$ | async as user">
+    <app-resizable-panes [autorotate]="true" class="main-content">
+      <div top-pane class="top-pane">
+        <app-videos-list [user]="user"></app-videos-list>
+      </div>
+      <div bottom-pane class="content-pane">
+        <!-- <router-outlet></router-outlet> -->
+        <!-- <app-play-cards></app-play-cards> -->
+        <!-- <app-message-list [userId]="user.id" [roomId]="roomId"></app-message-list> -->
+        <!-- <app-code-editor class="code-editor" [text]="room.code$ | async" (type)="sendText($event)"></app-code-editor> -->
+      </div>
+    </app-resizable-panes>
 
     <footer class="footer">
       <div></div>

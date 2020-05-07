@@ -1,4 +1,4 @@
-<app-resizable-panes [autorotate]="true">
+<!-- <app-resizable-panes [autorotate]="true">
   <div top-pane class="videos">
     <ng-container *ngIf="user">
       <app-self-video
@@ -17,4 +17,13 @@
   <div bottom-pane class="content">
     <ng-content></ng-content>
   </div>
-</app-resizable-panes>
+</app-resizable-panes> -->
+
+<app-flex-grid *ngIf="user">
+  <app-self-video grid-item [user]="user"></app-self-video>
+  <app-video-item
+    grid-item
+    *ngFor="let connection of user.connections"
+    [connection]="connection"
+  ></app-video-item>
+</app-flex-grid>

@@ -8,6 +8,8 @@ import { UserComponent } from './user/user.component';
 import { CommandsMenuComponent } from './commands-menu/commands-menu.component';
 import { ResizablePanesComponent } from './resizable-panes/resizable-panes.component';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
+import { FlexGridComponent } from './flex-grid/flex-grid.component';
+import { FlexGridDirective } from './flex-grid/flex-grid.directive';
 
 const copmonents = [
   SidenavComponent,
@@ -16,6 +18,8 @@ const copmonents = [
   ResizablePanesComponent,
   CodeEditorComponent,
   UserComponent,
+  FlexGridComponent,
+  FlexGridDirective,
 ];
 
 @NgModule({
