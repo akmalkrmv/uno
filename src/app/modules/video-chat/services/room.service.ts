@@ -5,7 +5,7 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import {
   switchMap,
-  take,
+  first,
   map,
   distinctUntilChanged,
   takeWhile,
@@ -62,17 +62,19 @@ export class RoomService implements OnDestroy {
 
     const roomExists$ = this.api.room
       .exists(this.roomId)
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(first(), untilDestroyed(this))
       .pipe(tap((exists) => !exists && this.router.navigate([''])));
 
-    const authorize$ = this.auth
-      .authorize()
-      .pipe(take(1), untilDestroyed(this));
+    const authorize$ = this.auth.user$.pipe(
+      first(),
+      untilDestroyed(this),
+      map((user) => (user ? new User(user.id, user.name) : null))
+    );
 
     roomExists$
       .pipe(switchMap((exists) => (exists ? authorize$ : of(null))))
       .pipe(switchMap((user) => (user ? this.joinRoom(user) : of(null))))
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(first(), untilDestroyed(this))
       .subscribe((user) => {
         if (!user) return;
         this.initialize(user);
@@ -121,7 +123,7 @@ export class RoomService implements OnDestroy {
   }
 
   public confirmJoinCall() {
-    this.onlineUsers$.pipe(take(1), untilDestroyed(this)).subscribe((users) => {
+    this.onlineUsers$.pipe(first(), untilDestroyed(this)).subscribe((users) => {
       if (users && users.length > 1) {
         // this.call();
         // if (confirm('Готовы подключиться к звонку?')) {
@@ -161,7 +163,7 @@ export class RoomService implements OnDestroy {
     this.isConnectionOn.next(true);
 
     this.roomUsers()
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(first(), untilDestroyed(this))
       .subscribe((users) =>
         this.connectionService.offerAll(this.user.id, users)
       );
@@ -182,7 +184,7 @@ export class RoomService implements OnDestroy {
   public leaveRoom() {
     this.api.roomUsers
       .leaveRoom(this.roomId, this.user.id)
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(first(), untilDestroyed(this))
       .subscribe(() => this.router.navigate([`/`]));
   }
 
@@ -192,7 +194,7 @@ export class RoomService implements OnDestroy {
 
     this.api.room
       .clearConnections()
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(first(), untilDestroyed(this))
       .pipe(switchMap(() => this.roomUsers()))
       .subscribe((users) => {
         this.isConnectionOn.next(true);
@@ -209,13 +211,16 @@ export class RoomService implements OnDestroy {
   private joinRoom(user: User) {
     return this.api.roomUsers
       .joinRoom(this.roomId, user.id)
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(first(), untilDestroyed(this))
       .pipe(map(() => user));
   }
 
   private async setTitle() {
     const roomRef = await this.api.room.room.ref.get();
     const room: Room = roomRef.data();
+
+    this.title.icon$.next('group');
+
     if (room.name) {
       this.title.text$.next(room.name);
     } else {
@@ -256,7 +261,7 @@ export class RoomService implements OnDestroy {
         }
 
         this.roomUsers()
-          .pipe(take(1), untilDestroyed(this))
+          .pipe(first(), untilDestroyed(this))
           .subscribe((users) =>
             this.connectionService.answerAll(offers, users)
           );
@@ -273,7 +278,7 @@ export class RoomService implements OnDestroy {
         }
 
         this.roomUsers()
-          .pipe(take(1), untilDestroyed(this))
+          .pipe(first(), untilDestroyed(this))
           .subscribe((users) =>
             this.connectionService.setRemoteAll(answers, users)
           );

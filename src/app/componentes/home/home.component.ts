@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, first } from 'rxjs/operators';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
@@ -23,9 +23,8 @@ export class HomeComponent implements OnInit {
   ngOnDestroy() {}
 
   public createRoom() {
-    this.auth
-      .authorize()
-      .pipe(take(1), untilDestroyed(this))
+    this.auth.user$
+      .pipe(first(), untilDestroyed(this))
       .pipe(switchMap((user) => this.api.rooms.createRoom(user.id)))
       .subscribe((roomId) => {
         this.router.navigate([`/room/${roomId}`]);
