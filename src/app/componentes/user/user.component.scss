@@ -46,4 +46,15 @@
       color: #ccc;
     }
   }
+
+  &.online {
+    .profile-avatar::after {
+      background-color: yellowgreen;
+    }
+  }
+  &.away {
+    .profile-avatar::after {
+      background-color: yellow;
+    }
+  }
 }

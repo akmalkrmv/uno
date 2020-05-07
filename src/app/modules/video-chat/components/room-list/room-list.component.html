@@ -1,3 +1,6 @@
-<div *ngFor="let room of rooms$ | async">
-  {{ room.name || room.id }}
-</div>
+<mat-nav-list class="room-list">
+  <div *ngFor="let room of rooms$ | async" mat-list-item>
+    <mat-icon>groups</mat-icon>
+    {{ room.name || room.id }}
+  </div>
+</mat-nav-list>

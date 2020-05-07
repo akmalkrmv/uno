@@ -1,8 +1,5 @@
-<h1 mat-dialog-title>Участники</h1>
-<div mat-dialog-content>
-  <mat-nav-list class="user-list">
-    <div *ngFor="let user of users" mat-list-item>
-      <app-user [user]="user" class="user-item"></app-user>
-    </div>
-  </mat-nav-list>
-</div>
+<mat-nav-list class="user-list">
+  <div *ngFor="let user of users" mat-list-item>
+    <app-user [user]="user" class="user-item"></app-user>
+  </div>
+</mat-nav-list>

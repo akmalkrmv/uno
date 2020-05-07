@@ -12,4 +12,10 @@ export class VideosListComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+
+  get connectionCount() {
+    return this.user && this.user.connections
+      ? this.user.connections.length
+      : 0;
+  }
 }

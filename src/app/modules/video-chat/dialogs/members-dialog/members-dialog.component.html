@@ -1,1 +1,10 @@
-<p>members-dialog works!</p>
+<h2 mat-dialog-title>Участники</h2>
+
+<mat-dialog-content mat-dialog-content>
+  <!-- <app-user-list class="user-list" [users]="users"></app-user-list> -->
+  <app-user-list [users]="users"></app-user-list>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button cdkFocusInitial (click)="dialogRef.close()">Ok</button>
+</mat-dialog-actions>

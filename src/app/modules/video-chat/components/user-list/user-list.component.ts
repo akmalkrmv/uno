@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Input } from '@angular/core';
 import { User } from 'src/app/models/user';
 
 @Component({
@@ -7,14 +6,8 @@ import { User } from 'src/app/models/user';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent {
   @Input() users: User[] = [];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    if(data && data.users) {
-      this.users = data.users;
-    }
-  }
-
-  ngOnInit(): void {}
+  constructor() {}
 }

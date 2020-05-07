@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 import { User } from '@models/index';
 import { RoomService } from '../../services/room.service';
 import { TitleService } from '@services/title.service';
-import { untilDestroyed } from 'ngx-take-until-destroy';
-import { MatDialog } from '@angular/material/dialog';
-import { UserListComponent } from '../user-list/user-list.component';
-import { first } from 'rxjs/operators';
+import { MembersDialogComponent } from '../../dialogs/members-dialog/members-dialog.component';
 
 @Component({
   selector: 'app-room',
@@ -36,8 +36,9 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     this.title.click$.pipe(untilDestroyed(this)).subscribe(() => {
       this.room.onlineUsers$.pipe(first()).subscribe((users) =>
-        this.dialog.open(UserListComponent, {
+        this.dialog.open(MembersDialogComponent, {
           data: { users },
+          width: '300px',
         })
       );
     });

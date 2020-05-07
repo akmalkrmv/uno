@@ -10,6 +10,8 @@ import { SigninComponent } from './modules/auth/signin/signin.component';
 import { LayoutComponent } from './componentes/layout/layout.component';
 import { HomeComponent } from './componentes/home/home.component';
 import { NameComponent } from './modules/auth/name/name.component';
+import { RoomListComponent } from './modules/video-chat/components/room-list/room-list.component';
+import { UserListComponent } from './modules/video-chat/components/user-list/user-list.component';
 
 const routes: Routes = [
   {
@@ -18,6 +20,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: '', component: HomeComponent },
+      { path: 'users', component: UserListComponent },
+      { path: 'rooms', component: RoomListComponent },
       { path: 'room/:id', component: RoomComponent },
       { path: 'game/:id', component: PlayComponent },
     ],

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { switchMap, map, take } from 'rxjs/operators';
+import { AngularFireDatabase } from '@angular/fire/database';
+import { switchMap, map, take, first, tap } from 'rxjs/operators';
 import { of, from, Observable, combineLatest } from 'rxjs';
 
 import * as firebaseui from 'firebaseui';
@@ -11,6 +12,8 @@ import 'firebase/auth';
 import { User } from '@models/index';
 import { ApiService } from './repository/api.service';
 
+type presenceStatus = 'online' | 'away' | 'offline';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   public user$: Observable<User>;
@@ -18,13 +21,18 @@ export class AuthService {
   constructor(
     private router: Router,
     private fireauth: AngularFireAuth,
+    private firedb: AngularFireDatabase,
     private api: ApiService
   ) {
     this.user$ = combineLatest([fireauth.authState, api.users.users$]).pipe(
-      switchMap(([user]) => {
-        return user ? this.api.users.findById(user.uid) : of(null);
-      })
+      switchMap(([user]) =>
+        user ? this.api.users.findById(user.uid) : of(null)
+      )
     );
+
+    this.updateOnUser().subscribe();
+    this.updateOnDisconnect().subscribe();
+    this.updateOnAway();
   }
 
   public isSignedIn() {
@@ -33,15 +41,6 @@ export class AuthService {
 
   public hasRole(role: string) {
     return this.user$.pipe(map((user) => user && user.role === role));
-  }
-
-  public authorize(): Observable<User> {
-    return this.user$.pipe(
-      take(1),
-      switchMap((user) => {
-        if (user) return of(new User(user.id, user.name));
-      })
-    );
   }
 
   public startUi(element: Element | string) {
@@ -73,6 +72,7 @@ export class AuthService {
   }
 
   public signOut() {
+    this.setPresence('offline');
     return from(this.fireauth.signOut()).pipe(
       switchMap(() => this.router.navigate(['/']))
     );
@@ -92,5 +92,56 @@ export class AuthService {
     return this.api.users
       .addIfNotExists(payload)
       .then(() => this.router.navigate(['/']));
+  }
+
+  public updateOnUser(): Observable<presenceStatus> {
+    const connection = this.firedb
+      .object('.info/connected')
+      .valueChanges()
+      .pipe(map((connected) => (connected ? 'online' : 'offline')));
+
+    return this.user$.pipe(
+      switchMap((user) =>
+        user ? connection : of('offline' as presenceStatus)
+      ),
+      tap((status) => this.setPresence(status))
+    );
+  }
+
+  public updateOnAway() {
+    document.onvisibilitychange = () => {
+      document.visibilityState === 'hidden'
+        ? this.setPresence('away')
+        : this.setPresence('online');
+    };
+  }
+
+  public updateOnDisconnect() {
+    return this.user$.pipe(
+      tap((user) => {
+        if (user)
+          this.firedb
+            .object(`status/${user.id}`)
+            .query.ref.onDisconnect()
+            .update({ status: 'offline', timestamp: this.timestamp });
+      })
+    );
+  }
+
+  public getPresence(uid: string): Observable<any> {
+    return this.firedb.object(`status/${uid}`).valueChanges();
+  }
+
+  public async setPresence(status: presenceStatus) {
+    const user = await this.user$.pipe(first()).toPromise();
+    if (user) {
+      return this.firedb
+        .object(`status/${user.id}`)
+        .update({ status, timestamp: this.timestamp });
+    }
+  }
+
+  public get timestamp() {
+    return firebase.database.ServerValue.TIMESTAMP;
   }
 }
