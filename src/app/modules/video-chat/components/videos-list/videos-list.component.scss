@@ -9,12 +9,12 @@
 }
 
 .videos {
-  flex-wrap: wrap;
   flex-grow: 0;
   height: 100%;
   overflow: hidden;
 
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
 
   .video-container {
