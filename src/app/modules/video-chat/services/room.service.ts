@@ -15,7 +15,7 @@ import {
 } from 'rxjs/operators';
 
 import { copyToClipboard, shareLink } from '@utils/index';
-import { User, Offer, Answer, IOffer } from '@models/index';
+import { User, Offer, Answer, IOffer, Room } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { TitleService } from '@services/title.service';
@@ -102,11 +102,6 @@ export class RoomService implements OnDestroy {
       switchMap((userIds) => this.api.users.getByIds(userIds))
     );
 
-    this.onlineUsers$.pipe(untilDestroyed(this)).subscribe((users) => {
-      const names = users.map((user) => user.name).join(', ');
-      this.title.text$.next(names);
-    });
-
     this.offers$ = this.api.room.userOffers(this.user.id).pipe(
       untilDestroyed(this),
       takeWhile(() => this.isConnectionOn.value)
@@ -117,6 +112,7 @@ export class RoomService implements OnDestroy {
       takeWhile(() => this.isConnectionOn.value)
     );
 
+    this.setTitle();
     this.listenToOffers();
     this.listenToAnswers();
     this.confirmJoinCall();
@@ -215,6 +211,19 @@ export class RoomService implements OnDestroy {
       .joinRoom(this.roomId, user.id)
       .pipe(take(1), untilDestroyed(this))
       .pipe(map(() => user));
+  }
+
+  private async setTitle() {
+    const roomRef = await this.api.room.room.ref.get();
+    const room: Room = roomRef.data();
+    if (room.name) {
+      this.title.text$.next(room.name);
+    } else {
+      this.onlineUsers$.pipe(untilDestroyed(this)).subscribe((users) => {
+        const names = users.map((user) => user.name).join(', ');
+        this.title.text$.next(names);
+      });
+    }
   }
 
   private compareOffers(before: IOffer[], after: IOffer[]) {
