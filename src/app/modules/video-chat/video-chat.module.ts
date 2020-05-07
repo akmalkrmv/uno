@@ -10,15 +10,23 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { VideoControlsComponent } from './components/video-controls/video-controls.component';
 import { VideoItemComponent } from './components/video-item/video-item.component';
 import { VideosListComponent } from './components/videos-list/videos-list.component';
+import { MembersDialogComponent } from './dialogs/members-dialog/members-dialog.component';
+import { CreateRoomDialogComponent } from './dialogs/create-room-dialog/create-room-dialog.component';
+
+const dialogs = [
+  CallDialogComponent,
+  UserListComponent,
+  MembersDialogComponent,
+  CreateRoomDialogComponent,
+];
 
 @NgModule({
-  entryComponents: [CallDialogComponent, UserListComponent],
+  entryComponents: [...dialogs],
   declarations: [
-    CallDialogComponent,
+    ...dialogs,
     RoomComponent,
     RoomListComponent,
     SelfVideoComponent,
-    UserListComponent,
     VideoControlsComponent,
     VideoItemComponent,
     VideosListComponent,
