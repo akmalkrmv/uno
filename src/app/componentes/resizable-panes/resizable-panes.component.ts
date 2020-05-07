@@ -1,6 +1,8 @@
 import {
   Component,
   OnInit,
+  OnChanges,
+  SimpleChanges,
   Input,
   ViewChild,
   ElementRef,
@@ -10,14 +12,18 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 
+type collapseType = 'top' | 'middle' | 'bottom';
+type orientationType = 'vertical' | 'horizontal';
+
 @Component({
   selector: 'app-resizable-panes',
   templateUrl: './resizable-panes.component.html',
   styleUrls: ['./resizable-panes.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResizablePanesComponent implements OnInit {
-  @Input() orientation: 'vertical' | 'horizontal' = 'vertical';
+export class ResizablePanesComponent implements OnInit, OnChanges {
+  @Input() state: collapseType = 'top';
+  @Input() orientation: orientationType = 'vertical';
   @Input() autorotate = true;
   @Input() collapseAt = 50;
 
@@ -38,6 +44,11 @@ export class ResizablePanesComponent implements OnInit {
   private isVertical = () => this.orientation === 'vertical';
 
   ngOnInit(): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes && changes['state']) {
+      this.collapseByState(changes['state'].currentValue);
+    }
+  }
 
   ngAfterViewInit(): void {
     const handle: HTMLButtonElement = this.handleRef._elementRef.nativeElement;
@@ -112,9 +123,6 @@ export class ResizablePanesComponent implements OnInit {
 
     top.style[type] = hideTop ? '0%' : hideBottom ? '100%' : topValue + 'px';
     botm.style[type] = hideTop ? '100%' : hideBottom ? '0%' : botmValue + 'px';
-
-    this.isTopVisible = !hideTop;
-    this.isBottomVisible = !hideBottom;
   }
 
   private clientY(event: MouseEvent | TouchEvent) {
@@ -127,5 +135,26 @@ export class ResizablePanesComponent implements OnInit {
     return event instanceof TouchEvent
       ? event.changedTouches[0].clientX
       : event.clientX;
+  }
+
+  private collapseByState(state: collapseType) {
+    const top: HTMLDivElement = this.topPaneRef.nativeElement;
+    const botm: HTMLDivElement = this.bottomPaneRef.nativeElement;
+    const type = this.isVertical() ? 'width' : 'height';
+
+    switch (state) {
+      case 'top':
+        top.style[type] = '0%';
+        botm.style[type] = '100%';
+        break;
+      case 'middle':
+        top.style[type] = '50%';
+        botm.style[type] = '50%';
+        break;
+      case 'bottom':
+        top.style[type] = '100%';
+        botm.style[type] = '0%';
+        break;
+    }
   }
 }
