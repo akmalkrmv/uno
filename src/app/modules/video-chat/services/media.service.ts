@@ -29,6 +29,7 @@ export class MediaService {
     Promise.all([audioStream, videoStream]).then(() => {
       if (userStream.getTracks().length > 0) {
         user.stream = userStream;
+        user.connections.forEach(c => user.addTracks(c.peer));
         this.muteSelfStream();
       }
     });
