@@ -26,7 +26,9 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              "src/combined-workers.js",
+              "src/firebase-messaging-sw.js"
             ],
             "styles": ["src/green-palette.scss", "src/styles.scss"],
             "scripts": []
