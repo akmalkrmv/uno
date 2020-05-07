@@ -4,9 +4,9 @@ import {
   Input,
   ViewChild,
   ElementRef,
-  ChangeDetectionStrategy,
   HostListener,
   ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 
@@ -24,6 +24,7 @@ export class ResizablePanesComponent implements OnInit {
   @ViewChild('viewport') viewportRef: ElementRef;
   @ViewChild('topPane') topPaneRef: ElementRef;
   @ViewChild('divider') dividerRef: ElementRef;
+  @ViewChild('bottomPane') bottomPaneRef: ElementRef;
   @ViewChild('handle') handleRef: MatButton;
 
   constructor(private changeDetectorRef: ChangeDetectorRef) {}
@@ -32,6 +33,7 @@ export class ResizablePanesComponent implements OnInit {
   public isTopVisible = true;
   public isBottomVisible = true;
 
+  private lastAngle: string | number = 0;
   private startDrag = () => (this.isDragging = true);
   private isVertical = () => this.orientation === 'vertical';
 
@@ -42,26 +44,32 @@ export class ResizablePanesComponent implements OnInit {
     handle.addEventListener('mousedown', this.startDrag);
     handle.addEventListener('touchstart', this.startDrag);
 
-    if (window.orientation !== 0) {
-      setTimeout(() => this.rotate());
+    setTimeout(() => this.setOrientation());
+  }
+
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange')
+  public setOrientation() {
+    if (!this.autorotate) return;
+    if (!screen.orientation) return;
+
+    if (screen.orientation.angle != this.lastAngle) {
+      this.rotate();
+      this.lastAngle = screen.orientation.angle;
     }
   }
 
-  @HostListener('window:orientationchange')
-  public rotate() {
-    if (this.autorotate) {
-      const rotated =
-        this.orientation === 'vertical' ? 'horizontal' : 'vertical';
-      this.orientation = rotated;
+  private rotate() {
+    const rotated = this.orientation === 'vertical' ? 'horizontal' : 'vertical';
+    const topPane: HTMLDivElement = this.topPaneRef.nativeElement;
 
-      const topPane: HTMLDivElement = this.topPaneRef.nativeElement;
-      [topPane.style.width, topPane.style.height] = [
-        topPane.style.height,
-        topPane.style.width,
-      ];
+    [topPane.style.width, topPane.style.height] = [
+      topPane.style.height,
+      topPane.style.width,
+    ];
 
-      this.changeDetectorRef.markForCheck();
-    }
+    this.orientation = rotated;
+    this.changeDetectorRef.markForCheck();
   }
 
   @HostListener('document:mouseup')
@@ -81,27 +89,29 @@ export class ResizablePanesComponent implements OnInit {
 
   private dragVertical(event: MouseEvent | TouchEvent) {
     const viewport: HTMLDivElement = this.viewportRef.nativeElement;
-    const topPane: HTMLDivElement = this.topPaneRef.nativeElement;
+    const topHeight = this.clientY(event) - viewport.offsetTop;
+    const bottomHeight = viewport.clientHeight - topHeight;
 
-    const height = this.clientY(event) - viewport.offsetTop;
-    const hideTop = height < this.collapseAt;
-    const hideBottom = viewport.clientHeight - height < this.collapseAt;
-
-    topPane.style.height = hideTop ? '0%' : hideBottom ? '100%' : height + 'px';
-
-    this.isTopVisible = !hideTop;
-    this.isBottomVisible = !hideBottom;
+    this.setMeasurements('height', topHeight, bottomHeight);
   }
 
   private dragHorizontal(event: MouseEvent | TouchEvent) {
     const viewport: HTMLDivElement = this.viewportRef.nativeElement;
-    const topPane: HTMLDivElement = this.topPaneRef.nativeElement;
+    const topWidth = this.clientX(event) - viewport.offsetLeft;
+    const bottomWidth = viewport.clientWidth - topWidth;
 
-    const width = this.clientX(event) - viewport.offsetLeft;
-    const hideTop = width < this.collapseAt;
-    const hideBottom = viewport.clientWidth - width < this.collapseAt;
+    this.setMeasurements('width', topWidth, bottomWidth);
+  }
 
-    topPane.style.width = hideTop ? '0%' : hideBottom ? '100%' : width + 'px';
+  private setMeasurements(type: string, topValue: number, botmValue: number) {
+    const top: HTMLDivElement = this.topPaneRef.nativeElement;
+    const botm: HTMLDivElement = this.bottomPaneRef.nativeElement;
+
+    const hideTop = topValue < this.collapseAt;
+    const hideBottom = botmValue < this.collapseAt;
+
+    top.style[type] = hideTop ? '0%' : hideBottom ? '100%' : topValue + 'px';
+    botm.style[type] = hideTop ? '100%' : hideBottom ? '0%' : botmValue + 'px';
 
     this.isTopVisible = !hideTop;
     this.isBottomVisible = !hideBottom;
