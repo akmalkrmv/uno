@@ -337,6 +337,9 @@ Apache-2.0
 @firebase/component
 Apache-2.0
 
+@firebase/database
+Apache-2.0
+
 @firebase/firestore
 Apache-2.0
 
@@ -347,6 +350,9 @@ Apache-2.0
 Apache-2.0
 
 @firebase/messaging
+Apache-2.0
+
+@firebase/storage
 Apache-2.0
 
 @firebase/util
@@ -413,9 +419,13 @@ firebase/app
 
 firebase/auth
 
+firebase/database
+
 firebase/firestore
 
 firebase/messaging
+
+firebase/storage
 
 firebaseui
 Apache-2.0
