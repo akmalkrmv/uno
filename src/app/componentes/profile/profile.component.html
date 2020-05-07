@@ -1,10 +1,19 @@
 <div class="profile-container" *ngIf="user">
-  <div class="profile-avatar">
+  <label class="profile-avatar" for="upload">
     <img *ngIf="user.photoURL" [src]="user.photoURL" class="profile-img" />
-    <mat-icon *ngIf="!user.photoURL">camera_alt</mat-icon>
-  </div>
+    <mat-icon *ngIf="!user.photoURL"> camera_alt </mat-icon>
+    <input
+      id="upload"
+      type="file"
+      accept="image/*"
+      hidden
+      (change)="uploadImage($event.target.files)"
+    />
+  </label>
   <div class="profile-data">
     <div class="profile-data__primary">{{ user.name || user.displayName }}</div>
-    <div class="profile-data__secondary">{{ user.phoneNumber || user.email }}</div>
+    <div class="profile-data__secondary">
+      {{ user.phoneNumber || user.email }}
+    </div>
   </div>
 </div>

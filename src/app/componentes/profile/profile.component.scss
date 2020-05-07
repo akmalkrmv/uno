@@ -6,10 +6,13 @@
   .profile-avatar {
     width: 50px;
     height: 50px;
+    overflow: hidden;
     margin-right: 10px;
     color: #333;
     background-color: #ddd;
     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border-radius: 100%;
     cursor: pointer;
 
@@ -18,9 +21,8 @@
     justify-content: center;
 
     .profile-img {
-      width: 100%;
+      // width: 100%;
       height: 100%;
-      border-radius: 100%;
     }
   }
 
