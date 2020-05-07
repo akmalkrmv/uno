@@ -3,8 +3,7 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from '@angular/fire/firestore';
-import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { Room } from '../../models/room';
 import { BaseFirestoreService } from './base-firestore.service';
@@ -23,8 +22,14 @@ export class RoomsApiService extends BaseFirestoreService {
     this.rooms$ = this.collectionChanges(this.roomsCollection);
   }
 
-  public createRoom(creatorId: string): Observable<string> {
-    return this.addToCollection(this.roomsCollection, { creator: creatorId });
+  public createRoom(
+    creatorId: string,
+    data?: Partial<Room>
+  ): Observable<string> {
+    return this.addToCollection(this.roomsCollection, {
+      ...data,
+      creator: creatorId,
+    });
   }
 
   public update(room: Room) {
