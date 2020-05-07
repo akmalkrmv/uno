@@ -1,7 +1,7 @@
 import {
   Component,
-  OnInit,
   OnChanges,
+  AfterViewInit,
   SimpleChanges,
   Input,
   ViewChild,
@@ -21,7 +21,7 @@ type orientationType = 'vertical' | 'horizontal';
   styleUrls: ['./resizable-panes.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResizablePanesComponent implements OnInit, OnChanges {
+export class ResizablePanesComponent implements OnChanges, AfterViewInit {
   @Input() state: collapseType = 'top';
   @Input() orientation: orientationType = 'vertical';
   @Input() autorotate = true;
@@ -43,7 +43,6 @@ export class ResizablePanesComponent implements OnInit, OnChanges {
   private startDrag = () => (this.isDragging = true);
   private isVertical = () => this.orientation === 'vertical';
 
-  ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes && changes['state']) {
       this.collapseByState(changes['state'].currentValue);
