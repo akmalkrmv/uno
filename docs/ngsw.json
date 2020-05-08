@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1588929111607,
+  "timestamp": 1588929783297,
   "index": "https://akmalkrmv.github.io/uno/index.html",
   "assetGroups": [
     {
@@ -60,7 +60,7 @@
     "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg": "fd1569dfae47d7e60104bcbd8ebbef362d53e4cb",
     "https://akmalkrmv.github.io/uno/combined-workers.js": "d22d7a1c81842f6bc462440d174f664d3d5c3607",
     "https://akmalkrmv.github.io/uno/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
-    "https://akmalkrmv.github.io/uno/firebase-messaging-sw.js": "6270280e25520f9dab3afbb598396a37c6621308",
+    "https://akmalkrmv.github.io/uno/firebase-messaging-sw.js": "881caa260de459af72d05de6b689f6e102f308d7",
     "https://akmalkrmv.github.io/uno/index.html": "4516bc04840a326ed749290d48d3596a67b42ebf",
     "https://akmalkrmv.github.io/uno/main-es2015.65d4c7d0bf9d38595765.js": "84480d387a6bef4f2ec7c7fe98ec685c223cb049",
     "https://akmalkrmv.github.io/uno/main-es5.65d4c7d0bf9d38595765.js": "9cb0427acbe5367868ff71e8e0d5a921d394f6fc",
