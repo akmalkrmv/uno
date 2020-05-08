@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1588926873333,
+  "timestamp": 1588927598049,
   "index": "https://akmalkrmv.github.io/uno/index.html",
   "assetGroups": [
     {
@@ -50,13 +50,13 @@
     "https://akmalkrmv.github.io/uno/5-es5.64b6217b4d579a652680.js": "eadcac2f7fa2a60f45b25e52231768ea14c22890",
     "https://akmalkrmv.github.io/uno/6-es2015.17c36fa701bf85785aa3.js": "f773a1ace35466cbc75506199e778aef54c795d6",
     "https://akmalkrmv.github.io/uno/6-es5.17c36fa701bf85785aa3.js": "2032f3b7fbfd210640a909213df6b15a69e41e1d",
-    "https://akmalkrmv.github.io/uno/assets/icons/android-chrome-192x192.png": "ee8d335a1a1b5c428c8e000f39ca74fd123fa225",
-    "https://akmalkrmv.github.io/uno/assets/icons/android-chrome-512x512.png": "8d921694fafe5d80ef0fcb071fa2c578cf68a5ac",
-    "https://akmalkrmv.github.io/uno/assets/icons/apple-touch-icon.png": "3000d36bd353d44b1b1d5fd7f44d2d2923645bae",
-    "https://akmalkrmv.github.io/uno/assets/icons/favicon-16x16.png": "722a3e3112fce06ed94d8c0dabb6725955fb7601",
-    "https://akmalkrmv.github.io/uno/assets/icons/favicon-32x32.png": "50675be53207fb69861ebe2ab308c18d0aeb2642",
-    "https://akmalkrmv.github.io/uno/assets/icons/favicon.ico": "425c45954196200a606f46ba9ae5b41f2638a837",
-    "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png": "ad756a57c4da147c18d0da7ed94587f4dca280ca",
+    "https://akmalkrmv.github.io/uno/assets/icons/android-chrome-192x192.png": "6f79ab7feefbd26806997bb3798fe85837454842",
+    "https://akmalkrmv.github.io/uno/assets/icons/android-chrome-512x512.png": "10772de14c2add4e6787a6628e08ebd3e85ffdc4",
+    "https://akmalkrmv.github.io/uno/assets/icons/apple-touch-icon.png": "d905c1c299aabddf2a576e3cc39077744f85a9c4",
+    "https://akmalkrmv.github.io/uno/assets/icons/favicon-16x16.png": "e6cc835201491895c056502f2f0959bedea26dea",
+    "https://akmalkrmv.github.io/uno/assets/icons/favicon-32x32.png": "1392746a7cb168c73a12cfecb167eb177b4f2a6d",
+    "https://akmalkrmv.github.io/uno/assets/icons/favicon.ico": "505c85fbbe714e7d45845e3493da39a555b3496c",
+    "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png": "e8b771bd2bfaf3861a6a1d01d31a3c933a2bbf2b",
     "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg": "fd1569dfae47d7e60104bcbd8ebbef362d53e4cb",
     "https://akmalkrmv.github.io/uno/combined-workers.js": "8112fc507def9bc58605f5446997e569a7cc6dcb",
     "https://akmalkrmv.github.io/uno/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
