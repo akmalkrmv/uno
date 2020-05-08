@@ -30,7 +30,7 @@ import { LocalApiService } from '@services/local-repository/api.service';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
+    ServiceWorkerModule.register('combined-workers.js', {
       enabled: environment.production,
     }),
     // Imports

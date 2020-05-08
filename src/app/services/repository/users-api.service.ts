@@ -44,6 +44,12 @@ export class UsersApiService extends BaseFirestoreService
     );
   }
 
+  // public getFreinds(userId: string[]): Observable<User[]> {
+  //   return this.users$.pipe(
+  //     map((users) => users.filter((user) => userIds.includes(user.id)))
+  //   );
+  // }
+
   public findById(userId: string): Observable<User> {
     return this.users$.pipe(
       map((users) => users.find((user) => user.id == userId))

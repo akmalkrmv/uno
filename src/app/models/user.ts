@@ -15,6 +15,7 @@ export interface IUser {
   email?: string;
   role?: string;
   fcmTokens?: any;
+  friends?: string[];
 }
 
 // TODO: A BIG TODO!!!
@@ -25,6 +26,7 @@ export class User {
   public phoneNumber?: string;
   public photoURL?: string;
   public fcmTokens?: any;
+  public friends?: string[];
 
   public uid?: string;
   public ref?: string;

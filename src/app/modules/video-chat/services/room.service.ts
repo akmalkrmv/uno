@@ -23,6 +23,7 @@ import { ConnectionService } from '@services/connection/connection.service';
 import { RoomCommandsService } from './room-commands.service';
 import { MediaService } from './media.service';
 import { CommandsService } from '@services/commands.service';
+import { MessagingService } from '@services/messaging.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService implements OnDestroy {
@@ -47,7 +48,8 @@ export class RoomService implements OnDestroy {
     private roomCommands: RoomCommandsService,
     private commands: CommandsService,
     private media: MediaService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private messaging: MessagingService
   ) {}
 
   ngOnDestroy() {
@@ -120,6 +122,9 @@ export class RoomService implements OnDestroy {
     this.confirmJoinCall();
 
     this.code$ = this.user.messages$.pipe(tap((data) => console.log(data)));
+
+    this.messaging.requestPermission(this.user.id);
+    this.messaging.receiveMessage();
   }
 
   public confirmJoinCall() {
