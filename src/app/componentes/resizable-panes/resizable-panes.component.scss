@@ -49,6 +49,7 @@
 
     button {
       position: fixed;
+      z-index: 1000;
       cursor: grab;
     }
   }

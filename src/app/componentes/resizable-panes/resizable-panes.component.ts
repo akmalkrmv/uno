@@ -137,9 +137,11 @@ export class ResizablePanesComponent implements OnChanges, AfterViewInit {
   }
 
   private collapseByState(state: collapseType) {
+    if (!this.topPaneRef || !this.bottomPaneRef) return;
+
     const top: HTMLDivElement = this.topPaneRef.nativeElement;
     const botm: HTMLDivElement = this.bottomPaneRef.nativeElement;
-    const type = this.isVertical() ? 'width' : 'height';
+    const type = this.isVertical() ? 'height' : 'width';
 
     switch (state) {
       case 'top':
