@@ -1,4 +1,7 @@
-.mat-card-avatar {
+.message-card {
+  padding: 10px 10px 0;
+
+  .mat-card-avatar {
   margin-right: 10px;
   color: #aaa;
   background-color: #ddd;
@@ -14,4 +17,4 @@
     height: 100%;
     border-radius: 100%;
   }
-}
+}}
