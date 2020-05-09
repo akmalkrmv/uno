@@ -18,6 +18,7 @@ import { MembersDialogComponent } from '../../dialogs/members-dialog/members-dia
 export class RoomComponent implements OnInit, OnDestroy {
   public user$: Observable<User> = this.room.user$;
   public code$: Observable<string> = this.room.code$;
+  public roomId: string = this.room.roomId;
 
   constructor(
     private activeRoute: ActivatedRoute,
@@ -31,7 +32,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.room.roomId = this.activeRoute.snapshot.paramMap.get('id');
+    this.roomId = this.room.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.room.ngOnInit();
 
     this.title.click$.pipe(untilDestroyed(this)).subscribe(() => {
