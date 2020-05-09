@@ -12,6 +12,9 @@ import { VideoItemComponent } from './components/video-item/video-item.component
 import { VideosListComponent } from './components/videos-list/videos-list.component';
 import { MembersDialogComponent } from './dialogs/members-dialog/members-dialog.component';
 import { CreateRoomDialogComponent } from './dialogs/create-room-dialog/create-room-dialog.component';
+import { FriendsPageComponent } from './pages/friends-page/friends-page.component';
+import { RoomsPageComponent } from './pages/rooms-page/rooms-page.component';
+import { ChatModule } from '../chat/chat.module';
 
 const dialogs = [
   CallDialogComponent,
@@ -30,7 +33,9 @@ const dialogs = [
     VideoControlsComponent,
     VideoItemComponent,
     VideosListComponent,
+    FriendsPageComponent,
+    RoomsPageComponent,
   ],
-  imports: [SharedModule, SharedComponentsModule],
+  imports: [SharedModule, SharedComponentsModule, ChatModule],
 })
 export class VideoChatModule {}

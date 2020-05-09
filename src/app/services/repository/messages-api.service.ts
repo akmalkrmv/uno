@@ -18,6 +18,13 @@ export class MessagesApiService extends BaseFirestoreService {
     this.messages$ = this.collectionChanges(this.collection);
   }
 
+  public roomMessages(roomId: string): Observable<Message[]> {
+    const collection = this.firestore.collection<Message>('messages', (ref) =>
+      ref.where('roomId', '==', roomId).orderBy('created', 'desc').limit(10)
+    );
+    return this.collectionChanges(collection);
+  }
+
   public create(payload: Message) {
     return this.addToCollection(this.collection, payload);
   }

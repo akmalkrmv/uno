@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { switchMap, map, take, first, tap } from 'rxjs/operators';
-import { of, from, Observable, combineLatest } from 'rxjs';
+import { of, from, Observable, combineLatest, BehaviorSubject } from 'rxjs';
 
 import * as firebaseui from 'firebaseui';
 import * as firebase from 'firebase/app';
@@ -17,6 +17,8 @@ type presenceStatus = 'online' | 'away' | 'offline';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   public user$: Observable<User>;
+  public current$ = new BehaviorSubject<User>(null);
+  public currentId$ = new BehaviorSubject<string>(null);
 
   constructor(
     private router: Router,
@@ -27,7 +29,9 @@ export class AuthService {
     this.user$ = combineLatest([fireauth.authState, api.users.users$]).pipe(
       switchMap(([user]) =>
         user ? this.api.users.findById(user.uid) : of(null)
-      )
+      ),
+      tap((user) => this.current$.next(user)),
+      tap((user) => this.currentId$.next(user?.id))
     );
 
     this.updateOnUser().subscribe();

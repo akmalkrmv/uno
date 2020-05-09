@@ -1,7 +1,14 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { Message } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
-import { take, map } from 'rxjs/operators';
+import { map, tap, first } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 
 @Component({
@@ -13,6 +20,8 @@ export class MessageListComponent implements OnInit, OnDestroy {
   @Input() roomId: string;
   @Input() userId: string;
 
+  @ViewChild('messages') messagesRef: ElementRef;
+
   public messages$: Observable<Message[]>;
   public content: string;
 
@@ -22,19 +31,16 @@ export class MessageListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.messages$ = combineLatest([
-      this.api.messages.messages$,
+      this.api.messages.roomMessages(this.roomId),
       this.api.users.users$,
     ]).pipe(
       map(([messages, users]) =>
-        messages
-          .filter((message) => message.roomId == this.roomId)
-          .map((message) => {
-            return {
-              ...message,
-              sender: users.find((user) => user.id == message.senderId),
-            };
-          })
-      )
+        messages.map((message) => ({
+          ...message,
+          sender: users.find((user) => user.id == message.senderId),
+        }))
+      ),
+      tap(() => this.scrollToBottom())
     );
   }
 
@@ -49,17 +55,18 @@ export class MessageListComponent implements OnInit, OnDestroy {
         senderId: this.userId,
         content: this.content,
       })
-      .pipe(take(1))
-      .subscribe(() => {
-        this.content = '';
-      });
-    1;
+      .pipe(first())
+      .subscribe();
+
+    this.content = '';
   }
 
-  public keyDown(event: KeyboardEvent): void {
-    if (event.keyCode === 13) {
-      // On 'Enter' do this...
-      this.send();
-    }
+  private scrollToBottom() {
+    setTimeout(() => {
+      if (this.messagesRef) {
+        const messages = this.messagesRef.nativeElement;
+        messages.scrollTo(0, messages.scrollHeight);
+      }
+    });
   }
 }

@@ -1,22 +1,29 @@
-<ng-container *ngFor="let message of messages$ | async | sort: 'created':'asc'">
-  <app-message [message]="message" [user]="message.sender"></app-message>
-</ng-container>
+<div class="messages-container">
+  <div #messages class="messages-list">
+    <ng-container
+      *ngFor="let message of messages$ | async | sort: 'created':'asc'"
+    >
+      <app-message
+        [message]="message"
+        [user]="message.sender"
+        class="message-item"
+      ></app-message>
+    </ng-container>
+  </div>
 
-<form class="form">
-  <div>
+  <form class="form">
     <mat-form-field>
       <mat-label>Message</mat-label>
-      <textarea
-        matInput
-        [(ngModel)]="content"
-        name="content"
-        (keydown)="keyDown($event)"
-      ></textarea>
+      <input matInput name="content" autocomplete="off" [(ngModel)]="content" />
     </mat-form-field>
-  </div>
-  <div class="controls">
-    <button mat-raised-button color="primary" (click)="send()">
-      Send <mat-icon>send</mat-icon>
+    <button
+      mat-icon-button
+      type="submit"
+      color="primary"
+      [disabled]="!content"
+      (click)="send()"
+    >
+      <mat-icon>send</mat-icon>
     </button>
-  </div>
-</form>
+  </form>
+</div>

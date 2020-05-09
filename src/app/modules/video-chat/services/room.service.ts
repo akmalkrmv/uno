@@ -97,7 +97,7 @@ export class RoomService implements OnDestroy {
   public initialize(user: User) {
     this.user = user;
     this.user$.next(user);
-    this.setStream(user);
+    // this.setStream(user);
 
     this.connectionService.init(user);
 
@@ -123,8 +123,8 @@ export class RoomService implements OnDestroy {
 
     this.code$ = this.user.messages$.pipe(tap((data) => console.log(data)));
 
-    this.messaging.requestPermission(this.user.id);
-    this.messaging.receiveMessage();
+    // this.messaging.requestPermission(this.user.id);
+    // this.messaging.receiveMessage();
   }
 
   public confirmJoinCall() {
@@ -166,6 +166,7 @@ export class RoomService implements OnDestroy {
 
   public call() {
     this.isConnectionOn.next(true);
+    this.setStream(this.user)
 
     this.roomUsers()
       .pipe(first(), untilDestroyed(this))

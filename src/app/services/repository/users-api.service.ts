@@ -3,8 +3,8 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { User } from '@models/user';
 import { BaseFirestoreService } from './base-firestore.service';
@@ -44,11 +44,24 @@ export class UsersApiService extends BaseFirestoreService
     );
   }
 
-  // public getFreinds(userId: string[]): Observable<User[]> {
-  //   return this.users$.pipe(
-  //     map((users) => users.filter((user) => userIds.includes(user.id)))
-  //   );
-  // }
+  public getFreinds(userId: string): Observable<User[]> {
+    return this.firestore
+      .doc<User>(`${this.path}/${userId}`)
+      .get()
+      .pipe(
+        switchMap((doc) => {
+          const user = doc.data();
+
+          return user.friends && user.friends.length
+            ? this.collectionChanges(
+                this.firestore.collection<User>(this.path, (ref) =>
+                  ref.where('id', 'in', user.friends)
+                )
+              )
+            : of([]);
+        })
+      );
+  }
 
   public findById(userId: string): Observable<User> {
     return this.users$.pipe(
@@ -62,6 +75,24 @@ export class UsersApiService extends BaseFirestoreService
     if (!doc.exists) {
       user = { ...user, created: Date.now() };
       userRef.set(user, { merge: true });
+    }
+  }
+
+  public async addToFriends(
+    userId: string,
+    ...freindIds: string[]
+  ): Promise<void> {
+    const userRef = this.firestore.doc(`users/${userId}`).ref;
+    const doc = await userRef.get();
+    if (doc.exists) {
+      const user = doc.data();
+      const friends: string[] = user.freinds || [];
+
+      freindIds.forEach(
+        (friend) => !friends.includes(friend) && friends.push(friend)
+      );
+
+      return userRef.update({ friends });
     }
   }
 
