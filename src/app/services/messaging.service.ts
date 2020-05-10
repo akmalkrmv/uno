@@ -22,12 +22,6 @@ export class MessagingService {
    */
   public updateToken(userId: string, token: string) {
     // we can change this function to request our backend service
-    // this.auth.authState.pipe(take(1)).subscribe((state) => {
-    //   const data = {};
-    //   data[userId] = token;
-    //   this.database.object('fcmTokens/').update(data);
-    // });
-
     this.api.users.saveToken(userId, token);
   }
 
