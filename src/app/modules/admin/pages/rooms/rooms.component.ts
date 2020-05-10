@@ -17,22 +17,14 @@ export class RoomsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   ngOnInit(): void {
-    combineLatest([
-      this.api.users.users$,
-      this.api.roomUsers.maps$,
-      this.api.rooms.rooms$,
-    ])
+    combineLatest([this.api.users.users$, this.api.rooms.rooms$])
       .pipe(untilDestroyed(this))
-      .subscribe(([users, maps, rooms]) => {
+      .subscribe(([users, rooms]) => {
         rooms = rooms.map((room) => {
-          const userIds = maps
-            .filter((map) => map.roomId == room.id)
-            .map((map) => map.userId);
-
           return {
             ...room,
             creator: users.find((user) => user.id == room.creator.id) || {},
-            users: users.filter((user) => userIds.includes(user.id)),
+            users: users.filter((user) => room.users.includes(user.id)),
           };
         });
 

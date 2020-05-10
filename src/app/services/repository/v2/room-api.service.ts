@@ -105,7 +105,7 @@ export class RoomV2ApiService extends BaseFirestoreService {
       );
   }
 
-  public otherUsers(roomId: string, userId: string): Observable<any[]> {
+  public roomOtherUsers(roomId: string, userId: string): Observable<any[]> {
     return this.roomUsers(roomId).pipe(
       map((users) => users.filter((user) => user.id != userId))
     );

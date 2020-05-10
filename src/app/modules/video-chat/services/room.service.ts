@@ -204,9 +204,7 @@ export class RoomService implements OnDestroy {
   }
 
   private roomUsers(): Observable<IUser[]> {
-    return this.api.roomUsers
-      .roomOtherUserIds(this.roomId, this.user.id)
-      .pipe(switchMap((userIds) => this.api.users.getByIds(userIds)));
+    return this.api.roomV2.roomOtherUsers(this.roomId, this.user.id);
   }
 
   private async joinRoom(user: User) {

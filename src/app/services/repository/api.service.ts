@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 import { UsersApiService } from './users-api.service';
 import { RoomApiService } from './room-api.service';
-import { RoomUserApiService } from './room-user-api.service';
 import { RoomsApiService } from './rooms-api.service';
 import { MessagesApiService } from './messages-api.service';
 
@@ -15,7 +14,6 @@ export class ApiService {
     public users: UsersApiService,
     public room: RoomApiService,
     public rooms: RoomsApiService,
-    public roomUsers: RoomUserApiService,
     public messages: MessagesApiService,
     // V2
     public roomV2: RoomV2ApiService
