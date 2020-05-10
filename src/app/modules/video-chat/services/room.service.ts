@@ -100,10 +100,9 @@ export class RoomService implements OnDestroy {
 
     this.connectionService.init(user);
 
-    this.onlineUsers$ = this.api.roomUsers.roomUserIds(this.roomId).pipe(
-      untilDestroyed(this),
-      switchMap((userIds) => this.api.users.getByIds(userIds))
-    );
+    this.onlineUsers$ = this.api.roomV2
+      .roomUsers(this.roomId)
+      .pipe(untilDestroyed(this));
 
     this.offers$ = this.api.room.userOffers(this.user.id).pipe(
       untilDestroyed(this),
