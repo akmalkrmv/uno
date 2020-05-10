@@ -10,14 +10,14 @@
       <mat-icon>group_add</mat-icon>
       <span class="menu-item">Присоединиться</span>
     </a>
-    <!-- <a mat-list-item routerLink="/rooms" (click)="closeSidenav()">
+    <a mat-list-item routerLink="/rooms" (click)="closeSidenav()">
       <mat-icon>groups</mat-icon>
-      <span class="menu-item">Группы</span>
+      <span class="menu-item">Комнаты</span>
     </a>
     <a mat-list-item routerLink="/friends" (click)="closeSidenav()">
       <mat-icon>people_outline</mat-icon>
-      <span class="menu-item">Контакты</span>
-    </a> -->
+      <span class="menu-item">Друзья</span>
+    </a>
     <a
       mat-list-item
       *ngIf="user.role === 'admin'"

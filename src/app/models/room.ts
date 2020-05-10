@@ -11,7 +11,7 @@ export class Answer extends IOffer {}
 export interface Room {
   id?: string;
   name?: string;
-  photoUrl?: string;
+  photoURL?: string;
   creator?: any;
   created?: number;
   users?: any[];

@@ -111,6 +111,14 @@ export class RoomV2ApiService extends BaseFirestoreService {
     );
   }
 
+  public userRooms(userId: string): Observable<Room[]> {
+    return this.collectionChanges(
+      this.firestore.collection<Room>(`rooms`, (ref) =>
+        ref.where('users', 'array-contains', userId)
+      )
+    );
+  }
+
   // public userOffers(userId: string): Observable<Offer[]> {
   //   return this.offersToUserId(userId, 'offers');
   // }

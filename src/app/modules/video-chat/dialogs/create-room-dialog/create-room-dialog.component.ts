@@ -15,7 +15,7 @@ import { UploadService, Upload } from '@services/upload.service';
 })
 export class CreateRoomDialogComponent implements OnInit, OnDestroy {
   public name = new FormControl('', [Validators.required]);
-  private photoUrl: string;
+  private photoURL: string;
 
   constructor(
     private router: Router,
@@ -30,8 +30,8 @@ export class CreateRoomDialogComponent implements OnInit, OnDestroy {
   public create() {
     const data: Partial<Room> = { name: this.name.value };
 
-    if (this.photoUrl) {
-      data.photoUrl = this.photoUrl;
+    if (this.photoURL) {
+      data.photoURL = this.photoURL;
     }
 
     this.auth.authorized$
@@ -46,7 +46,7 @@ export class CreateRoomDialogComponent implements OnInit, OnDestroy {
     if (input.files && input.files.length) {
       const upload = new Upload(input.files[0]);
       const result = await this.fileUpload.upload(upload);
-      this.photoUrl = result.url;
+      this.photoURL = result.url;
     }
   }
 }

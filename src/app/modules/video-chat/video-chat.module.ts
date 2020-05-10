@@ -16,6 +16,8 @@ import { FriendsPageComponent } from './pages/friends-page/friends-page.componen
 import { RoomsPageComponent } from './pages/rooms-page/rooms-page.component';
 import { ChatModule } from '../chat/chat.module';
 import { CreateRoomPageComponent } from './pages/create-room-page/create-room-page.component';
+import { VideoChatRoutingModule } from './video-chat-routing.module';
+import { RoomItemComponent } from './components/room-item/room-item.component';
 
 const dialogs = [
   CallDialogComponent,
@@ -37,7 +39,13 @@ const dialogs = [
     FriendsPageComponent,
     RoomsPageComponent,
     CreateRoomPageComponent,
+    RoomItemComponent,
   ],
-  imports: [SharedModule, SharedComponentsModule, ChatModule],
+  imports: [
+    SharedModule,
+    SharedComponentsModule,
+    ChatModule,
+    VideoChatRoutingModule,
+  ],
 })
 export class VideoChatModule {}

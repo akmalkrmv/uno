@@ -1,14 +1,17 @@
 <mat-nav-list class="user-list">
-  <div *ngFor="let user of users" mat-list-item class="user-item">
-    <app-user [user]="user"></app-user>
-    <ng-container *ngIf="canAddToFriends(user.id)">
-      <button
-        mat-icon-button
-        title="Добавить в друзья"
-        (click)="addToFriends(user.id)"
+  <ng-container *ngFor="let user of users">
+    <div mat-list-item class="user-item">
+      <app-user [user]="user"></app-user>
+      <ng-container *ngIf="canAddToFriends(user.id)">
+        <button
+          mat-icon-button
+          title="Добавить в друзья"
+          (click)="addToFriends(user.id)"
+        >
+          <mat-icon>person_add</mat-icon>
+        </button></ng-container
       >
-        <mat-icon>person_add</mat-icon>
-      </button></ng-container
-    >
-  </div>
+    </div>
+    <mat-divider></mat-divider>
+  </ng-container>
 </mat-nav-list>

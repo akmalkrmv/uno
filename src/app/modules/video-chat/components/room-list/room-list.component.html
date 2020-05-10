@@ -1,6 +1,15 @@
 <mat-nav-list class="room-list">
-  <div *ngFor="let room of rooms$ | async" mat-list-item>
-    <mat-icon>groups</mat-icon>
-    {{ room.name || room.id }}
-  </div>
+  <ng-container *ngFor="let room of rooms$ | async">
+    <a mat-list-item routerLink="/room/{{ room.id }}" class="profile-container">
+      <div class="profile-avatar">
+        <img *ngIf="room.photoURL" [src]="room.photoURL" class="profile-img" />
+        <mat-icon *ngIf="!room.photoURL">groups</mat-icon>
+      </div>
+      <div class="profile-data">
+        <div class="profile-data__primary">{{ room.name || room.users }}</div>
+        <div class="profile-data__secondary">{{ room.id }}</div>
+      </div>
+    </a>
+    <mat-divider></mat-divider>
+  </ng-container>
 </mat-nav-list>
