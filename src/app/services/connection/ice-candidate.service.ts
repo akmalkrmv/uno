@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { first, catchError, tap } from 'rxjs/operators';
+import { first, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { Connection, IceCandidate, User } from '@models/index';
