@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
-import { catchError, first } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
 import { User, Offer, Answer, Connection, IUser } from '@models/index';
@@ -217,7 +216,7 @@ export class ConnectionService {
       if (!successful) {
         this.trySetRemoteWithRetry(connection, answer, --retry);
       }
-    }, 1000);
+    }, 100);
   }
 
   private handleError(error) {

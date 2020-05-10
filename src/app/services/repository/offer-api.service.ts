@@ -20,9 +20,29 @@ export class OfferApiService extends BaseFirestoreService {
   public userOffers(roomId: string, userId: string): Observable<IOffer[]> {
     const collection = this.firestore.collection<IOffer>(
       `rooms/${roomId}/offers`,
+      (ref) => ref.where('receiver', '==', userId).where('type', '==', 'offer')
+    );
+    return this.collectionChanges(collection, ['added']);
+  }
+
+  public userAnswers(roomId: string, userId: string): Observable<IOffer[]> {
+    const collection = this.firestore.collection<IOffer>(
+      `rooms/${roomId}/offers`,
+      (ref) => ref.where('receiver', '==', userId).where('type', '==', 'answer')
+    );
+    return this.collectionChanges(collection, ['added']);
+  }
+
+  public userDisconnections(
+    roomId: string,
+    userId: string
+  ): Observable<IOffer[]> {
+    const collection = this.firestore.collection<IOffer>(
+      `rooms/${roomId}/offers`,
       (ref) => ref.where('receiver', '==', userId)
     );
-    return this.collectionChanges(collection);
+
+    return this.collectionChanges(collection, ['removed']);
   }
 
   public async createOffer(roomId: string, offer: IOffer): Promise<void> {
@@ -66,8 +86,9 @@ export class OfferApiService extends BaseFirestoreService {
 
   public clearConnections(roomId: string, userId: string): Promise<any> {
     const deleteDocuments = (collection: AngularFirestoreCollection) =>
-      collection.ref
+      collection
         .get()
+        .toPromise()
         .then((snapshot: QuerySnapshot<DocumentData>) =>
           snapshot.forEach((item) => item.ref.delete())
         );

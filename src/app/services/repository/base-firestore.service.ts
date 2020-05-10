@@ -16,7 +16,7 @@ export class BaseFirestoreService {
     logItems = false,
     logChanges = false
   ): Observable<T[]> {
-    return collection.snapshotChanges(events).pipe(
+    return collection.stateChanges(events).pipe(
       tap(() => console.log(`list path: ${collection.ref.path}`)),
       tap((changes: DocumentChangeAction<T>[]) => {
         logChanges &&

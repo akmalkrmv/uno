@@ -103,15 +103,21 @@ export class RoomService implements OnDestroy {
 
     this.offers$ = this.api.offer.userOffers(this.roomId, this.user.id).pipe(
       untilDestroyed(this),
-      takeWhile(() => this.isConnectionOn.value),
-      map((offers) => offers.filter((offer) => offer.type == 'offer'))
+      takeWhile(() => this.isConnectionOn.value)
     );
 
-    this.answers$ = this.api.offer.userOffers(this.roomId, this.user.id).pipe(
+    this.answers$ = this.api.offer.userAnswers(this.roomId, this.user.id).pipe(
       untilDestroyed(this),
-      takeWhile(() => this.isConnectionOn.value),
-      map((offers) => offers.filter((offer) => offer.type == 'answer'))
+      takeWhile(() => this.isConnectionOn.value)
     );
+
+    this.api.offer
+      .userDisconnections(this.roomId, this.user.id)
+      .pipe(untilDestroyed(this))
+      .subscribe((offers) => {
+        console.log('dissconnection', offers);
+        offers.forEach((offer) => this.user.closeConnection(offer.sender));
+      });
 
     this.setTitle();
     this.listenToOffers();
@@ -171,12 +177,17 @@ export class RoomService implements OnDestroy {
       );
   }
 
-  public hangup() {
+  public async hangup() {
     if (!this.user) return;
 
-    // this.isConnectionOn.next(false);
+    console.log('clearing connections..');
+    this.isConnectionOn.next(false);
+
     this.user.closeConnections();
-    this.api.offer.clearConnections(this.roomId, this.user.id);
+    await this.api.offer.clearConnections(this.roomId, this.user.id);
+
+    this.isConnectionOn.next(true);
+    console.log('clearing connections done.');
   }
 
   public async leaveRoom() {
@@ -247,7 +258,7 @@ export class RoomService implements OnDestroy {
       .pipe(throttleTime(300), distinctUntilChanged(this.compareOffers))
       .subscribe((offers) => {
         if (!offers || !offers.length) {
-          this.user.closeConnections();
+          // this.user.closeConnections();
           return;
         }
 
@@ -264,7 +275,7 @@ export class RoomService implements OnDestroy {
       .pipe(throttleTime(300), distinctUntilChanged(this.compareOffers))
       .subscribe((answers) => {
         if (!answers || !answers.length) {
-          this.user.closeConnections();
+          // this.user.closeConnections();
           return;
         }
 
