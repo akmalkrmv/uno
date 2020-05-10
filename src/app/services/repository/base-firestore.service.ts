@@ -69,7 +69,7 @@ export class BaseFirestoreService {
   protected async getCollectionOnce<T>(
     collection: AngularFirestoreCollection<T>
   ): Promise<T[]> {
-    const snapshot = await collection.ref.get();
+    const snapshot = await collection.get().toPromise();
     return snapshot.docs.map((doc) => doc.data() as T);
   }
 
