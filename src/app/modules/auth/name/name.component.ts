@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
-import { take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 @Component({
@@ -23,10 +22,7 @@ export class NameComponent implements OnInit {
   ngOnInit(): void {}
 
   public next() {
-    this.auth.user$.pipe(take(1)).subscribe((current) => {
-      this.api.users.update({ ...current, name: this.name.value }).then(() => {
-        this.router.navigate(['']);
-      });
-    });
+    const payload = { ...this.auth.current$.value, name: this.name.value };
+    this.api.users.update(payload).then(() => this.router.navigate(['']));
   }
 }

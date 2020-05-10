@@ -11,7 +11,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 
-import { User } from '@models/index';
+import { IUser } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 
 @Component({
@@ -21,9 +21,9 @@ import { ApiService } from '@services/repository/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit, OnDestroy {
-  @Input() user: User;
+  @Input() user: IUser;
   @Input() isCardView: boolean;
-  @Output() save = new EventEmitter<User>();
+  @Output() save = new EventEmitter<IUser>();
   @Output() remove = new EventEmitter<string>();
   
   constructor(

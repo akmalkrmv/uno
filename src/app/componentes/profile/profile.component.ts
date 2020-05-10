@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UploadService, Upload } from '@services/upload.service';
 import { ApiService } from '@services/repository/api.service';
-import { User } from '@models/index';
+import { IUser } from '@models/index';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -9,11 +10,15 @@ import { User } from '@models/index';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
-  @Input() user: User;
+  @Input() user: IUser;
 
   public upload: Upload;
 
-  constructor(private fileUpload: UploadService, private api: ApiService) {}
+  constructor(
+    private fileUpload: UploadService,
+    private api: ApiService,
+    private auth: AuthService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -21,7 +26,10 @@ export class ProfileComponent implements OnInit {
     if (files && files.length) {
       this.upload = new Upload(files[0]);
       this.fileUpload.upload(this.upload).then((upload) => {
-        this.api.users.update({ ...this.user, photoURL: upload.url });
+        const updated = { ...this.user, photoURL: upload.url };
+        this.api.users
+          .update(updated)
+          .then(() => this.auth.current$.next(updated));
       });
     }
   }

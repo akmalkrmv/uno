@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { ApiService } from '@services/repository/api.service';
-import { User } from '@models/index';
+import { IUser } from '@models/index';
 
 @Component({
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent implements OnInit {
-  public users$ = new BehaviorSubject<User[]>([]);
+  public users$ = new BehaviorSubject<IUser[]>([]);
   public isCardView$ = new BehaviorSubject(true);
 
   constructor(private api: ApiService) {}
@@ -24,7 +24,7 @@ export class UsersComponent implements OnInit {
       });
   }
 
-  public save(user: User) {
+  public save(user: IUser) {
     this.api.users.update(user);
   }
 

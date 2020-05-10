@@ -6,7 +6,7 @@
     fixedInViewport="false"
     [attr.role]="isHeadset$ ? 'dialog' : 'navigation'"
   >
-    <app-sidenav [user]="auth.user$ | async"></app-sidenav>
+    <app-sidenav [user]="auth.current$ | async"></app-sidenav>
   </mat-sidenav>
 
   <mat-sidenav-content class="layout-content">

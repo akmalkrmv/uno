@@ -4,10 +4,10 @@ import {
   ChangeDetectionStrategy,
   Input,
 } from '@angular/core';
-import { User } from '@models/index';
-import { AuthService } from '@services/auth.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IUser } from '@models/index';
+import { PresenceService } from '@services/presence.service';
 
 @Component({
   selector: 'app-user',
@@ -16,14 +16,14 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
-  @Input() user: User;
+  @Input() user: IUser;
 
   status$: Observable<string>;
 
-  constructor(private auth: AuthService) {}
+  constructor(private precense: PresenceService) {}
 
   ngOnInit(): void {
-    this.status$ = this.auth
+    this.status$ = this.precense
       .getPresence(this.user.id)
       .pipe(map((presence) => (presence ? presence.status : 'offline')));
   }
