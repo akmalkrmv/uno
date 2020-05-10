@@ -1,32 +1,21 @@
 import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
+import { CanActivate, Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { AuthService } from '@services/auth.service';
-import { map } from 'rxjs/operators';
+import { LocalStorageKeys } from '@constants/index';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean | Observable<boolean> {
+  canActivate(): boolean | Observable<boolean> {
     return this.auth.isSignedIn().pipe(
-      map((isSignedIn) => {
+      tap((isSignedIn) => {
         if (!isSignedIn) {
+          localStorage.setItem(LocalStorageKeys.redirectUrl, location.pathname);
           this.router.navigate(['/login']);
-          return false;
         }
-
-        return true;
       })
     );
   }

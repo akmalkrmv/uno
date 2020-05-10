@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { switchMap, map, tap, filter, first } from 'rxjs/operators';
+import { switchMap, map, filter, first } from 'rxjs/operators';
 import { of, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { IUser } from '@models/index';
+import { LocalStorageKeys } from '@constants/index';
 import { ApiService } from './repository/api.service';
 import { PresenceService } from './presence.service';
+import { NavigationService } from './navigation.service';
 
 import * as firebaseui from 'firebaseui';
 import * as firebase from 'firebase/app';
@@ -13,14 +15,15 @@ import 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  public current$ = new BehaviorSubject<IUser>(null);
+  private current$ = new BehaviorSubject<IUser>(null);
   private refreshEvent$ = new BehaviorSubject<number>(null);
 
   constructor(
     private router: Router,
     private api: ApiService,
     private fireauth: AngularFireAuth,
-    private presence: PresenceService
+    private presence: PresenceService,
+    private navigate: NavigationService
   ) {
     combineLatest([fireauth.authState, this.refreshEvent$])
       .pipe(
@@ -30,6 +33,7 @@ export class AuthService {
       )
       .subscribe((user: IUser) => {
         if (user && !user.name) {
+          localStorage.setItem(LocalStorageKeys.redirectUrl, location.pathname);
           this.router.navigate(['/name']);
         }
 
@@ -60,7 +64,7 @@ export class AuthService {
   }
 
   public hasRole(role: string): Observable<boolean> {
-    return this.current$.pipe(map((user) => user && user.role === role));
+    return this.authorized$.pipe(map((user) => user.role === role));
   }
 
   public startUi(element: Element | string): void {
@@ -83,9 +87,13 @@ export class AuthService {
       ],
       callbacks: {
         signInSuccessWithAuthResult: (credential, redirectUrl: string) => {
-          this.saveCredentials(credential.user).then(() =>
-            this.router.navigate([redirectUrl || ''])
-          );
+          this.saveCredentials(credential.user).then(() => {
+            if (redirectUrl) {
+              this.router.navigate([redirectUrl]);
+            } else {
+              this.navigate.redirectIfShould();
+            }
+          });
 
           return false;
         },
