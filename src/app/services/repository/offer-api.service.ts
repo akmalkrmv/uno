@@ -22,7 +22,7 @@ export class OfferApiService extends BaseFirestoreService {
       `rooms/${roomId}/offers`,
       (ref) => ref.where('receiver', '==', userId).where('type', '==', 'offer')
     );
-    return this.collectionChanges(collection, ['added']);
+    return this.collectionStateChanges(collection, ['added']);
   }
 
   public userAnswers(roomId: string, userId: string): Observable<IOffer[]> {
@@ -30,7 +30,7 @@ export class OfferApiService extends BaseFirestoreService {
       `rooms/${roomId}/offers`,
       (ref) => ref.where('receiver', '==', userId).where('type', '==', 'answer')
     );
-    return this.collectionChanges(collection, ['added']);
+    return this.collectionStateChanges(collection, ['added']);
   }
 
   public userDisconnections(
