@@ -4,7 +4,7 @@ import { of, Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { GameService } from './game.service';
 import { Player, PlayerMapper } from '../models/player';
 import { Card } from '../models/card.model';
-import { take } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 declare type Notifiable =
   | Array<Player | Card>
@@ -67,7 +67,7 @@ export class GameLocalService {
     const notifier = this.playerId;
 
     if (!this.isCreator) {
-      observable = observable.pipe(take(1));
+      observable = observable.pipe(first());
     }
 
     const subscription = observable.subscribe((payload) => {
