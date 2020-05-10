@@ -47,44 +47,61 @@ export class RoomV2ApiService extends BaseFirestoreService {
     return doc.exists;
   }
 
-  public async createRoom(
-    creator: string,
-    data?: Partial<Room>
-  ): Promise<string> {
-    const roomId = await this.addToCollection(
-      this.firestore.collection(`rooms`),
-      { ...data, creator }
-    );
-
-    await this.joinRoom(roomId, creator);
-    return roomId;
+  public createRoom(creator: string, data?: Partial<Room>): Promise<string> {
+    return this.addToCollection(this.firestore.collection(`rooms`), {
+      ...data,
+      creator,
+      users: [creator],
+    });
   }
 
   public async joinRoom(roomId: string, userId: string): Promise<void> {
-    const colection = this.firestore.collection(`rooms/${roomId}/users`);
-    await colection.add(userId);
+    const roomDoc = this.firestore.doc<Room>(`rooms/${roomId}`);
+    const snapshot = await roomDoc.ref.get();
+
+    if (!snapshot.exists) return;
+
+    const room: Room = snapshot.data();
+    if (room.users.indexOf(userId) < 0) {
+      room.users.push(userId);
+      await roomDoc.update(room);
+    }
+  }
+
+  public async leaveRoom(roomId: string, userId: string): Promise<void> {
+    const roomDoc = this.firestore.doc<Room>(`rooms/${roomId}`);
+    const snapshot = await roomDoc.ref.get();
+
+    if (!snapshot.exists) return;
+
+    const room: Room = snapshot.data();
+    const index = room.users.indexOf(userId);
+    if (index >= 0) {
+      room.users.splice(index, 1);
+      await roomDoc.update(room);
+    }
   }
 
   public roomUsers(roomId: string): Observable<IUser[]> {
     return this.firestore
-      .collection<string>(`rooms/${roomId}/users`)
+      .doc<Room>(`rooms/${roomId}`)
       .valueChanges()
       .pipe(
-        switchMap((userIds) => {
+        switchMap((room) => {
           return this.collectionChanges(
             this.firestore.collection<IUser>(`users`, (ref) =>
-              ref.where('id', 'in', userIds)
+              ref.where('id', 'in', room.users)
             )
           );
         })
       );
   }
 
-  // public otherUsers(userId: string): Observable<any[]> {
-  //   return this.users$.pipe(
-  //     map((users) => users.filter((user) => user.id != userId))
-  //   );
-  // }
+  public otherUsers(roomId: string, userId: string): Observable<any[]> {
+    return this.roomUsers(roomId).pipe(
+      map((users) => users.filter((user) => user.id != userId))
+    );
+  }
 
   // public userOffers(userId: string): Observable<Offer[]> {
   //   return this.offersToUserId(userId, 'offers');

@@ -20,10 +20,6 @@ import { ChatModule } from './modules/chat/chat.module';
 import { VideoChatModule } from './modules/video-chat/video-chat.module';
 import { SharedComponentsModule } from './componentes/shared-components.module';
 
-// Services
-import { ApiService } from '@services/repository/api.service';
-import { LocalApiService } from '@services/local-repository/api.service';
-
 @NgModule({
   declarations: [AppComponent, HomeComponent, LayoutComponent],
   imports: [

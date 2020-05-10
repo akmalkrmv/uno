@@ -74,7 +74,7 @@ export class RoomService implements OnDestroy {
 
     roomExists$
       .pipe(switchMap((exists) => (exists ? authorize$ : of(null))))
-      .pipe(switchMap((user) => (user ? this.joinRoom(user) : of(null))))
+      .pipe(tap((user) => user && this.joinRoom(user)))
       .pipe(first(), untilDestroyed(this))
       .subscribe((user) => {
         if (!user) return;
@@ -184,11 +184,9 @@ export class RoomService implements OnDestroy {
       .subscribe(() => this.user.closeConnections());
   }
 
-  public leaveRoom() {
-    this.api.roomUsers
-      .leaveRoom(this.roomId, this.user.id)
-      .pipe(first(), untilDestroyed(this))
-      .subscribe(() => this.router.navigate([`/`]));
+  public async leaveRoom() {
+    await this.api.roomV2.leaveRoom(this.roomId, this.user.id);
+    this.router.navigate([`/`]);
   }
 
   public retryCall() {
@@ -211,11 +209,9 @@ export class RoomService implements OnDestroy {
       .pipe(switchMap((userIds) => this.api.users.getByIds(userIds)));
   }
 
-  private joinRoom(user: User) {
-    return this.api.roomUsers
-      .joinRoom(this.roomId, user.id)
-      .pipe(first(), untilDestroyed(this))
-      .pipe(map(() => user));
+  private async joinRoom(user: User) {
+    await this.api.roomV2.joinRoom(this.roomId, user.id);
+    return user;
   }
 
   private async setTitle() {

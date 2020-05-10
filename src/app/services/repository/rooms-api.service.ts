@@ -22,13 +22,6 @@ export class RoomsApiService extends BaseFirestoreService {
     this.rooms$ = this.collectionChanges(this.roomsCollection);
   }
 
-  public createRoom(creatorId: string, data?: Partial<Room>): Promise<string> {
-    return this.addToCollection(this.roomsCollection, {
-      ...data,
-      creator: creatorId,
-    });
-  }
-
   public update(room: Room) {
     const roomRef = this.firestore.doc(`rooms/${room.id}`).ref;
     return roomRef.update({ ...room });
