@@ -5,29 +5,9 @@ import {
   videoConstraints,
 } from '../constants/rts-configurations';
 
-export interface IUser {
-  id?: string;
-  created?: number;
-  name?: string;
-  phoneNumber?: string;
-  photoURL?: string;
-  email?: string;
-  role?: string;
-  fcmTokens?: any;
-  friends?: string[];
-}
-
 // TODO: A BIG TODO!!!
 export class User {
-  public created?: number;
-  public email?: string;
-  public phoneNumber?: string;
   public photoURL?: string;
-  public fcmTokens?: any;
-  public friends?: string[];
-
-  public ref?: string;
-  public role?: string;
   public stream?: MediaStream;
   public connections: Connection[] = [];
   public isFrontCamera = true;
@@ -76,6 +56,17 @@ export class User {
     }
 
     this.connections = [];
+  }
+
+  public closeConnection(userId: string) {
+    const index = this.connections.findIndex(
+      (connection) => (connection.userId = userId)
+    );
+
+    if (index >= 0) {
+      this.connections[index].close();
+      this.connections.splice(index, 1);
+    }
   }
 
   public addTracks(connection: RTCPeerConnection) {

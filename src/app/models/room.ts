@@ -1,7 +1,8 @@
 export class IOffer {
   id?: string;
-  from: string;
-  to: string;
+  type: 'offer' | 'answer';
+  sender: string;
+  receiver: string;
   description: any;
 }
 
@@ -21,7 +22,7 @@ export interface Room {
 
 export class IceCandidate {
   id?: string;
-  senderId: string;
-  recieverId: string;
+  sender: string;
+  reciever: string;
   candidates: any;
 }
