@@ -41,11 +41,10 @@ export class RoomsComponent implements OnInit, OnDestroy {
   }
 
   public save(room: Room) {
-    this.api.rooms.update(room);
+    this.api.roomV2.update(room);
   }
 
   public remove(roomId: string) {
-    this.api.roomUsers.removeByRoomId(roomId);
-    this.api.rooms.remove(roomId);
+    this.api.roomV2.remove(roomId);
   }
 }

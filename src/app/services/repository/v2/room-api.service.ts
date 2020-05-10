@@ -55,6 +55,14 @@ export class RoomV2ApiService extends BaseFirestoreService {
     });
   }
 
+  public update(room: Room): Promise<void> {
+    return this.firestore.doc(`rooms/${room.id}`).ref.update({ ...room });
+  }
+
+  public remove(roomId: string): Promise<void> {
+    return this.firestore.doc(`rooms/${roomId}`).ref.delete();
+  }
+
   public async joinRoom(roomId: string, userId: string): Promise<void> {
     const roomDoc = this.firestore.doc<Room>(`rooms/${roomId}`);
     const snapshot = await roomDoc.ref.get();
