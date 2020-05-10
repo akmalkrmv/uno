@@ -42,7 +42,7 @@ export class OfferApiService extends BaseFirestoreService {
       (ref) => ref.where('receiver', '==', userId)
     );
 
-    return this.collectionChanges(collection, ['removed']);
+    return this.collectionStateChanges(collection, ['removed']);
   }
 
   public async createOffer(roomId: string, offer: IOffer): Promise<void> {

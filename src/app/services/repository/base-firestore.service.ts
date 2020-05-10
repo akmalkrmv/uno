@@ -16,6 +16,33 @@ export class BaseFirestoreService {
     logItems = false,
     logChanges = false
   ): Observable<T[]> {
+    return collection.snapshotChanges(events).pipe(
+      tap(() => console.log(`list path: ${collection.ref.path}`)),
+      tap((changes: DocumentChangeAction<T>[]) => {
+        logChanges &&
+          console.log(
+            `${collection.ref.path}`,
+            changes.map((change) => change.type)
+          );
+      }),
+      map((changes: DocumentChangeAction<T>[]) =>
+        changes.map((change: DocumentChangeAction<T>) => ({
+          ...(change.payload.doc.data() as T),
+          id: change.payload.doc.id,
+        }))
+      ),
+      tap((items: T[]) => {
+        logItems && console.log(`${collection.ref.path}`, items);
+      })
+    );
+  }
+
+  protected collectionStateChanges<T>(
+    collection: AngularFirestoreCollection<T>,
+    events?: Array<DocumentChangeType>,
+    logItems = false,
+    logChanges = false
+  ): Observable<T[]> {
     return collection.stateChanges(events).pipe(
       tap(() => console.log(`list path: ${collection.ref.path}`)),
       tap((changes: DocumentChangeAction<T>[]) => {
