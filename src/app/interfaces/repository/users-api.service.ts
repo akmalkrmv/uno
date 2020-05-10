@@ -1,16 +1,14 @@
 import { Observable } from 'rxjs';
-import { User } from '@models/user';
+import { IUser } from '@models/user';
 
 export interface IUsersApiService {
-  users$: Observable<any[]>;
+  users$: Observable<IUser[]>;
 
-  createUser(name?: string): Observable<User>;
+  getByIds(userIds: string[]): Observable<IUser[]>;
+  findById(userId: string): Observable<IUser>;
+
   saveToken(userId: string, token: string): Promise<void>;
-
-  getByIds(userIds: string[]): Observable<User[]>;
-  findById(userId: string): Observable<User>;
-
   addIfNotExists(user: any): Promise<any>;
-  update(user: User): Promise<void>;
+  update(user: IUser): Promise<void>;
   remove(userId: string): Promise<void>;
 }

@@ -6,7 +6,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { User } from '@models/user';
+import { IUser } from '@models/user';
 import { BaseFirestoreService } from './base-firestore.service';
 import { IUsersApiService } from '@interfaces/repository';
 
@@ -15,8 +15,8 @@ import { IUsersApiService } from '@interfaces/repository';
 })
 export class UsersApiService extends BaseFirestoreService
   implements IUsersApiService {
-  public userCollection: AngularFirestoreCollection<any>;
-  public users$: Observable<any[]>;
+  public userCollection: AngularFirestoreCollection<IUser>;
+  public users$: Observable<IUser[]>;
   public path = 'users';
 
   constructor(private firestore: AngularFirestore) {
@@ -26,27 +26,21 @@ export class UsersApiService extends BaseFirestoreService
     this.users$ = this.collectionChanges(this.userCollection);
   }
 
-  public createUser(name?: string): Observable<User> {
-    return this.addToCollection(this.userCollection, { name }).pipe(
-      map((id) => new User(id, name))
-    );
-  }
-
   public saveToken(userId: string, token: string) {
     const userRef = this.userCollection.doc(userId);
     const tokens = { [token]: true };
     return userRef.update({ fcmTokens: tokens });
   }
 
-  public getByIds(userIds: string[]): Observable<User[]> {
+  public getByIds(userIds: string[]): Observable<IUser[]> {
     return this.users$.pipe(
       map((users) => users.filter((user) => userIds.includes(user.id)))
     );
   }
 
-  public getFreinds(userId: string): Observable<User[]> {
+  public getFreinds(userId: string): Observable<IUser[]> {
     return this.firestore
-      .doc<User>(`${this.path}/${userId}`)
+      .doc<IUser>(`${this.path}/${userId}`)
       .get()
       .pipe(
         switchMap((doc) => {
@@ -54,7 +48,7 @@ export class UsersApiService extends BaseFirestoreService
 
           return user.friends && user.friends.length
             ? this.collectionChanges(
-                this.firestore.collection<User>(this.path, (ref) =>
+                this.firestore.collection<IUser>(this.path, (ref) =>
                   ref.where('id', 'in', user.friends)
                 )
               )
@@ -63,13 +57,13 @@ export class UsersApiService extends BaseFirestoreService
       );
   }
 
-  public findById(userId: string): Observable<User> {
+  public findById(userId: string): Observable<IUser> {
     return this.users$.pipe(
       map((users) => users.find((user) => user.id == userId))
     );
   }
 
-  public async addIfNotExists(user: any): Promise<void> {
+  public async addIfNotExists(user: IUser): Promise<void> {
     const userRef = this.firestore.doc(`users/${user.id}`).ref;
     const doc = await userRef.get();
     if (!doc.exists) {
@@ -96,7 +90,7 @@ export class UsersApiService extends BaseFirestoreService
     }
   }
 
-  public update(user: Partial<User>) {
+  public update(user: Partial<IUser>) {
     const userRef = this.firestore.doc(`users/${user.id}`).ref;
     return userRef.update({ ...user });
   }
