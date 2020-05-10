@@ -15,7 +15,7 @@ import {
 } from 'rxjs/operators';
 
 import { copyToClipboard, shareLink } from '@utils/index';
-import { User, Offer, Answer, IOffer, Room } from '@models/index';
+import { User, Offer, Answer, IOffer, Room, IUser } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { TitleService } from '@services/title.service';
@@ -27,7 +27,7 @@ import { MessagingService } from '@services/messaging.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService implements OnDestroy {
-  public onlineUsers$: Observable<User[]>;
+  public onlineUsers$: Observable<IUser[]>;
   public offers$: Observable<Offer[]>;
   public answers$: Observable<Answer[]>;
   public title$: Observable<string>;
@@ -97,7 +97,7 @@ export class RoomService implements OnDestroy {
   public initialize(user: User) {
     this.user = user;
     this.user$.next(user);
-    // this.setStream(user);
+    this.setStream(user);
 
     this.connectionService.init(user);
 
@@ -137,8 +137,8 @@ export class RoomService implements OnDestroy {
     });
   }
 
-  public setStream(user: User) {
-    this.media.setStream(user);
+  public async setStream(user: User) {
+    await this.media.setStream(user);
   }
 
   public closeStream(user: User) {
@@ -166,7 +166,6 @@ export class RoomService implements OnDestroy {
 
   public call() {
     this.isConnectionOn.next(true);
-    this.setStream(this.user)
 
     this.roomUsers()
       .pipe(first(), untilDestroyed(this))
@@ -208,7 +207,7 @@ export class RoomService implements OnDestroy {
       });
   }
 
-  private roomUsers(): Observable<User[]> {
+  private roomUsers(): Observable<IUser[]> {
     return this.api.roomUsers
       .roomOtherUserIds(this.roomId, this.user.id)
       .pipe(switchMap((userIds) => this.api.users.getByIds(userIds)));

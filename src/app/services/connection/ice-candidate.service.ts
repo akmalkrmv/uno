@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { take, catchError, tap } from 'rxjs/operators';
+import { first, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { Connection, IceCandidate, User } from '@models/index';
@@ -71,14 +71,14 @@ export class IceCandidateService {
     console.log('sending IceCandidates');
     this.api.room
       .addIceCandidate({ senderId, recieverId, candidates })
-      .pipe(take(1), catchError(this.handleError))
+      .pipe(first(), catchError(this.handleError))
       .subscribe();
   }
 
   public addIceCandidatesIfExists(user: User) {
     return this.api.room
       .userIceCandidates(user.id)
-      .pipe(take(1))
+      .pipe(first())
       .pipe(
         tap((iceCandidates) => {
           if (iceCandidates && iceCandidates.length) {

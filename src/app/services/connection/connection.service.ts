@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
-import { catchError, take } from 'rxjs/operators';
+import { catchError, first } from 'rxjs/operators';
 
 import { offerOptions } from '@constants/index';
-import { User, Offer, Answer, Connection } from '@models/index';
+import { User, Offer, Answer, Connection, IUser } from '@models/index';
 import { IceCandidateService } from './ice-candidate.service';
 import { ApiService } from '@services/repository/api.service';
 
@@ -20,13 +20,13 @@ export class ConnectionService {
     this.user = user;
   }
 
-  public offerAll(callerId: string, users: User[]) {
+  public offerAll(callerId: string, users: IUser[]) {
     for (const user of users) {
       this.offer(callerId, user.id, user.name).then();
     }
   }
 
-  public answerAll(offers: Offer[], users: User[]) {
+  public answerAll(offers: Offer[], users: IUser[]) {
     for (const offer of offers) {
       const user = users.find((user) => user.id == offer.from);
       const name = user ? user.name : offer.from;
@@ -34,7 +34,7 @@ export class ConnectionService {
     }
   }
 
-  public setRemoteAll(answers: Answer[], users: User[]) {
+  public setRemoteAll(answers: Answer[], users: IUser[]) {
     for (const answer of answers) {
       const user = users.find((user) => user.id == answer.from);
       const caller = user ? user.name : answer.from;
@@ -132,7 +132,7 @@ export class ConnectionService {
         to: reciever,
         description: peer.localDescription.toJSON(),
       })
-      .pipe(take(1), catchError(this.handleError))
+      .pipe(first(), catchError(this.handleError))
       .subscribe();
   }
 
@@ -223,7 +223,7 @@ export class ConnectionService {
         to: reciever,
         description: peer.localDescription.toJSON(),
       })
-      .pipe(take(1), catchError(this.handleError))
+      .pipe(first(), catchError(this.handleError))
       .subscribe();
   }
 
