@@ -7,9 +7,8 @@ import {
 
 export interface IUser {
   id?: string;
-  uid?: string;
   created?: number;
-  displayName?: string;
+  name?: string;
   phoneNumber?: string;
   photoURL?: string;
   email?: string;
@@ -22,13 +21,11 @@ export interface IUser {
 export class User {
   public created?: number;
   public email?: string;
-  public displayName?: string;
   public phoneNumber?: string;
   public photoURL?: string;
   public fcmTokens?: any;
   public friends?: string[];
 
-  public uid?: string;
   public ref?: string;
   public role?: string;
   public stream?: MediaStream;
