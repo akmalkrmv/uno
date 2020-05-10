@@ -2,7 +2,7 @@
   <app-profile [user]="user" class="profile-panel"> </app-profile>
 
   <mat-nav-list class="nav-list">
-    <a mat-list-item>
+    <a mat-list-item routerLink="/room/create" (click)="closeSidenav()">
       <mat-icon>add</mat-icon>
       <span class="menu-item">Создать комнату</span>
     </a>
@@ -10,15 +10,20 @@
       <mat-icon>group_add</mat-icon>
       <span class="menu-item">Присоединиться</span>
     </a>
-    <!-- <a mat-list-item routerLink="/rooms">
+    <!-- <a mat-list-item routerLink="/rooms" (click)="closeSidenav()">
       <mat-icon>groups</mat-icon>
       <span class="menu-item">Группы</span>
     </a>
-    <a mat-list-item routerLink="/users">
+    <a mat-list-item routerLink="/friends" (click)="closeSidenav()">
       <mat-icon>people_outline</mat-icon>
       <span class="menu-item">Контакты</span>
     </a> -->
-    <a mat-list-item *ngIf="user.role === 'admin'" routerLink="/admin/users">
+    <a
+      mat-list-item
+      *ngIf="user.role === 'admin'"
+      routerLink="/admin/users"
+      (click)="closeSidenav()"
+    >
       <mat-icon>perm_identity</mat-icon>
       <span class="menu-item">Администрирование</span>
     </a>

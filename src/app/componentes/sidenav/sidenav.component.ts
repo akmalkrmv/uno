@@ -3,6 +3,8 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   Input,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { User } from '@models/index';
 import { AuthService } from '@services/auth.service';
@@ -15,6 +17,7 @@ import { AuthService } from '@services/auth.service';
 })
 export class SidenavComponent implements OnInit {
   @Input() user: User;
+  @Output() close = new EventEmitter();
 
   constructor(private auth: AuthService) {}
 
@@ -22,5 +25,9 @@ export class SidenavComponent implements OnInit {
 
   signOut() {
     this.auth.signOut();
+  }
+
+  closeSidenav() {
+    this.close.emit();
   }
 }

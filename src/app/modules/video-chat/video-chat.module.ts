@@ -15,6 +15,7 @@ import { CreateRoomDialogComponent } from './dialogs/create-room-dialog/create-r
 import { FriendsPageComponent } from './pages/friends-page/friends-page.component';
 import { RoomsPageComponent } from './pages/rooms-page/rooms-page.component';
 import { ChatModule } from '../chat/chat.module';
+import { CreateRoomPageComponent } from './pages/create-room-page/create-room-page.component';
 
 const dialogs = [
   CallDialogComponent,
@@ -35,6 +36,7 @@ const dialogs = [
     VideosListComponent,
     FriendsPageComponent,
     RoomsPageComponent,
+    CreateRoomPageComponent,
   ],
   imports: [SharedModule, SharedComponentsModule, ChatModule],
 })

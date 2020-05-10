@@ -12,6 +12,7 @@ import { HomeComponent } from './componentes/home/home.component';
 import { NameComponent } from './modules/auth/name/name.component';
 import { RoomListComponent } from './modules/video-chat/components/room-list/room-list.component';
 import { FriendsPageComponent } from './modules/video-chat/pages/friends-page/friends-page.component';
+import { CreateRoomPageComponent } from './modules/video-chat/pages/create-room-page/create-room-page.component';
 
 const routes: Routes = [
   {
@@ -20,8 +21,9 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: '', component: HomeComponent },
-      { path: 'users', component: FriendsPageComponent },
+      { path: 'friends', component: FriendsPageComponent },
       { path: 'rooms', component: RoomListComponent },
+      { path: 'room/create', component: CreateRoomPageComponent },
       { path: 'room/:id', component: RoomComponent },
       { path: 'game/:id', component: PlayComponent },
     ],
