@@ -10,10 +10,17 @@ export class NavigationService {
     const redirectUrl = localStorage.getItem(LocalStorageKeys.redirectUrl);
 
     if (redirectUrl) {
-      this.router.navigate([redirectUrl]);
+      this.router.navigate([this.withoutDomainRoute(redirectUrl)]);
       localStorage.removeItem(LocalStorageKeys.redirectUrl);
     } else {
       this.router.navigate(['/']);
     }
+  }
+
+  private withoutDomainRoute(redirectUrl: string): string {
+    if (redirectUrl.indexOf('/uno') >= 0) return redirectUrl.substr(4);
+    if (redirectUrl.indexOf('uno') >= 0) return redirectUrl.substr(3);
+
+    return redirectUrl;
   }
 }
