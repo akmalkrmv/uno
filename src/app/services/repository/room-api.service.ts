@@ -43,10 +43,9 @@ export class RoomApiService extends BaseFirestoreService {
     this.users$ = this.collectionChanges(this.userCollection);
     this.offers$ = this.collectionChanges(this.offerCollection, ['added']);
     this.answers$ = this.collectionChanges(this.answerCollection, ['added']);
-    this.iceCandidates$ = this.collectionChanges(
-      this.iceCandidateCollection,
-      ['added']
-    );
+    this.iceCandidates$ = this.collectionChanges(this.iceCandidateCollection, [
+      'added',
+    ]);
   }
 
   public exists(roomId: string): Observable<boolean> {
@@ -89,7 +88,7 @@ export class RoomApiService extends BaseFirestoreService {
     return this.createOfferByType(answer, 'answers');
   }
 
-  public addIceCandidate(payload: IceCandidate): Observable<string> {
+  public addIceCandidate(payload: IceCandidate): Promise<string> {
     return this.addToCollection(this.iceCandidateCollection, payload);
   }
 

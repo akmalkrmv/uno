@@ -22,10 +22,7 @@ export class RoomsApiService extends BaseFirestoreService {
     this.rooms$ = this.collectionChanges(this.roomsCollection);
   }
 
-  public createRoom(
-    creatorId: string,
-    data?: Partial<Room>
-  ): Observable<string> {
+  public createRoom(creatorId: string, data?: Partial<Room>): Promise<string> {
     return this.addToCollection(this.roomsCollection, {
       ...data,
       creator: creatorId,

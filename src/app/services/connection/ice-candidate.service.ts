@@ -71,8 +71,7 @@ export class IceCandidateService {
     console.log('sending IceCandidates');
     this.api.room
       .addIceCandidate({ senderId, recieverId, candidates })
-      .pipe(first(), catchError(this.handleError))
-      .subscribe();
+      .catch(this.handleError);
   }
 
   public addIceCandidatesIfExists(user: User) {

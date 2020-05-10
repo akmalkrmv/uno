@@ -49,14 +49,11 @@ export class MessageListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.api.messages
-      .create({
-        roomId: this.roomId,
-        senderId: this.userId,
-        content: this.content,
-      })
-      .pipe(first())
-      .subscribe();
+    this.api.messages.create({
+      roomId: this.roomId,
+      senderId: this.userId,
+      content: this.content,
+    });
 
     this.content = '';
   }
