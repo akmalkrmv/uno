@@ -34,9 +34,9 @@ export class CreateRoomDialogComponent implements OnInit, OnDestroy {
       data.photoUrl = this.photoUrl;
     }
 
-    this.auth.user$
-      .pipe(first(), untilDestroyed(this))
+    this.auth.authorized$
       .pipe(switchMap((user) => this.api.rooms.createRoom(user.id, data)))
+      .pipe(first(), untilDestroyed(this))
       .subscribe((roomId) => this.router.navigate([`/room/${roomId}`]));
   }
 

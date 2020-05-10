@@ -67,8 +67,7 @@ export class RoomService implements OnDestroy {
       .pipe(first(), untilDestroyed(this))
       .pipe(tap((exists) => !exists && this.router.navigate([''])));
 
-    const authorize$ = this.auth.user$.pipe(
-      first(),
+    const authorize$ = this.auth.authorized$.pipe(
       untilDestroyed(this),
       map((user) => (user ? new User(user.id, user.name) : null))
     );

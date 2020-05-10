@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { switchMap, map, tap } from 'rxjs/operators';
-import { of, Observable, BehaviorSubject } from 'rxjs';
+import { switchMap, map, tap, filter, first } from 'rxjs/operators';
+import { of, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { IUser } from '@models/index';
 import { ApiService } from './repository/api.service';
+import { PresenceService } from './presence.service';
 
 import * as firebaseui from 'firebaseui';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
-import { PresenceService } from './presence.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  public user$: Observable<IUser>;
   public current$ = new BehaviorSubject<IUser>(null);
-  public currentId$ = new BehaviorSubject<string>(null);
+  private refreshEvent$ = new BehaviorSubject<number>(null);
 
   constructor(
     private router: Router,
@@ -23,25 +22,48 @@ export class AuthService {
     private fireauth: AngularFireAuth,
     private presence: PresenceService
   ) {
-    this.user$ = fireauth.authState.pipe(
-      switchMap((user: firebase.User) =>
-        user ? this.api.users.findById(user.uid) : of(null)
-      ),
-      tap((user) => this.current$.next(user)),
-      tap((user) => this.currentId$.next(user?.id)),
-      tap((user) => this.presence.startTracking(user?.id))
+    combineLatest([fireauth.authState, this.refreshEvent$])
+      .pipe(
+        switchMap(([firebaseUser]) =>
+          firebaseUser ? this.api.users.findById(firebaseUser.uid) : of(null)
+        )
+      )
+      .subscribe((user: IUser) => {
+        if (user && !user.name) {
+          this.router.navigate(['/name']);
+        }
+
+        this.current$.next(user);
+        this.presence.startTracking(user?.id);
+      });
+  }
+
+  public get current(): IUser {
+    return this.current$.value;
+  }
+
+  public get currentId(): string {
+    return this.current$.value?.id;
+  }
+
+  public get authorized$(): Observable<IUser> {
+    return this.current$.pipe(
+      filter((user) => !!user),
+      first()
     );
   }
 
   public isSignedIn() {
-    return this.user$.pipe(map((user) => user != null));
+    return this.fireauth.authState.pipe(
+      map((firebaseUser) => firebaseUser != null)
+    );
   }
 
-  public hasRole(role: string) {
-    return this.user$.pipe(map((user) => user && user.role === role));
+  public hasRole(role: string): Observable<boolean> {
+    return this.current$.pipe(map((user) => user && user.role === role));
   }
 
-  public startUi(element: Element | string) {
+  public startUi(element: Element | string): void {
     const auth = firebase.auth();
     auth.useDeviceLanguage();
 
@@ -60,21 +82,28 @@ export class AuthService {
         firebase.auth.GithubAuthProvider.PROVIDER_ID,
       ],
       callbacks: {
-        signInSuccessWithAuthResult: (credential) => {
-          this.updateUserData(credential.user);
+        signInSuccessWithAuthResult: (credential, redirectUrl: string) => {
+          this.saveCredentials(credential.user).then(() =>
+            this.router.navigate([redirectUrl || ''])
+          );
+
           return false;
         },
       },
     });
   }
 
-  public signOut() {
-    this.presence.setPresence(this.currentId$.value, 'offline');
+  public signOut(): void {
+    this.presence.setPresence(this.currentId, 'offline');
     this.fireauth.signOut().then(() => location.reload());
   }
 
-  public async updateUserData(user: firebase.User) {
-    const payload = {
+  public refresh(): void {
+    this.refreshEvent$.next(Date.now());
+  }
+
+  private async saveCredentials(user: firebase.User): Promise<void> {
+    const payload: IUser = {
       id: user.uid,
       name: user.displayName,
       phoneNumber: user.phoneNumber,
@@ -83,6 +112,5 @@ export class AuthService {
     };
 
     await this.api.users.addIfNotExists(payload);
-    return await this.router.navigate(['']);
   }
 }

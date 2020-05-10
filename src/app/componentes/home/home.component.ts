@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
 
   public createRoom() {
     this.api.rooms
-      .createRoom(this.auth.current$.value.id)
+      .createRoom(this.auth.currentId)
       .pipe(first(), untilDestroyed(this))
       .subscribe((roomId) => {
         this.router.navigate([`/room/${roomId}`]);

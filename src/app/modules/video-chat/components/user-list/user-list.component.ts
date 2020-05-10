@@ -14,11 +14,13 @@ export class UserListComponent {
   constructor(private auth: AuthService, private api: ApiService) {}
 
   public addToFriends(friendId: string) {
-    this.api.users.addToFriends(this.auth.currentId$.value, friendId);
+    this.auth.authorized$.subscribe((user) =>
+      this.api.users.addToFriends(user.id, friendId)
+    );
   }
 
   public canAddToFriends(freindId: string) {
-    const current = this.auth.current$.value;
+    const current = this.auth.current;
     if (!current) return false;
     if (current.id === freindId) return false;
     if (!current.friends) return true;

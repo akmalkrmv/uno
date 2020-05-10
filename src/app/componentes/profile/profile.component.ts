@@ -27,9 +27,7 @@ export class ProfileComponent implements OnInit {
       this.upload = new Upload(files[0]);
       this.fileUpload.upload(this.upload).then((upload) => {
         const updated = { ...this.user, photoURL: upload.url };
-        this.api.users
-          .update(updated)
-          .then(() => this.auth.current$.next(updated));
+        this.api.users.update(updated).then(() => this.auth.refresh());
       });
     }
   }

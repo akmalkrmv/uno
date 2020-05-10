@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./name.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NameComponent implements OnInit {
+export class NameComponent {
   public name = new FormControl('', [Validators.required]);
 
   constructor(
@@ -19,10 +19,10 @@ export class NameComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {}
-
   public next() {
-    const payload = { ...this.auth.current$.value, name: this.name.value };
-    this.api.users.update(payload).then(() => this.router.navigate(['']));
+    this.auth.authorized$.subscribe((current) => {
+      const payload = { ...current, name: this.name.value };
+      this.api.users.update(payload).then(() => this.router.navigate(['']));
+    });
   }
 }

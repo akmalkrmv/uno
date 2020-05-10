@@ -49,12 +49,9 @@ export class PlayComponent implements OnInit, OnDestroy {
     this.roomId = this.activeRoute.snapshot.paramMap.get('id');
     this.isCreator = this.activeRoute.snapshot.fragment === 'init';
 
-    this.auth.user$.pipe(untilDestroyed(this)).subscribe((user) => {
-      // this.init(user.id, user.name);
-
-      const id = Math.floor(Math.random() * 100000).toString();
-      this.init(id, id);
-    });
+    const id = Math.floor(Math.random() * 100000).toString();
+    this.init(id, id);
+    // this.init(this.auth.current.id, this.auth.current.name);
   }
 
   public init(userId: string, userName: string) {
