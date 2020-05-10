@@ -9,7 +9,7 @@ export class Upload {
   public url: string;
   public progress: number;
 
-  constructor(public file: File) {}
+  constructor(public file?: File) {}
 }
 
 @Injectable({ providedIn: 'root' })
@@ -47,14 +47,14 @@ export class UploadService {
     });
   }
 
-  public deleteUpload(upload: Upload) {
+  public deleteUpload(key: string): Promise<any> {
     const storageRef = firebase.storage().ref();
 
     // Create a reference to the file to delete
-    var desertRef = storageRef.child(`${this.basePath}/${upload.key$}`);
+    var desertRef = storageRef.child(`${this.basePath}/${key}`);
 
     // Delete the file
-    desertRef
+    return desertRef
       .delete()
       .then(function () {
         // File deleted successfully

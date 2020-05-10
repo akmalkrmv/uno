@@ -23,12 +23,19 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {}
 
   uploadImage(files: FileList) {
-    if (files && files.length) {
-      this.upload = new Upload(files[0]);
-      this.fileUpload.upload(this.upload).then((upload) => {
-        const updated = { ...this.user, photoURL: upload.url };
-        this.api.users.update(updated).then(() => this.auth.refresh());
-      });
-    }
+    if (!files) return;
+    if (!files.length) return;
+
+    this.upload = new Upload(files[0]);
+
+    this.fileUpload.upload(this.upload).then((upload) => {
+      // Delete old photo to save space
+      // this.fileUpload.deleteUpload(this.user.photoURL);
+
+      // Update users photo url
+      this.api.users
+        .update({ ...this.user, photoURL: upload.url })
+        .then(() => this.auth.refresh());
+    });
   }
 }
