@@ -17,12 +17,10 @@ export interface IRoomApiService {
 
   userOffers(userId: string): Observable<Offer[]>;
   userAnswers(userId: string): Observable<Answer[]>;
-
   createOffer(offer: Offer): Observable<string>;
   createAnswer(answer: Answer): Observable<string>;
 
   addIceCandidate(payload: IceCandidate): Observable<string>;
-
   userIceCandidates(userId: string): Observable<IceCandidate[]>;
 
   clearConnections(): Observable<any>;

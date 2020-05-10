@@ -10,14 +10,17 @@ import { ApiService } from '@services/repository/api.service';
 @Injectable({ providedIn: 'root' })
 export class ConnectionService {
   public user: User;
+  public roomId: string;
 
   constructor(
     private api: ApiService,
     private iceCandidateService: IceCandidateService
   ) {}
 
-  public init(user: User) {
+  public init(user: User, roomId: string) {
     this.user = user;
+    this.roomId = roomId;
+    this.iceCandidateService.roomId = roomId;
   }
 
   public offerAll(callerId: string, users: IUser[]) {
@@ -28,16 +31,16 @@ export class ConnectionService {
 
   public answerAll(offers: Offer[], users: IUser[]) {
     for (const offer of offers) {
-      const user = users.find((user) => user.id == offer.from);
-      const name = user ? user.name : offer.from;
+      const user = users.find((user) => user.id == offer.sender);
+      const name = user ? user.name : offer.sender;
       this.answer(this.user.id, offer, name).then();
     }
   }
 
   public setRemoteAll(answers: Answer[], users: IUser[]) {
     for (const answer of answers) {
-      const user = users.find((user) => user.id == answer.from);
-      const caller = user ? user.name : answer.from;
+      const user = users.find((user) => user.id == answer.sender);
+      const caller = user ? user.name : answer.sender;
       this.setRemote(answer, caller).then();
     }
   }
@@ -68,11 +71,11 @@ export class ConnectionService {
 
     connection.showState('offer: setLocalDescription');
 
-    this.sendOffer(caller, reciever, peer);
+    this.sendOffer('offer', caller, reciever, peer);
   }
 
   public async answer(caller: string, offer: Offer, name?: string) {
-    const reciever = offer.from;
+    const reciever = offer.sender;
     const connection = this.user.getConnection(reciever, name);
     const peer = connection.peer;
 
@@ -100,12 +103,12 @@ export class ConnectionService {
     this.tryCreateAnswer(connection, retryCount, () => {
       this.iceCandidateService
         .addIceCandidatesIfExists(this.user)
-        .subscribe(() => this.sendAnswer(caller, reciever, peer));
+        .subscribe(() => this.sendOffer('answer', caller, reciever, peer));
     });
   }
 
   public async setRemote(answer: Answer, name?: string) {
-    const connection = this.user.getConnection(answer.from, name);
+    const connection = this.user.getConnection(answer.sender, name);
     const peer = connection.peer;
 
     if (connection.isConnected) {
@@ -125,15 +128,20 @@ export class ConnectionService {
     // }
   }
 
-  private sendOffer(caller: string, reciever: string, peer: RTCPeerConnection) {
-    this.api.room
-      .createOffer({
-        from: caller,
-        to: reciever,
+  private sendOffer(
+    type: 'offer' | 'answer',
+    caller: string,
+    reciever: string,
+    peer: RTCPeerConnection
+  ) {
+    this.api.offer
+      .createOffer(this.roomId, {
+        type,
+        sender: caller,
+        receiver: reciever,
         description: peer.localDescription.toJSON(),
       })
-      .pipe(first(), catchError(this.handleError))
-      .subscribe();
+      .catch(this.handleError);
   }
 
   private async trySetRemote(connection: Connection, offer: Offer) {
@@ -181,7 +189,7 @@ export class ConnectionService {
       if (!successful) {
         this.tryCreateAnswer(connection, --retry, callBack);
       }
-    }, 1000);
+    }, 100);
   }
 
   private trySetRemoteWithRetry(
@@ -210,21 +218,6 @@ export class ConnectionService {
         this.trySetRemoteWithRetry(connection, answer, --retry);
       }
     }, 1000);
-  }
-
-  private sendAnswer(
-    caller: string,
-    reciever: string,
-    peer: RTCPeerConnection
-  ) {
-    this.api.room
-      .createAnswer({
-        from: caller,
-        to: reciever,
-        description: peer.localDescription.toJSON(),
-      })
-      .pipe(first(), catchError(this.handleError))
-      .subscribe();
   }
 
   private handleError(error) {

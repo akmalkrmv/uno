@@ -15,7 +15,7 @@ export class RoomListComponent implements OnInit {
 
   constructor(private api: ApiService, private auth: AuthService) {
     this.rooms$ = auth.authorized$.pipe(
-      switchMap((user) => api.roomV2.userRooms(user.id))
+      switchMap((user) => api.room.userRooms(user.id))
     );
   }
 

@@ -1,10 +1,5 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  Input,
-} from '@angular/core';
-import { Message, User } from '@models/index';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Message, IUser } from '@models/index';
 
 @Component({
   selector: 'app-message',
@@ -12,13 +7,7 @@ import { Message, User } from '@models/index';
   styleUrls: ['./message.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageComponent implements OnInit {
+export class MessageComponent {
   @Input() message: Message;
-  @Input() user: User;
-
-  constructor() {}
-
-  ngOnInit(): void {
-
-  }
+  @Input() user: IUser;
 }

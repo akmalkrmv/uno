@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { IUser } from '@models/user';
+import { IUser } from '@models/index';
 
 export interface IUsersApiService {
   users$: Observable<IUser[]>;

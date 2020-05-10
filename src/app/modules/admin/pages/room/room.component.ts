@@ -43,7 +43,9 @@ export class RoomComponent implements OnInit {
           this.room = {
             ...room,
             creator: users.find((user) => user.id == room.creator.id) || {},
-            users: users.filter((user) => room.users.includes(user.id)),
+            users: users.filter(
+              (user) => !room.users || room.users.includes(user.id)
+            ),
           };
 
           this.changeDetectorRef.detectChanges();

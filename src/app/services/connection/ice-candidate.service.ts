@@ -7,6 +7,7 @@ import { ApiService } from '@services/repository/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class IceCandidateService {
+  public roomId: string;
   private iceSendingId: any; // NodeJS.Timeout
 
   constructor(private api: ApiService) {}
@@ -69,14 +70,18 @@ export class IceCandidateService {
     }
 
     console.log('sending IceCandidates');
-    this.api.room
-      .addIceCandidate({ senderId, recieverId, candidates })
+    this.api.offer
+      .addIceCandidate(this.roomId, {
+        sender: senderId,
+        reciever: recieverId,
+        candidates,
+      })
       .catch(this.handleError);
   }
 
   public addIceCandidatesIfExists(user: User) {
-    return this.api.room
-      .userIceCandidates(user.id)
+    return this.api.offer
+      .userIceCandidates(this.roomId, user.id)
       .pipe(first())
       .pipe(
         tap((iceCandidates) => {
@@ -91,7 +96,7 @@ export class IceCandidateService {
     console.log('Got ice candidates', iceCandidates);
 
     iceCandidates.map((ice) => {
-      const connectionRef = user.getConnection(ice.senderId);
+      const connectionRef = user.getConnection(ice.sender);
       connectionRef.addIceCandidatesToQueue(ice.candidates);
     });
   }

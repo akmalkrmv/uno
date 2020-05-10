@@ -6,7 +6,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { IUser } from '@models/user';
+import { IUser } from '@models/index';
 import { BaseFirestoreService } from './base-firestore.service';
 import { IUsersApiService } from '@interfaces/repository';
 

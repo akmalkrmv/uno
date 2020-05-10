@@ -6,7 +6,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { User } from '@models/index';
+import { IUser } from '@models/index';
 import { AuthService } from '@services/auth.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { AuthService } from '@services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidenavComponent implements OnInit {
-  @Input() user: User;
+  @Input() user: IUser;
   @Output() close = new EventEmitter();
 
   constructor(private auth: AuthService) {}

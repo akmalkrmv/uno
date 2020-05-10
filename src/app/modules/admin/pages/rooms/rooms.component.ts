@@ -24,7 +24,9 @@ export class RoomsComponent implements OnInit, OnDestroy {
           return {
             ...room,
             creator: users.find((user) => user.id == room.creator.id) || {},
-            users: users.filter((user) => room.users.includes(user.id)),
+            users: users.filter(
+              (user) => !room.users || room.users.includes(user.id)
+            ),
           };
         });
 
@@ -33,10 +35,10 @@ export class RoomsComponent implements OnInit, OnDestroy {
   }
 
   public save(room: Room) {
-    this.api.roomV2.update(room);
+    this.api.room.update(room);
   }
 
   public remove(roomId: string) {
-    this.api.roomV2.remove(roomId);
+    this.api.room.remove(roomId);
   }
 }

@@ -15,7 +15,7 @@ import {
 } from 'rxjs/operators';
 
 import { copyToClipboard, shareLink } from '@utils/index';
-import { User, Offer, Answer, IOffer, Room, IUser } from '@models/index';
+import { User, Answer, Room, IUser, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { TitleService } from '@services/title.service';
@@ -28,7 +28,7 @@ import { MessagingService } from '@services/messaging.service';
 @Injectable({ providedIn: 'root' })
 export class RoomService implements OnDestroy {
   public onlineUsers$: Observable<IUser[]>;
-  public offers$: Observable<Offer[]>;
+  public offers$: Observable<IOffer[]>;
   public answers$: Observable<Answer[]>;
   public title$: Observable<string>;
   public code$: Observable<string>;
@@ -59,21 +59,18 @@ export class RoomService implements OnDestroy {
     this.roomCommands.unregister();
   }
 
-  ngOnInit() {
-    this.api.room.init(this.roomId);
-
-    const roomExists$ = this.api.room
-      .exists(this.roomId)
-      .pipe(first(), untilDestroyed(this))
-      .pipe(tap((exists) => !exists && this.router.navigate([''])));
+  async ngOnInit() {
+    const roomExists = await this.api.room.exists(this.roomId);
+    if (!roomExists) {
+      return this.router.navigate(['']);
+    }
 
     const authorize$ = this.auth.authorized$.pipe(
       untilDestroyed(this),
       map((user) => (user ? new User(user.id, user.name) : null))
     );
 
-    roomExists$
-      .pipe(switchMap((exists) => (exists ? authorize$ : of(null))))
+    authorize$
       .pipe(tap((user) => user && this.joinRoom(user)))
       .pipe(first(), untilDestroyed(this))
       .subscribe((user) => {
@@ -98,20 +95,22 @@ export class RoomService implements OnDestroy {
     this.user$.next(user);
     this.setStream(user);
 
-    this.connectionService.init(user);
+    this.connectionService.init(user, this.roomId);
 
-    this.onlineUsers$ = this.api.roomV2
+    this.onlineUsers$ = this.api.room
       .roomUsers(this.roomId)
       .pipe(untilDestroyed(this));
 
-    this.offers$ = this.api.room.userOffers(this.user.id).pipe(
+    this.offers$ = this.api.offer.userOffers(this.roomId, this.user.id).pipe(
       untilDestroyed(this),
-      takeWhile(() => this.isConnectionOn.value)
+      takeWhile(() => this.isConnectionOn.value),
+      map((offers) => offers.filter((offer) => offer.type == 'offer'))
     );
 
-    this.answers$ = this.api.room.userAnswers(this.user.id).pipe(
+    this.answers$ = this.api.offer.userOffers(this.roomId, this.user.id).pipe(
       untilDestroyed(this),
-      takeWhile(() => this.isConnectionOn.value)
+      takeWhile(() => this.isConnectionOn.value),
+      map((offers) => offers.filter((offer) => offer.type == 'answer'))
     );
 
     this.setTitle();
@@ -177,26 +176,22 @@ export class RoomService implements OnDestroy {
 
     // this.isConnectionOn.next(false);
     this.user.closeConnections();
-
-    this.api.room
-      .clearConnections()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.user.closeConnections());
+    this.api.offer.clearConnections(this.roomId, this.user.id);
   }
 
   public async leaveRoom() {
-    await this.api.roomV2.leaveRoom(this.roomId, this.user.id);
+    await this.api.room.leaveRoom(this.roomId, this.user.id);
     this.router.navigate([`/`]);
   }
 
-  public retryCall() {
+  public async retryCall() {
     this.isConnectionOn.next(false);
     this.user.closeConnections();
 
-    this.api.room
-      .clearConnections()
+    await this.api.offer.clearConnections(this.roomId, this.user.id);
+
+    this.roomUsers()
       .pipe(first(), untilDestroyed(this))
-      .pipe(switchMap(() => this.roomUsers()))
       .subscribe((users) => {
         this.isConnectionOn.next(true);
         this.connectionService.offerAll(this.user.id, users);
@@ -204,17 +199,16 @@ export class RoomService implements OnDestroy {
   }
 
   private roomUsers(): Observable<IUser[]> {
-    return this.api.roomV2.roomOtherUsers(this.roomId, this.user.id);
+    return this.api.room.roomOtherUsers(this.roomId, this.user.id);
   }
 
   private async joinRoom(user: User) {
-    await this.api.roomV2.joinRoom(this.roomId, user.id);
+    await this.api.room.joinRoom(this.roomId, user.id);
     return user;
   }
 
   private async setTitle() {
-    const roomRef = await this.api.room.room.ref.get();
-    const room: Room = roomRef.data();
+    const room = await this.api.room.getById(this.roomId);
 
     this.title.icon$.next('group');
 
