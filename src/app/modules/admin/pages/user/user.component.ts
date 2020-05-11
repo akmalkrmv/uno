@@ -25,7 +25,7 @@ export class UserComponent implements OnInit, OnDestroy {
   @Input() isCardView: boolean;
   @Output() save = new EventEmitter<IUser>();
   @Output() remove = new EventEmitter<string>();
-  
+
   constructor(
     private api: ApiService,
     private activeRoute: ActivatedRoute,
@@ -37,10 +37,13 @@ export class UserComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const userId = this.activeRoute.snapshot.paramMap.get('id');
     if (userId) {
-      this.api.users.users$.pipe(untilDestroyed(this)).subscribe((users) => {
-        this.user = users.find((user) => user.id == userId);
-        this.changeDetectorRef.detectChanges();
-      });
+      this.api.users
+        .findById(userId)
+        .pipe(untilDestroyed(this))
+        .subscribe((user) => {
+          this.user = user;
+          this.changeDetectorRef.detectChanges();
+        });
     }
   }
 

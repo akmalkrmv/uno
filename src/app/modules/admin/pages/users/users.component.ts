@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { ApiService } from '@services/repository/api.service';
 import { IUser } from '@models/index';
@@ -17,11 +17,9 @@ export class UsersComponent implements OnInit {
   ngOnDestroy(): void {}
 
   ngOnInit(): void {
-    combineLatest([this.api.users.users$])
+    this.api.users.users$
       .pipe(untilDestroyed(this))
-      .subscribe(([users]) => {
-        this.users$.next(users);
-      });
+      .subscribe((users) => this.users$.next(users));
   }
 
   public save(user: IUser) {
