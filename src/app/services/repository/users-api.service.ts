@@ -32,9 +32,11 @@ export class UsersApiService extends BaseFirestoreService
     return userRef.update({ fcmTokens: tokens });
   }
 
-  public getByIds(userIds: string[]): Observable<IUser[]> {
-    return this.users$.pipe(
-      map((users) => users.filter((user) => userIds.includes(user.id)))
+  public getByIds(users: string[]): Observable<IUser[]> {
+    return this.collectionChanges(
+      this.firestore.collection<IUser>(`users`, (ref) =>
+        ref.where('id', 'in', users)
+      )
     );
   }
 
@@ -43,24 +45,17 @@ export class UsersApiService extends BaseFirestoreService
       .doc<IUser>(`${this.path}/${userId}`)
       .get()
       .pipe(
-        switchMap((doc) => {
-          const user = doc.data();
-
-          return user.friends && user.friends.length
-            ? this.collectionChanges(
-                this.firestore.collection<IUser>(this.path, (ref) =>
-                  ref.where('id', 'in', user.friends)
-                )
-              )
-            : of([]);
-        })
+        map((doc) => doc.data()),
+        switchMap((user: IUser) =>
+          user.friends && user.friends.length
+            ? this.getByIds(user.friends)
+            : of([])
+        )
       );
   }
 
   public findById(userId: string): Observable<IUser> {
-    return this.users$.pipe(
-      map((users) => users.find((user) => user.id == userId))
-    );
+    return this.documentChanges(this.firestore.doc(`users/${userId}`));
   }
 
   public async addIfNotExists(user: IUser): Promise<void> {
@@ -79,8 +74,8 @@ export class UsersApiService extends BaseFirestoreService
     const userRef = this.firestore.doc(`users/${userId}`).ref;
     const doc = await userRef.get();
     if (doc.exists) {
-      const user = doc.data();
-      const friends: string[] = user.freinds || [];
+      const user: IUser = doc.data();
+      const friends: string[] = user.friends || [];
 
       freindIds.forEach(
         (friend) => !friends.includes(friend) && friends.push(friend)
@@ -90,12 +85,11 @@ export class UsersApiService extends BaseFirestoreService
     }
   }
 
-  public update(user: Partial<IUser>) {
-    const userRef = this.firestore.doc(`users/${user.id}`).ref;
-    return userRef.update({ ...user });
+  public update(user: Partial<IUser>): Promise<void> {
+    return this.firestore.doc(`users/${user.id}`).update({ ...user });
   }
 
-  public remove(userId: string) {
-    return this.firestore.doc(`users/${userId}`).ref.delete();
+  public remove(userId: string): Promise<void> {
+    return this.firestore.doc(`users/${userId}`).delete();
   }
 }
