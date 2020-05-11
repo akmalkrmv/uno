@@ -17,10 +17,12 @@ export interface Room {
   photoURL?: string;
   creator?: any;
   created?: number;
+  updated?: number;
   members?: string[];
   users?: IUserInfo[];
   offers?: Offer[];
   answers?: Answer[];
+  lastMessage?: string;
 }
 
 export class IceCandidate {
