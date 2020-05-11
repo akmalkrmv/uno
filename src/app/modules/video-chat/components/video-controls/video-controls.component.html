@@ -1,5 +1,10 @@
 <div class="buttons-container">
-  <div class="buttons-horizontal">
+  <button mat-icon-button (click)="toggleBottom()">
+    <mat-icon *ngIf="viewState != 'bottom'">sms</mat-icon>
+    <mat-icon *ngIf="viewState == 'bottom'">chat</mat-icon>
+  </button>
+
+  <ng-container *ngIf="user.stream">
     <button mat-icon-button (click)="toggleSound()">
       <mat-icon *ngIf="isAudioOn$ | async">mic</mat-icon>
       <mat-icon *ngIf="!(isAudioOn$ | async)">mic_off</mat-icon>
@@ -11,5 +16,20 @@
     <button *ngIf="canFlipCamera" mat-icon-button (click)="flipCamera()">
       <mat-icon>flip_camera_ios</mat-icon>
     </button>
-  </div>
+  </ng-container>
+
+  <ng-container *ngIf="!user.connections.length">
+    <button mat-icon-button color="accent" (click)="call()">
+      <mat-icon>call</mat-icon>
+    </button>
+    <!-- <button mat-icon-button color="accent" (click)="call()">
+      <mat-icon>video_call</mat-icon>
+    </button> -->
+  </ng-container>
+
+  <ng-container *ngIf="user.connections.length">
+    <button mat-icon-button color="warn" (click)="hangup()">
+      <mat-icon>call_end</mat-icon>
+    </button>
+  </ng-container>
 </div>

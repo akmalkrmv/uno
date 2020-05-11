@@ -35,6 +35,7 @@ export class RoomService implements OnDestroy {
   public isConnectionOn$ = new BehaviorSubject(true);
   public user$ = new BehaviorSubject<User>(null);
   public viewState$ = new BehaviorSubject<string>('top');
+  public prevState = 'top';
 
   public roomId: string;
   public user: User;
@@ -209,6 +210,20 @@ export class RoomService implements OnDestroy {
         this.isConnectionOn$.next(true);
         this.connectionService.offerAll(this.user.id, users);
       });
+  }
+
+  public toggleTop() {
+    const prevState = this.prevState == 'top' ? 'middle' : this.prevState;
+    const newState = this.viewState$.value === 'top' ? prevState : 'top';
+    this.prevState = prevState;
+    this.viewState$.next(newState);
+  }
+
+  public toggleBottom() {
+    const prevState = this.prevState == 'bottom' ? 'middle' : this.prevState;
+    const newState = this.viewState$.value === 'bottom' ? prevState : 'bottom';
+    this.prevState = prevState;
+    this.viewState$.next(newState);
   }
 
   private roomUsers(): Observable<IUser[]> {

@@ -20,7 +20,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public code$: Observable<string> = this.room.code$;
   public viewState$: Observable<string> = this.room.viewState$;
   public roomId: string = this.room.roomId;
-  
+
   constructor(
     private activeRoute: ActivatedRoute,
     private title: TitleService,
@@ -33,7 +33,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.roomId = this.room.roomId = this.activeRoute.snapshot.paramMap.get('id');
+    this.roomId = this.room.roomId = this.activeRoute.snapshot.paramMap.get(
+      'id'
+    );
     this.room.ngOnInit();
 
     this.title.click$.pipe(untilDestroyed(this)).subscribe(() => {

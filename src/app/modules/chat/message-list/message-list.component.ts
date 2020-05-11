@@ -30,11 +30,15 @@ export class MessageListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   ngOnInit(): void {
-    this.messages$ = this.api.messages.roomMessages(this.roomId);
+    this.messages$ = this.api.messages
+      .roomMessages(this.roomId)
+      // Scroll to last message always
+      .pipe(tap(() => this.scrollToBottom()));
 
-    this.messages$
-      .pipe(first(), untilDestroyed(this))
-      .subscribe(() => this.scrollToBottom());
+    // Scroll to last message only once
+    // this.messages$
+    //   .pipe(first(), untilDestroyed(this))
+    //   .subscribe(() => this.scrollToBottom());
   }
 
   public send() {

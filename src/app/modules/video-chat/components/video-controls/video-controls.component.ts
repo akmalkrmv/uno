@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/models/user';
+import { RoomService } from '../../services/room.service';
 
 @Component({
   selector: 'app-video-controls',
@@ -9,6 +10,7 @@ import { User } from 'src/app/models/user';
 })
 export class VideoControlsComponent implements OnInit {
   @Input() user: User;
+  @Input() viewState: string;
 
   public isAudioOn$ = new BehaviorSubject(true);
   public isVideoOn$ = new BehaviorSubject(true);
@@ -18,7 +20,7 @@ export class VideoControlsComponent implements OnInit {
   private videoDevices: MediaDeviceInfo[] = [];
   private currentDevice: MediaDeviceInfo = null;
 
-  constructor() {}
+  constructor(private room: RoomService) {}
 
   ngOnInit(): void {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
@@ -50,5 +52,17 @@ export class VideoControlsComponent implements OnInit {
     this.isFront$.next(!this.isFront$.value);
     this.user.toggleCamera(this.currentDevice);
     this.user.isFrontCamera = this.isFront$.value;
+  }
+
+  public toggleBottom() {
+    this.room.toggleBottom();
+  }
+
+  public call() {
+    this.room.call();
+  }
+
+  public hangup() {
+    this.room.hangup();
   }
 }

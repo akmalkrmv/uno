@@ -15,14 +15,10 @@
       ></app-code-editor> -->
     </app-videos-list>
 
-    <footer class="footer">
-      <div></div>
-      <app-video-controls
-        *ngIf="user.stream"
-        [user]="user"
-        class="stream-controls"
-      ></app-video-controls>
-      <div></div>
-    </footer>
+    <app-video-controls
+      class="footer"
+      [user]="user"
+      [viewState]="viewState$ | async"
+    ></app-video-controls>
   </ng-container>
 </div>
