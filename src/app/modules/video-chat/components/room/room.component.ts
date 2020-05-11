@@ -18,8 +18,9 @@ import { MembersDialogComponent } from '../../dialogs/members-dialog/members-dia
 export class RoomComponent implements OnInit, OnDestroy {
   public user$: Observable<User> = this.room.user$;
   public code$: Observable<string> = this.room.code$;
+  public viewState$: Observable<string> = this.room.viewState$;
   public roomId: string = this.room.roomId;
-
+  
   constructor(
     private activeRoute: ActivatedRoute,
     private title: TitleService,

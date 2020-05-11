@@ -1,6 +1,10 @@
 <div class="room-container">
   <ng-container *ngIf="user$ | async as user">
-    <app-videos-list class="main-content" [user]="user">
+    <app-videos-list
+      class="main-content"
+      [user]="user"
+      [viewState]="viewState$ | async"
+    >
       <!-- <router-outlet></router-outlet> -->
       <!-- <app-play-cards></app-play-cards> -->
       <app-message-list *ngIf="user" [roomId]="roomId"></app-message-list>

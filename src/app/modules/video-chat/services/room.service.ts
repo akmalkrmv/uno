@@ -2,9 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import {
-  switchMap,
   first,
   map,
   distinctUntilChanged,
@@ -15,7 +14,7 @@ import {
 } from 'rxjs/operators';
 
 import { copyToClipboard, shareLink } from '@utils/index';
-import { User, Answer, Room, IUser, IOffer } from '@models/index';
+import { User, Answer, IUser, IOffer } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { TitleService } from '@services/title.service';
@@ -33,8 +32,9 @@ export class RoomService implements OnDestroy {
   public title$: Observable<string>;
   public code$: Observable<string>;
 
-  public isConnectionOn = new BehaviorSubject(true);
+  public isConnectionOn$ = new BehaviorSubject(true);
   public user$ = new BehaviorSubject<User>(null);
+  public viewState$ = new BehaviorSubject<string>('top');
 
   public roomId: string;
   public user: User;
@@ -48,13 +48,12 @@ export class RoomService implements OnDestroy {
     private roomCommands: RoomCommandsService,
     private commands: CommandsService,
     private media: MediaService,
-    private snackBar: MatSnackBar,
-    private messaging: MessagingService
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnDestroy() {
     this.hangup();
-    this.closeStream(this.user);
+    this.closeStream();
     this.title.toDefault();
     this.roomCommands.unregister();
   }
@@ -91,7 +90,7 @@ export class RoomService implements OnDestroy {
   public initialize(user: User) {
     this.user = user;
     this.user$.next(user);
-    this.setStream(user);
+    // this.setStream(user);
 
     this.connectionService.init(user, this.roomId);
 
@@ -101,12 +100,12 @@ export class RoomService implements OnDestroy {
 
     this.offers$ = this.api.offer.userOffers(this.roomId, this.user.id).pipe(
       untilDestroyed(this),
-      takeWhile(() => this.isConnectionOn.value)
+      takeWhile(() => this.isConnectionOn$.value)
     );
 
     this.answers$ = this.api.offer.userAnswers(this.roomId, this.user.id).pipe(
       untilDestroyed(this),
-      takeWhile(() => this.isConnectionOn.value)
+      takeWhile(() => this.isConnectionOn$.value)
     );
 
     this.api.offer
@@ -138,16 +137,17 @@ export class RoomService implements OnDestroy {
     });
   }
 
-  public async setStream(user: User) {
-    await this.media.setStream(user);
+  public async setStream() {
+    this.viewState$.next('middle');
+    await this.media.setStream(this.user);
   }
 
-  public closeStream(user: User) {
-    this.media.closeStream(user);
+  public closeStream() {
+    this.media.closeStream(this.user);
   }
 
-  public requestMedia(user: User) {
-    this.media.requestMedia(user);
+  public requestMedia() {
+    this.media.requestMedia(this.user);
   }
 
   public transferText(text: string) {
@@ -165,8 +165,10 @@ export class RoomService implements OnDestroy {
     this.snackBar.open(`Cсылка скопирована`, '', { duration: 2000 });
   }
 
-  public call() {
-    this.isConnectionOn.next(true);
+  public async call() {
+    this.isConnectionOn$.next(true);
+
+    await this.setStream();
 
     this.roomUsers()
       .pipe(first(), untilDestroyed(this))
@@ -179,12 +181,14 @@ export class RoomService implements OnDestroy {
     if (!this.user) return;
 
     console.log('clearing connections..');
-    this.isConnectionOn.next(false);
+    this.isConnectionOn$.next(false);
 
     this.user.closeConnections();
+    this.viewState$.next('top');
+    this.closeStream();
     await this.api.offer.clearConnections(this.roomId, this.user.id);
 
-    this.isConnectionOn.next(true);
+    this.isConnectionOn$.next(true);
     console.log('clearing connections done.');
   }
 
@@ -194,7 +198,7 @@ export class RoomService implements OnDestroy {
   }
 
   public async retryCall() {
-    this.isConnectionOn.next(false);
+    this.isConnectionOn$.next(false);
     this.user.closeConnections();
 
     await this.api.offer.clearConnections(this.roomId, this.user.id);
@@ -202,7 +206,7 @@ export class RoomService implements OnDestroy {
     this.roomUsers()
       .pipe(first(), untilDestroyed(this))
       .subscribe((users) => {
-        this.isConnectionOn.next(true);
+        this.isConnectionOn$.next(true);
         this.connectionService.offerAll(this.user.id, users);
       });
   }
@@ -255,11 +259,13 @@ export class RoomService implements OnDestroy {
   private listenToOffers() {
     this.offers$
       .pipe(throttleTime(300), distinctUntilChanged(this.compareOffers))
-      .subscribe((offers) => {
+      .subscribe(async (offers) => {
         if (!offers || !offers.length) {
           // this.user.closeConnections();
           return;
         }
+
+        await this.setStream();
 
         this.roomUsers()
           .pipe(first(), untilDestroyed(this))

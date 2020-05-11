@@ -38,7 +38,9 @@ export class RoomApiService extends BaseFirestoreService {
   }
 
   public update(room: Room): Promise<void> {
-    return this.firestore.doc(`rooms/${room.id}`).update({ ...room });
+    return this.firestore
+      .doc(`rooms/${room.id}`)
+      .update({ ...room, updated: Date.now() });
   }
 
   public remove(roomId: string): Promise<void> {

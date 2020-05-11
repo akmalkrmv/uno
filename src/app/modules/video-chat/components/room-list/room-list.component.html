@@ -16,7 +16,9 @@
       </div>
       <div class="profile-data">
         <div class="profile-data__primary">{{ room.name }}</div>
-        <div class="profile-data__secondary">{{ room.id }}</div>
+        <div class="profile-data__secondary">
+          <span>{{ room.lastMessage }}</span>
+        </div>
       </div>
     </a>
     <mat-divider></mat-divider>

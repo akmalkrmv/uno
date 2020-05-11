@@ -8,6 +8,7 @@ import { User } from 'src/app/models/user';
 })
 export class VideosListComponent implements OnInit {
   @Input() user: User;
+  @Input() viewState: string;
 
   constructor() {}
 
