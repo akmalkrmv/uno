@@ -1,5 +1,5 @@
-<app-resizable-panes [autorotate]="true" [state]="'bottom'">
-  <div top-pane class="videos">
+<app-resizable-panes [autorotate]="true" [state]="'middle'">
+  <div top-pane class="videos" appOrientation>
     <ng-container *ngIf="user">
       <app-self-video
         class="video-container video-container-{{ connectionCount }}"

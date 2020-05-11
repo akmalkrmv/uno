@@ -9,6 +9,8 @@ import {
   HostListener,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 
@@ -26,6 +28,7 @@ export class ResizablePanesComponent implements OnChanges, AfterViewInit {
   @Input() orientation: orientationType = 'vertical';
   @Input() autorotate = true;
   @Input() collapseAt = 50;
+  @Output() resizing = new EventEmitter();
 
   @ViewChild('viewport') viewportRef: ElementRef;
   @ViewChild('topPane') topPaneRef: ElementRef;
@@ -54,7 +57,10 @@ export class ResizablePanesComponent implements OnChanges, AfterViewInit {
     handle.addEventListener('mousedown', this.startDrag);
     handle.addEventListener('touchstart', this.startDrag);
 
-    setTimeout(() => this.setOrientation());
+    setTimeout(() => {
+      this.setOrientation();
+      this.collapseByState(this.state);
+    });
   }
 
   @HostListener('window:resize')
@@ -71,12 +77,11 @@ export class ResizablePanesComponent implements OnChanges, AfterViewInit {
 
   private rotate() {
     const rotated = this.orientation === 'vertical' ? 'horizontal' : 'vertical';
-    const topPane: HTMLDivElement = this.topPaneRef.nativeElement;
+    const top: HTMLDivElement = this.topPaneRef.nativeElement;
+    const btm: HTMLDivElement = this.bottomPaneRef.nativeElement;
 
-    [topPane.style.width, topPane.style.height] = [
-      topPane.style.height,
-      topPane.style.width,
-    ];
+    [top.style.width, top.style.height] = [top.style.height, top.style.width];
+    [btm.style.width, btm.style.height] = [btm.style.height, btm.style.width];
 
     this.orientation = rotated;
     this.changeDetectorRef.markForCheck();
@@ -94,6 +99,7 @@ export class ResizablePanesComponent implements OnChanges, AfterViewInit {
   public drag(event: MouseEvent | TouchEvent) {
     if (this.isDragging) {
       this.isVertical() ? this.dragVertical(event) : this.dragHorizontal(event);
+      this.resizing.emit();
     }
   }
 

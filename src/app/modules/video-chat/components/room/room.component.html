@@ -3,11 +3,7 @@
     <app-videos-list class="main-content" [user]="user">
       <!-- <router-outlet></router-outlet> -->
       <!-- <app-play-cards></app-play-cards> -->
-      <!-- <app-message-list
-        *ngIf="user"
-        [userId]="user.id"
-        [roomId]="roomId"
-      ></app-message-list> -->
+      <app-message-list *ngIf="user" [roomId]="roomId"></app-message-list>
       <!-- <app-code-editor
         class="code-editor"
         [text]="room.code$ | async"
