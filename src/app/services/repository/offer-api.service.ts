@@ -22,7 +22,7 @@ export class OfferApiService extends BaseFirestoreService {
       `rooms/${roomId}/offers`,
       (ref) => ref.where('receiver', '==', userId).where('type', '==', 'offer')
     );
-    return this.collectionStateChanges(collection, ['added']);
+    return this.collectionStateChanges(collection, { events: ['added'] });
   }
 
   public userAnswers(roomId: string, userId: string): Observable<IOffer[]> {
@@ -30,7 +30,7 @@ export class OfferApiService extends BaseFirestoreService {
       `rooms/${roomId}/offers`,
       (ref) => ref.where('receiver', '==', userId).where('type', '==', 'answer')
     );
-    return this.collectionStateChanges(collection, ['added']);
+    return this.collectionStateChanges(collection, { events: ['added'] });
   }
 
   public userDisconnections(
@@ -42,7 +42,7 @@ export class OfferApiService extends BaseFirestoreService {
       (ref) => ref.where('receiver', '==', userId)
     );
 
-    return this.collectionStateChanges(collection, ['removed']);
+    return this.collectionStateChanges(collection, { events: ['removed'] });
   }
 
   public async createOffer(roomId: string, offer: IOffer): Promise<void> {
