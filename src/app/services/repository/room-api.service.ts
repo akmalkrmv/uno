@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
-import { Room } from '@models/room';
-import { IUser } from '@models/index';
+import { IUser, IUserInfo, Room } from '@models/index';
 
 @Injectable({ providedIn: 'root' })
 export class RoomApiService extends BaseFirestoreService {
@@ -34,16 +33,16 @@ export class RoomApiService extends BaseFirestoreService {
       ...data,
       creator: creator.id,
       members: [creator.id],
-      users: [creator],
+      users: [this.toUserInfo(creator)],
     });
   }
 
   public update(room: Room): Promise<void> {
-    return this.firestore.doc(`rooms/${room.id}`).ref.update({ ...room });
+    return this.firestore.doc(`rooms/${room.id}`).update({ ...room });
   }
 
   public remove(roomId: string): Promise<void> {
-    return this.firestore.doc(`rooms/${roomId}`).ref.delete();
+    return this.firestore.doc(`rooms/${roomId}`).delete();
   }
 
   public async joinRoom(roomId: string, user: IUser): Promise<void> {
@@ -54,8 +53,8 @@ export class RoomApiService extends BaseFirestoreService {
 
     const room: Room = snapshot.data();
     if (room.members.indexOf(user.id) < 0) {
-      room.users.push(user);
       room.members.push(user.id);
+      room.users.push(this.toUserInfo(user));
       await roomDoc.update(room);
     }
   }
@@ -81,16 +80,7 @@ export class RoomApiService extends BaseFirestoreService {
     return this.firestore
       .doc<Room>(`rooms/${roomId}`)
       .valueChanges()
-      .pipe(
-        switchMap((room) => {
-          const collection = room.members
-            ? this.firestore.collection<IUser>(`users`, (ref) =>
-                ref.where('id', 'in', room.members)
-              )
-            : this.firestore.collection<IUser>(`users`);
-          return this.collectionChanges(collection);
-        })
-      );
+      .pipe(map((room) => room.users));
   }
 
   public roomOtherUsers(roomId: string, userId: string): Observable<any[]> {
@@ -102,8 +92,20 @@ export class RoomApiService extends BaseFirestoreService {
   public userRooms(userId: string): Observable<Room[]> {
     return this.collectionChanges(
       this.firestore.collection<Room>(`rooms`, (ref) =>
-        ref.where('members', 'array-contains', userId)
+        ref
+          .where('members', 'array-contains', userId)
+          .orderBy('created', 'desc')
       )
     );
+  }
+
+
+  private toUserInfo(creator: IUser): IUserInfo {
+    // Dublicate only secure info
+    return {
+      id: creator.id,
+      name: creator.name,
+      photoURL: creator.photoURL,
+    };
   }
 }
