@@ -98,6 +98,7 @@ export class ResizablePanesComponent implements OnChanges, AfterViewInit {
   @HostListener('document:touchmove', ['$event'])
   public drag(event: MouseEvent | TouchEvent) {
     if (this.isDragging) {
+      event.preventDefault();
       this.isVertical() ? this.dragVertical(event) : this.dragHorizontal(event);
       this.resizing.emit();
     }

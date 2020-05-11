@@ -12,7 +12,7 @@
   <div *ngIf="!user.stream" class="profile-info flex-center">
     <img *ngIf="user.photoURL" [src]="user.photoURL" class="profile-pic" />
     <div *ngIf="!user.photoURL" class="profile-name flex-center">
-      <span *ngIf="user.name">{{ user.name }}</span>
+      <span *ngIf="user.name">{{ user.name[0].toUpperCase() }}</span>
     </div>
   </div>
 

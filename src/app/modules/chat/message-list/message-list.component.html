@@ -21,9 +21,14 @@
   </div>
 
   <form class="form">
-    <mat-form-field>
-      <mat-label>Message</mat-label>
-      <input matInput name="content" autocomplete="off" [(ngModel)]="content" />
+    <mat-form-field appearance="standard">
+      <input
+        matInput
+        name="content"
+        placeholder="Сообщение"
+        autocomplete="off"
+        [(ngModel)]="content"
+      />
     </mat-form-field>
     <button
       mat-icon-button

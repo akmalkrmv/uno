@@ -11,7 +11,7 @@
   <div *ngIf="!connection.stream" class="profile-info flex-center">
     <div class="profile-name flex-center">
       <span *ngIf="connection.userName">
-        {{ connection.userName }}
+        {{ connection.userName[0].toUpperCase() }}
       </span>
     </div>
   </div>
@@ -19,7 +19,7 @@
   <div class="video-cover">
     <div class="info-block">
       <div class="user-name">
-        {{ connection.userName || connection.userId }}
+        {{ connection.userName }}
       </div>
       <div *ngIf="connection.stream" class="stream-controls">
         <!-- <button mat-icon-button disabled>
