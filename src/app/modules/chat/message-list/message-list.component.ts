@@ -8,9 +8,10 @@ import {
 } from '@angular/core';
 import { Message } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
-import { tap } from 'rxjs/operators';
+import { tap, first } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { AuthService } from '@services/auth.service';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
   selector: 'app-message-list',
@@ -29,9 +30,11 @@ export class MessageListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   ngOnInit(): void {
-    this.messages$ = this.api.messages
-      .roomMessages(this.roomId)
-      .pipe(tap(() => this.scrollToBottom()));
+    this.messages$ = this.api.messages.roomMessages(this.roomId);
+
+    this.messages$
+      .pipe(first(), untilDestroyed(this))
+      .subscribe(() => this.scrollToBottom());
   }
 
   public send() {
@@ -40,18 +43,21 @@ export class MessageListComponent implements OnInit, OnDestroy {
     }
 
     this.auth.authorizedInfo$.subscribe((user) => {
-      this.api.messages.create({
-        roomId: this.roomId,
-        content: this.content,
-        sender: user,
-        senderId: user.id,
-      });
+      this.api.messages
+        .create({
+          roomId: this.roomId,
+          content: this.content,
+          sender: user,
+          senderId: user.id,
+          type: 'message',
+        })
+        .then(() => this.scrollToBottom());
     });
 
     this.content = '';
   }
 
-  private scrollToBottom() {
+  public scrollToBottom() {
     setTimeout(() => {
       if (this.messagesRef) {
         const messages = this.messagesRef.nativeElement;

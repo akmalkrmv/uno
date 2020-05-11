@@ -1,13 +1,22 @@
 <div class="messages-container">
   <div #messages class="messages-list">
-    <ng-container
-      *ngFor="let message of messages$ | async | sort: 'created':'asc'"
-    >
-      <app-message
-        [message]="message"
-        [user]="message.sender"
-        class="message-item"
-      ></app-message>
+    <ng-container *ngIf="messages$ | async as messages">
+      <div *ngIf="!messages.length" class="info-message">
+        Нет сообщений
+      </div>
+
+      <ng-container *ngFor="let message of messages | sort: 'created':'asc'">
+        <app-message
+          *ngIf="message.type != 'event'"
+          [message]="message"
+          [user]="message.sender"
+          class="message-item"
+        ></app-message>
+
+        <mat-chip-list *ngIf="message.type == 'event'">
+          <mat-chip>{{ message.content }}</mat-chip>
+        </mat-chip-list>
+      </ng-container>
     </ng-container>
   </div>
 
