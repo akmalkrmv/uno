@@ -13,23 +13,17 @@ import { IUsersApiService } from '@interfaces/repository';
 @Injectable({
   providedIn: 'root',
 })
-export class UsersApiService extends BaseFirestoreService
-  implements IUsersApiService {
-  public userCollection: AngularFirestoreCollection<IUser>;
-  public users$: Observable<IUser[]>;
-  public path = 'users';
+export class UsersApiService extends BaseFirestoreService {
+  private collection: AngularFirestoreCollection<IUser>;
+  private path = 'users';
 
   constructor(private firestore: AngularFirestore) {
     super();
-
-    this.userCollection = firestore.collection(this.path);
-    this.users$ = this.collectionChanges(this.userCollection);
+    this.collection = firestore.collection<IUser>(this.path);
   }
 
-  public saveToken(userId: string, token: string) {
-    const userRef = this.userCollection.doc(userId);
-    const tokens = { [token]: true };
-    return userRef.update({ fcmTokens: tokens });
+  public getAll(): Observable<IUser[]> {
+    return this.collectionChanges(this.firestore.collection<IUser>(`users`));
   }
 
   public getByIds(users: string[]): Observable<IUser[]> {
@@ -83,6 +77,12 @@ export class UsersApiService extends BaseFirestoreService
 
       return userRef.update({ friends });
     }
+  }
+
+  public saveToken(userId: string, token: string) {
+    const userRef = this.collection.doc(userId);
+    const tokens = { [token]: true };
+    return userRef.update({ fcmTokens: tokens });
   }
 
   public update(user: Partial<IUser>): Promise<void> {

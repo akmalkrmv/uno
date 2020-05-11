@@ -2,8 +2,6 @@ import { Observable } from 'rxjs';
 import { IUser } from '@models/index';
 
 export interface IUsersApiService {
-  users$: Observable<IUser[]>;
-
   getByIds(userIds: string[]): Observable<IUser[]>;
   findById(userId: string): Observable<IUser>;
 

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
-import { IUser, IUserInfo, Room } from '@models/index';
+import { IUser, Room, toUserInfo } from '@models/index';
 
 @Injectable({ providedIn: 'root' })
 export class RoomApiService extends BaseFirestoreService {
@@ -33,7 +33,7 @@ export class RoomApiService extends BaseFirestoreService {
       ...data,
       creator: creator.id,
       members: [creator.id],
-      users: [this.toUserInfo(creator)],
+      users: [toUserInfo(creator)],
     });
   }
 
@@ -54,7 +54,7 @@ export class RoomApiService extends BaseFirestoreService {
     const room: Room = snapshot.data();
     if (room.members.indexOf(user.id) < 0) {
       room.members.push(user.id);
-      room.users.push(this.toUserInfo(user));
+      room.users.push(toUserInfo(user));
       await roomDoc.update(room);
     }
   }
@@ -97,15 +97,5 @@ export class RoomApiService extends BaseFirestoreService {
           .orderBy('created', 'desc')
       )
     );
-  }
-
-
-  private toUserInfo(creator: IUser): IUserInfo {
-    // Dublicate only secure info
-    return {
-      id: creator.id,
-      name: creator.name,
-      photoURL: creator.photoURL,
-    };
   }
 }

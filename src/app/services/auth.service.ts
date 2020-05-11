@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { switchMap, map, filter, first } from 'rxjs/operators';
 import { of, Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { IUser } from '@models/index';
+import { IUser, IUserInfo, toUserInfo } from '@models/index';
 import { LocalStorageKeys } from '@constants/index';
 import { ApiService } from './repository/api.service';
 import { PresenceService } from './presence.service';
@@ -55,6 +55,10 @@ export class AuthService {
       filter((user) => !!user),
       first()
     );
+  }
+
+  public get authorizedInfo$(): Observable<IUserInfo> {
+    return this.authorized$.pipe(map(toUserInfo));
   }
 
   public isSignedIn() {

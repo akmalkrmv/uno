@@ -8,8 +8,9 @@ import {
 } from '@angular/core';
 import { Message } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
-import { map, tap, first } from 'rxjs/operators';
-import { Observable, combineLatest } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-message-list',
@@ -18,41 +19,33 @@ import { Observable, combineLatest } from 'rxjs';
 })
 export class MessageListComponent implements OnInit, OnDestroy {
   @Input() roomId: string;
-  @Input() userId: string;
-
   @ViewChild('messages') messagesRef: ElementRef;
 
   public messages$: Observable<Message[]>;
   public content: string;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private auth: AuthService) {}
 
   ngOnDestroy() {}
 
   ngOnInit(): void {
-    this.messages$ = combineLatest([
-      this.api.messages.roomMessages(this.roomId),
-      this.api.users.users$,
-    ]).pipe(
-      map(([messages, users]) =>
-        messages.map((message) => ({
-          ...message,
-          sender: users.find((user) => user.id == message.senderId),
-        }))
-      ),
-      tap(() => this.scrollToBottom())
-    );
+    this.messages$ = this.api.messages
+      .roomMessages(this.roomId)
+      .pipe(tap(() => this.scrollToBottom()));
   }
 
   public send() {
-    if (!this.roomId || !this.userId || !this.content) {
+    if (!this.roomId || !this.content) {
       return;
     }
 
-    this.api.messages.create({
-      roomId: this.roomId,
-      senderId: this.userId,
-      content: this.content,
+    this.auth.authorizedInfo$.subscribe((user) => {
+      this.api.messages.create({
+        roomId: this.roomId,
+        content: this.content,
+        sender: user,
+        senderId: user.id,
+      });
     });
 
     this.content = '';

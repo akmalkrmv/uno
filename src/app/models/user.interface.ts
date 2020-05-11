@@ -15,3 +15,12 @@ export interface IUserInfo {
   name?: string;
   photoURL?: string;
 }
+
+export function toUserInfo(user: IUser): IUserInfo {
+  // Dublicate only secure info
+  return {
+    id: user.id,
+    name: user.name,
+    photoURL: user.photoURL,
+  };
+}

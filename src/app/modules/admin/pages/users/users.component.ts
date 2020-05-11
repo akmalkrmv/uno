@@ -17,7 +17,8 @@ export class UsersComponent implements OnInit {
   ngOnDestroy(): void {}
 
   ngOnInit(): void {
-    this.api.users.users$
+    this.api.users
+      .getAll()
       .pipe(untilDestroyed(this))
       .subscribe((users) => this.users$.next(users));
   }
