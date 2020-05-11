@@ -1,4 +1,13 @@
-<mat-nav-list class="room-list">
+<mat-nav-list class="room-list wide-list">
+  <a mat-list-item routerLink="/room/create" class="profile-container">
+    <div class="profile-avatar">
+      <mat-icon>group_add</mat-icon>
+    </div>
+    <div class="profile-data">
+      <div class="profile-data__primary">+ Создать комнату</div>
+    </div>
+  </a>
+  <mat-divider></mat-divider>
   <ng-container *ngFor="let room of rooms$ | async">
     <a mat-list-item routerLink="/room/{{ room.id }}" class="profile-container">
       <div class="profile-avatar">
