@@ -2,31 +2,52 @@
   <app-profile [user]="user" class="profile-panel"> </app-profile>
 
   <mat-nav-list class="nav-list">
-    <a mat-list-item routerLink="/room/create" (click)="closeSidenav()">
+    <a
+      mat-list-item
+      routerLink="/room/create"
+      routerLinkActive="active"
+      (click)="closeSidenav()"
+    >
       <mat-icon>add</mat-icon>
       <span class="menu-item">Создать комнату</span>
     </a>
-    <a mat-list-item>
+    
+    <!-- <a mat-list-item>
       <mat-icon>group_add</mat-icon>
       <span class="menu-item">Присоединиться</span>
-    </a>
-    <a mat-list-item routerLink="/rooms" (click)="closeSidenav()">
+    </a> -->
+
+    <a
+      mat-list-item
+      routerLink="/rooms"
+      routerLinkActive="active"
+      (click)="closeSidenav()"
+    >
       <mat-icon>groups</mat-icon>
       <span class="menu-item">Комнаты</span>
     </a>
-    <a mat-list-item routerLink="/friends" (click)="closeSidenav()">
+
+    <a
+      mat-list-item
+      routerLink="/friends"
+      routerLinkActive="active"
+      (click)="closeSidenav()"
+    >
       <mat-icon>people_outline</mat-icon>
       <span class="menu-item">Друзья</span>
     </a>
+
     <a
       mat-list-item
       *ngIf="user.role === 'admin'"
       routerLink="/admin/users"
+      routerLinkActive="active"
       (click)="closeSidenav()"
     >
       <mat-icon>perm_identity</mat-icon>
       <span class="menu-item">Администрирование</span>
     </a>
+
     <a mat-list-item (click)="signOut()">
       <mat-icon>exit_to_app</mat-icon>
       <span class="menu-item">Выйти</span>
