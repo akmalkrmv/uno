@@ -6,20 +6,24 @@ import {
   Action,
   DocumentChangeType,
 } from '@angular/fire/firestore';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
+interface IChangeOptions {
+  events?: Array<DocumentChangeType>;
+  logItems?: boolean;
+  logChanges?: boolean;
+}
 
 export class BaseFirestoreService {
   protected collectionChanges<T>(
     collection: AngularFirestoreCollection<T>,
-    events?: Array<DocumentChangeType>,
-    logItems = false,
-    logChanges = false
+    options: IChangeOptions = {}
   ): Observable<T[]> {
-    return collection.snapshotChanges(events).pipe(
+    return collection.snapshotChanges(options.events).pipe(
       tap(() => console.log(`list path: ${collection.ref.path}`)),
       tap((changes: DocumentChangeAction<T>[]) => {
-        logChanges &&
+        options.logChanges &&
           console.log(
             `${collection.ref.path}`,
             changes.map((change) => change.type)
@@ -32,21 +36,19 @@ export class BaseFirestoreService {
         }))
       ),
       tap((items: T[]) => {
-        logItems && console.log(`${collection.ref.path}`, items);
+        options.logItems && console.log(`${collection.ref.path}`, items);
       })
     );
   }
 
   protected collectionStateChanges<T>(
     collection: AngularFirestoreCollection<T>,
-    events?: Array<DocumentChangeType>,
-    logItems = false,
-    logChanges = false
+    options: IChangeOptions = {}
   ): Observable<T[]> {
-    return collection.stateChanges(events).pipe(
+    return collection.stateChanges(options.events).pipe(
       tap(() => console.log(`list path: ${collection.ref.path}`)),
       tap((changes: DocumentChangeAction<T>[]) => {
-        logChanges &&
+        options.logChanges &&
           console.log(
             `${collection.ref.path}`,
             changes.map((change) => change.type)
@@ -59,7 +61,7 @@ export class BaseFirestoreService {
         }))
       ),
       tap((items: T[]) => {
-        logItems && console.log(`${collection.ref.path}`, items);
+        options.logItems && console.log(`${collection.ref.path}`, items);
       })
     );
   }
@@ -100,5 +102,10 @@ export class BaseFirestoreService {
     return snapshot.docs.map((doc) => doc.data() as T);
   }
 
-  protected getDocumentOnce() {}
+  protected async getDocumentOnce<T>(
+    document: AngularFirestoreDocument<T>
+  ): Promise<T> {
+    const snapshot = await document.get().toPromise();
+    return snapshot.data() as T;
+  }
 }
