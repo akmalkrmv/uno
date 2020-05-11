@@ -6,7 +6,7 @@ import { User } from '@models/index';
 export class MediaService {
   constructor() {}
 
-  public async setStream(user: User) {
+  public async setStream(user: User, media: 'user' | 'display' = 'user') {
     if (!user) return;
 
     const userStream = new MediaStream();
@@ -21,15 +21,31 @@ export class MediaService {
       .catch((error) => console.log(error));
 
     // Adding video tracks
-    const videoStream = navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints })
-      .then((stream) => addTracks(stream))
-      .catch((error) => console.log(error));
+    let videoStream = null;
+    if (media === 'user')
+      videoStream = navigator.mediaDevices
+        .getUserMedia({ video: videoConstraints })
+        .then((stream) => addTracks(stream))
+        .catch((error) => console.log(error));
+    else {
+      videoStream = (navigator.mediaDevices as any)
+        .getDisplayMedia()
+        .then((stream) => addTracks(stream))
+        .catch((error) => console.log(error));
+    }
 
     return Promise.all([audioStream, videoStream]).then(() => {
       if (userStream.getTracks().length > 0) {
+        if (user.stream) {
+          // Stop current tracks
+          user.stream.getTracks().forEach((track) => track.stop());
+          // Replace connection tracks with new tracks
+          userStream.getTracks().forEach((track) => user.replaceTrack(track));
+        }
+
         user.stream = userStream;
-        user.connections.forEach(c => user.addTracks(c.peer));
+        user.connections.forEach((c) => user.addTracks(c.peer));
+
         this.muteSelfStream();
       }
     });

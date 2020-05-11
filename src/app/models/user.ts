@@ -111,13 +111,17 @@ export class User {
       const videoTrack = stream.getVideoTracks()[0];
 
       this.stream = stream;
-      this.connections.forEach((connection) => {
-        const sender = connection.peer
-          .getSenders()
-          .find((sender) => sender.track.kind == videoTrack.kind);
+      this.replaceTrack(videoTrack);
+    });
+  }
 
-        sender && sender.replaceTrack(videoTrack);
-      });
+  public replaceTrack(videoTrack: MediaStreamTrack) {
+    this.connections.forEach((connection) => {
+      const senders = connection.peer.getSenders();
+      const sender = senders.find(
+        (sender) => sender.track.kind == videoTrack.kind
+      );
+      sender && sender.replaceTrack(videoTrack);
     });
   }
 

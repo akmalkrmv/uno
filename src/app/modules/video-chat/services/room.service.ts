@@ -39,6 +39,7 @@ export class RoomService implements OnDestroy {
 
   public roomId: string;
   public user: User;
+  public mediaType: 'user' | 'display' = 'user';
 
   constructor(
     private router: Router,
@@ -138,9 +139,14 @@ export class RoomService implements OnDestroy {
     });
   }
 
+  public async toggleMediaType() {
+    this.mediaType = this.mediaType === 'user' ? 'display' : 'user';
+    await this.setStream();
+  }
+
   public async setStream() {
     this.viewState$.next('middle');
-    await this.media.setStream(this.user);
+    await this.media.setStream(this.user, this.mediaType);
   }
 
   public closeStream() {

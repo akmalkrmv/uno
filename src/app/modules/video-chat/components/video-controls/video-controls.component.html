@@ -28,6 +28,12 @@
   </ng-container>
 
   <ng-container *ngIf="user.connections.length">
+    <button mat-icon-button (click)="toggleMediaType()">
+      <mat-icon *ngIf="room.mediaType == 'user'">desktop_windows</mat-icon>
+      <mat-icon *ngIf="room.mediaType == 'display'">
+        desktop_access_disabled
+      </mat-icon>
+    </button>
     <button mat-icon-button color="warn" (click)="hangup()">
       <mat-icon>call_end</mat-icon>
     </button>

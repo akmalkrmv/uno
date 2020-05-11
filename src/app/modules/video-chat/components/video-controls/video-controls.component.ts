@@ -20,7 +20,7 @@ export class VideoControlsComponent implements OnInit {
   private videoDevices: MediaDeviceInfo[] = [];
   private currentDevice: MediaDeviceInfo = null;
 
-  constructor(private room: RoomService) {}
+  constructor(public room: RoomService) {}
 
   ngOnInit(): void {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
@@ -52,6 +52,10 @@ export class VideoControlsComponent implements OnInit {
     this.isFront$.next(!this.isFront$.value);
     this.user.toggleCamera(this.currentDevice);
     this.user.isFrontCamera = this.isFront$.value;
+  }
+
+  public toggleMediaType() {
+    this.room.toggleMediaType();
   }
 
   public toggleBottom() {
