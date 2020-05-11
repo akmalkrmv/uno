@@ -1,4 +1,4 @@
-import { IUser } from './user.interface';
+import { IUserInfo } from './user.interface';
 
 export class IOffer {
   id?: string;
@@ -18,7 +18,7 @@ export interface Room {
   creator?: any;
   created?: number;
   members?: string[];
-  users?: IUser[];
+  users?: IUserInfo[];
   offers?: Offer[];
   answers?: Answer[];
 }

@@ -9,3 +9,9 @@ export interface IUser {
   fcmTokens?: any;
   friends?: string[];
 }
+
+export interface IUserInfo {
+  id?: string;
+  name?: string;
+  photoURL?: string;
+}
