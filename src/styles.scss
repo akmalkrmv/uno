@@ -31,6 +31,15 @@ body {
   flex-basis: auto;
 }
 
+.info-message {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
 .warn-color {
   color: #f44336;
 }
@@ -54,6 +63,13 @@ body {
       width: 100%;
       padding: 12px 16px;
     }
+  }
+}
+
+.messages-container {
+  .mat-chip-list-wrapper {
+    margin: 0;
+    justify-content: center;
   }
 }
 
