@@ -1,6 +1,6 @@
-<mat-nav-list class="user-list">
+<mat-nav-list class="user-list wide-list">
   <ng-container *ngFor="let user of users">
-    <div mat-list-item class="user-item">
+    <a mat-list-item class="user-item">
       <app-user [user]="user"></app-user>
       <ng-container *ngIf="canAddToFriends(user.id)">
         <button
@@ -11,7 +11,7 @@
           <mat-icon>person_add</mat-icon>
         </button></ng-container
       >
-    </div>
+    </a>
     <mat-divider></mat-divider>
   </ng-container>
 </mat-nav-list>
