@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Room } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-room-list',
@@ -15,7 +15,13 @@ export class RoomListComponent implements OnInit {
 
   constructor(private api: ApiService, private auth: AuthService) {
     this.rooms$ = auth.authorized$.pipe(
-      switchMap((user) => api.room.userRooms(user.id))
+      switchMap((user) => api.room.userRooms(user.id)),
+      map((rooms) =>
+        rooms.map((room) => ({
+          ...room,
+          name: room.name || room.users.map((user) => user.name).join(', '),
+        }))
+      )
     );
   }
 

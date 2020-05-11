@@ -17,21 +17,16 @@ export class RoomsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   ngOnInit(): void {
-    combineLatest([this.api.users.users$, this.api.rooms.rooms$])
-      .pipe(untilDestroyed(this))
-      .subscribe(([users, rooms]) => {
-        rooms = rooms.map((room) => {
-          return {
-            ...room,
-            creator: users.find((user) => user.id == room.creator.id) || {},
-            users: users.filter(
-              (user) => !room.users || room.users.includes(user.id)
-            ),
-          };
-        });
-
-        this.rooms$.next(rooms);
+    this.api.rooms.rooms$.pipe(untilDestroyed(this)).subscribe((rooms) => {
+      rooms = rooms.map((room) => {
+        return {
+          ...room,
+          creator: room.users.find((user) => user.id == room.creator.id) || {},
+        };
       });
+
+      this.rooms$.next(rooms);
+    });
   }
 
   public save(room: Room) {

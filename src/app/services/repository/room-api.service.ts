@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { BaseFirestoreService } from './base-firestore.service';
@@ -25,10 +25,15 @@ export class RoomApiService extends BaseFirestoreService {
     return doc.data();
   }
 
-  public createRoom(creator: string, data?: Partial<Room>): Promise<string> {
+  public onRoomChange(roomId: string): Observable<Room> {
+    return this.documentChanges(this.firestore.doc<Room>(`rooms/${roomId}`));
+  }
+
+  public createRoom(creator: IUser, data?: Partial<Room>): Promise<string> {
     return this.addToCollection(this.firestore.collection(`rooms`), {
       ...data,
-      creator,
+      creator: creator.id,
+      members: [creator.id],
       users: [creator],
     });
   }
@@ -41,15 +46,16 @@ export class RoomApiService extends BaseFirestoreService {
     return this.firestore.doc(`rooms/${roomId}`).ref.delete();
   }
 
-  public async joinRoom(roomId: string, userId: string): Promise<void> {
+  public async joinRoom(roomId: string, user: IUser): Promise<void> {
     const roomDoc = this.firestore.doc<Room>(`rooms/${roomId}`);
     const snapshot = await roomDoc.ref.get();
 
     if (!snapshot.exists) return;
 
     const room: Room = snapshot.data();
-    if (room.users.indexOf(userId) < 0) {
-      room.users.push(userId);
+    if (room.members.indexOf(user.id) < 0) {
+      room.users.push(user);
+      room.members.push(user.id);
       await roomDoc.update(room);
     }
   }
@@ -61,9 +67,12 @@ export class RoomApiService extends BaseFirestoreService {
     if (!snapshot.exists) return;
 
     const room: Room = snapshot.data();
-    const index = room.users.indexOf(userId);
-    if (index >= 0) {
-      room.users.splice(index, 1);
+    const userIndex = room.users.findIndex((u) => u.id == userId);
+    const memberIndex = room.members.indexOf(userId);
+
+    if (memberIndex >= 0) {
+      room.users.splice(userIndex, 1);
+      room.members.splice(memberIndex, 1);
       await roomDoc.update(room);
     }
   }
@@ -74,11 +83,12 @@ export class RoomApiService extends BaseFirestoreService {
       .valueChanges()
       .pipe(
         switchMap((room) => {
-          return this.collectionChanges(
-            this.firestore.collection<IUser>(`users`, (ref) =>
-              ref.where('id', 'in', room.users)
-            )
-          );
+          const collection = room.members
+            ? this.firestore.collection<IUser>(`users`, (ref) =>
+                ref.where('id', 'in', room.members)
+              )
+            : this.firestore.collection<IUser>(`users`);
+          return this.collectionChanges(collection);
         })
       );
   }
@@ -92,7 +102,7 @@ export class RoomApiService extends BaseFirestoreService {
   public userRooms(userId: string): Observable<Room[]> {
     return this.collectionChanges(
       this.firestore.collection<Room>(`rooms`, (ref) =>
-        ref.where('users', 'array-contains', userId)
+        ref.where('members', 'array-contains', userId)
       )
     );
   }

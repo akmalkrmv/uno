@@ -1,3 +1,5 @@
+import { IUser } from './user.interface';
+
 export class IOffer {
   id?: string;
   type: 'offer' | 'answer';
@@ -15,7 +17,8 @@ export interface Room {
   photoURL?: string;
   creator?: any;
   created?: number;
-  users?: any[];
+  members?: string[];
+  users?: IUser[];
   offers?: Offer[];
   answers?: Answer[];
 }

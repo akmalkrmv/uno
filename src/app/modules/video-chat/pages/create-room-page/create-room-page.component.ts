@@ -20,7 +20,7 @@ export class CreateRoomPageComponent implements OnInit, OnDestroy {
   
   ngOnInit(): void {
     this.auth.authorized$
-      .pipe(switchMap((user) => this.api.room.createRoom(user.id)))
+      .pipe(switchMap((user) => this.api.room.createRoom(user)))
       .pipe(first(), untilDestroyed(this))
       .subscribe((roomId) => {
         this.router.navigate([`/room/${roomId}`]);

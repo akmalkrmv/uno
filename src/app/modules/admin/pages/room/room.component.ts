@@ -36,20 +36,15 @@ export class RoomComponent implements OnInit {
   ngOnInit(): void {
     const roomId = this.activeRoute.snapshot.paramMap.get('id');
     if (roomId) {
-      combineLatest([this.api.users.users$, this.api.rooms.rooms$])
-        .pipe(untilDestroyed(this))
-        .subscribe(([users, rooms]) => {
-          const room = rooms.find((room) => room.id == roomId);
-          this.room = {
-            ...room,
-            creator: users.find((user) => user.id == room.creator.id) || {},
-            users: users.filter(
-              (user) => !room.users || room.users.includes(user.id)
-            ),
-          };
+      this.api.rooms.rooms$.pipe(untilDestroyed(this)).subscribe((rooms) => {
+        const room = rooms.find((room) => room.id == roomId);
+        this.room = {
+          ...room,
+          creator: room.users.find((user) => user.id == room.creator.id) || {},
+        };
 
-          this.changeDetectorRef.detectChanges();
-        });
+        this.changeDetectorRef.detectChanges();
+      });
     }
   }
 

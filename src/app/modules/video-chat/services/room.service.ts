@@ -67,16 +67,14 @@ export class RoomService implements OnDestroy {
 
     const authorize$ = this.auth.authorized$.pipe(
       untilDestroyed(this),
+      tap((user) => user && this.joinRoom(user)),
       map((user) => (user ? new User(user.id, user.name) : null))
     );
 
-    authorize$
-      .pipe(tap((user) => user && this.joinRoom(user)))
-      .pipe(first(), untilDestroyed(this))
-      .subscribe((user) => {
-        if (!user) return;
-        this.initialize(user);
-      });
+    authorize$.pipe(first(), untilDestroyed(this)).subscribe((user) => {
+      if (!user) return;
+      this.initialize(user);
+    });
 
     this.roomCommands.register();
     this.commands.current$
@@ -213,24 +211,25 @@ export class RoomService implements OnDestroy {
     return this.api.room.roomOtherUsers(this.roomId, this.user.id);
   }
 
-  private async joinRoom(user: User) {
-    await this.api.room.joinRoom(this.roomId, user.id);
+  private async joinRoom(user: IUser) {
+    await this.api.room.joinRoom(this.roomId, user);
     return user;
   }
 
   private async setTitle() {
-    const room = await this.api.room.getById(this.roomId);
-
     this.title.icon$.next('group');
 
-    if (room.name) {
-      this.title.text$.next(room.name);
-    } else {
-      this.onlineUsers$.pipe(untilDestroyed(this)).subscribe((users) => {
-        const names = users.map((user) => user.name).join(', ');
-        this.title.text$.next(names);
+    this.api.room
+      .onRoomChange(this.roomId)
+      .pipe(untilDestroyed(this))
+      .subscribe((room) => {
+        if (room.name) {
+          this.title.text$.next(room.name);
+        } else {
+          const names = room.users.map((user) => user.name).join(', ');
+          this.title.text$.next(names);
+        }
       });
-    }
   }
 
   private compareOffers(before: IOffer[], after: IOffer[]) {
