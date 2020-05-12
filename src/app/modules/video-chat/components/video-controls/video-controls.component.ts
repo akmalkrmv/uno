@@ -32,6 +32,10 @@ export class VideoControlsComponent implements OnInit {
     });
   }
 
+  public get canShareScreen() {
+    return 'getDisplayMedia' in navigator.mediaDevices;
+  }
+
   public toggleSound() {
     this.isAudioOn$.next(!this.isAudioOn$.value);
     this.user.toggleAudio();

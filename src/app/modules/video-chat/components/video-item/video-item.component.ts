@@ -15,6 +15,10 @@ export class VideoItemComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  public pictureInPictureEnabled() {
+    return 'pictureInPictureEnabled' in document;
+  }
+
   public fullscreen() {
     const video = this.videoRef.nativeElement;
 

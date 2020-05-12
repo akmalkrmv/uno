@@ -30,7 +30,11 @@
         <button mat-icon-button (click)="fullscreen()">
           <mat-icon>fullscreen</mat-icon>
         </button>
-        <button mat-icon-button (click)="pictureInPicture()">
+        <button
+          mat-icon-button
+          *ngIf="pictureInPictureEnabled"
+          (click)="pictureInPicture()"
+        >
           <mat-icon>picture_in_picture</mat-icon>
         </button>
 
