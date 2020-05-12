@@ -20,7 +20,8 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
 })
 export class MessageListComponent implements OnInit, OnDestroy {
   @Input() roomId: string;
-  @ViewChild('messages') messagesRef: ElementRef;
+  @ViewChild('messages') messagesRef: ElementRef<Element>;
+  @ViewChild('input') inputRef: ElementRef<HTMLInputElement>;
 
   public messages$: Observable<Message[]>;
   public content: string;
@@ -59,6 +60,7 @@ export class MessageListComponent implements OnInit, OnDestroy {
     });
 
     this.content = '';
+    this.inputRef.nativeElement.focus();
   }
 
   public scrollToBottom() {
