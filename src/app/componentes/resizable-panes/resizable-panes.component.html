@@ -1,4 +1,4 @@
-<div #viewport class="viewport {{ orientation }}">
+<div #viewport class="viewport {{ orientation }}" [class.animate]="!isDragging">
   <div #topPane class="top-pane">
     <ng-content select="[top-pane]" class="pane-content"></ng-content>
   </div>

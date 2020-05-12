@@ -115,7 +115,10 @@ export class RoomService implements OnDestroy {
       .pipe(untilDestroyed(this))
       .subscribe((offers) => {
         console.log('dissconnection', offers);
-        offers.forEach((offer) => this.user.closeConnection(offer.sender));
+        offers.forEach((offer) => {
+          this.user.closeConnection(offer.sender);
+          this.user.closeConnection(offer.receiver);
+        });
       });
 
     this.setTitle();

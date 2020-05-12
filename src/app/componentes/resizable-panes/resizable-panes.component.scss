@@ -17,10 +17,17 @@
     flex-direction: row;
     .divider {
       height: 100%;
-      width: 0;
+      width: 0px;
       mat-icon {
         transform: rotate(90deg);
       }
+    }
+  }
+
+  &.animate {
+    .top-pane,
+    .bottom-pane {
+      transition: all ease 0.3s;
     }
   }
 
