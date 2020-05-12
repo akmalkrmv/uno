@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1589242369168,
+  "timestamp": 1589272063172,
   "index": "https://akmalkrmv.github.io/uno/index.html",
   "assetGroups": [
     {
@@ -16,8 +16,8 @@
         "https://akmalkrmv.github.io/uno/favicon.ico",
         "https://akmalkrmv.github.io/uno/firebase-messaging-sw.js",
         "https://akmalkrmv.github.io/uno/index.html",
-        "https://akmalkrmv.github.io/uno/main-es2015.a82f080830f14ab3a810.js",
-        "https://akmalkrmv.github.io/uno/main-es5.a82f080830f14ab3a810.js",
+        "https://akmalkrmv.github.io/uno/main-es2015.d15d42ae295cfff88e50.js",
+        "https://akmalkrmv.github.io/uno/main-es5.d15d42ae295cfff88e50.js",
         "https://akmalkrmv.github.io/uno/manifest.webmanifest",
         "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js",
         "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js",
@@ -61,9 +61,9 @@
     "https://akmalkrmv.github.io/uno/combined-workers.js": "d22d7a1c81842f6bc462440d174f664d3d5c3607",
     "https://akmalkrmv.github.io/uno/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
     "https://akmalkrmv.github.io/uno/firebase-messaging-sw.js": "881caa260de459af72d05de6b689f6e102f308d7",
-    "https://akmalkrmv.github.io/uno/index.html": "b7317afce70273a8900984eabcea37ea49e7e6cd",
-    "https://akmalkrmv.github.io/uno/main-es2015.a82f080830f14ab3a810.js": "e473cfa58b6d40ee6afd20080c778ae5a969481d",
-    "https://akmalkrmv.github.io/uno/main-es5.a82f080830f14ab3a810.js": "b04d2e235927861a0e8c7ce60432dcfacaca79f7",
+    "https://akmalkrmv.github.io/uno/index.html": "38de1183266d2c09989559dc7ecb472ee92ed7f4",
+    "https://akmalkrmv.github.io/uno/main-es2015.d15d42ae295cfff88e50.js": "13965ba7f9a0727e69d42bc5da4e4e895bbd32d8",
+    "https://akmalkrmv.github.io/uno/main-es5.d15d42ae295cfff88e50.js": "8381346190948e7dddeee7d77079c1cb6d5ff1f3",
     "https://akmalkrmv.github.io/uno/manifest.webmanifest": "5b65b9e8e3183bd14ccad5de3643cdbc662242ec",
     "https://akmalkrmv.github.io/uno/polyfills-es2015.1f913f16a2d346cc8bdc.js": "72ad4ccc0a3916ae4598199447cdeadd6d380570",
     "https://akmalkrmv.github.io/uno/polyfills-es5.1a3c78b07cd6f16c6e9a.js": "e5472003c8575a8fca7583648df3905038faeb18",

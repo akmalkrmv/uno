@@ -86,8 +86,8 @@ export class AuthService {
         withoutCaptcha(firebase.auth.PhoneAuthProvider.PROVIDER_ID),
         withoutCaptcha(firebase.auth.EmailAuthProvider.PROVIDER_ID),
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        firebase.auth.GithubAuthProvider.PROVIDER_ID,
+        // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        // firebase.auth.GithubAuthProvider.PROVIDER_ID,
       ],
       callbacks: {
         signInSuccessWithAuthResult: (credential, redirectUrl: string) => {
