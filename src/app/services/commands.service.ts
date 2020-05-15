@@ -21,8 +21,10 @@ export class CommandsService {
 
   public registerGroup(group: CommandGroup) {
     const groups = this.groups$.value;
-    groups.push(group);
-    this.groups$.next(groups);
+    if (groups.indexOf(group) < 0) {
+      groups.push(group);
+      this.groups$.next(groups);
+    }
   }
 
   public unregisterGroup(group: CommandGroup) {
