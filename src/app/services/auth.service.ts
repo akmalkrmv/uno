@@ -11,7 +11,6 @@ import { NavigationService } from './navigation.service';
 
 import * as firebaseui from 'firebaseui';
 import * as firebase from 'firebase/app';
-import 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -32,13 +31,13 @@ export class AuthService {
         )
       )
       .subscribe((user: IUser) => {
+        this.current$.next(user);
+        this.presence.startTracking(user?.id);
+        
         if (user && !user.name) {
           localStorage.setItem(LocalStorageKeys.redirectUrl, location.pathname);
           this.router.navigate(['/name']);
         }
-
-        this.current$.next(user);
-        this.presence.startTracking(user?.id);
       });
   }
 
