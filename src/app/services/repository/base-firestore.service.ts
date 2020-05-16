@@ -8,6 +8,7 @@ import {
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import * as firebase from 'firebase/app';
 
 interface IChangeOptions {
   events?: Array<DocumentChangeType>;
@@ -15,55 +16,31 @@ interface IChangeOptions {
   logChanges?: boolean;
 }
 
+const trace = (...params: any) => {
+  console.log(params);
+  firebase.performance().trace(params[0]);
+};
+const traceIf = (condition: boolean, ...params: any) => {
+  condition && trace(...params);
+};
+
 export class BaseFirestoreService {
   protected collectionChanges<T>(
     collection: AngularFirestoreCollection<T>,
     options: IChangeOptions = {}
   ): Observable<T[]> {
-    return collection.snapshotChanges(options.events).pipe(
-      tap(() => console.log(`list path: ${collection.ref.path}`)),
-      tap((changes: DocumentChangeAction<T>[]) => {
-        options.logChanges &&
-          console.log(
-            `${collection.ref.path}`,
-            changes.map((change) => change.type)
-          );
-      }),
-      map((changes: DocumentChangeAction<T>[]) =>
-        changes.map((change: DocumentChangeAction<T>) => ({
-          ...(change.payload.doc.data() as T),
-          id: change.payload.doc.id,
-        }))
-      ),
-      tap((items: T[]) => {
-        options.logItems && console.log(`${collection.ref.path}`, items);
-      })
-    );
+    return collection
+      .snapshotChanges(options.events)
+      .pipe(this.map<T>(collection, options));
   }
 
   protected collectionStateChanges<T>(
     collection: AngularFirestoreCollection<T>,
     options: IChangeOptions = {}
   ): Observable<T[]> {
-    return collection.stateChanges(options.events).pipe(
-      tap(() => console.log(`list path: ${collection.ref.path}`)),
-      tap((changes: DocumentChangeAction<T>[]) => {
-        options.logChanges &&
-          console.log(
-            `${collection.ref.path}`,
-            changes.map((change) => change.type)
-          );
-      }),
-      map((changes: DocumentChangeAction<T>[]) =>
-        changes.map((change: DocumentChangeAction<T>) => ({
-          ...(change.payload.doc.data() as T),
-          id: change.payload.doc.id,
-        }))
-      ),
-      tap((items: T[]) => {
-        options.logItems && console.log(`${collection.ref.path}`, items);
-      })
-    );
+    return collection
+      .snapshotChanges(options.events)
+      .pipe(this.map<T>(collection, options));
   }
 
   protected documentChanges<T>(
@@ -72,17 +49,13 @@ export class BaseFirestoreService {
     logChanges = false
   ): Observable<T> {
     return document.snapshotChanges().pipe(
-      tap(() => console.log(`doc path: ${document.ref.path}`)),
-      tap((change: Action<DocumentSnapshot<T>>) => {
-        logChanges && console.log(`${document.ref.path} ${change.type}`);
-      }),
+      tap(() => trace(document.ref.path)),
+      tap((change) => traceIf(logChanges, document.ref.path, change.type)),
       map((change: Action<DocumentSnapshot<T>>) => ({
         ...(change.payload.data() as T),
         id: change.payload.id,
       })),
-      tap((item: T) => {
-        logItems && console.log(`${document.ref.path}`, item);
-      })
+      tap((item: T) => traceIf(logItems, document.ref.path, item))
     );
   }
 
@@ -107,5 +80,29 @@ export class BaseFirestoreService {
   ): Promise<T> {
     const snapshot = await document.get().toPromise();
     return snapshot.data() as T;
+  }
+
+  private map<T>(
+    collection: AngularFirestoreCollection<T>,
+    { logChanges, logItems }: IChangeOptions = {}
+  ) {
+    return (source: Observable<DocumentChangeAction<T>[]>) =>
+      source.pipe(
+        tap(() => trace(collection.ref.path)),
+        tap((changes: DocumentChangeAction<T>[]) => {
+          traceIf(
+            logChanges,
+            collection.ref.path,
+            changes.map((change) => change.type)
+          );
+        }),
+        map((changes: DocumentChangeAction<T>[]) =>
+          changes.map((change: DocumentChangeAction<T>) => ({
+            ...(change.payload.doc.data() as T),
+            id: change.payload.doc.id,
+          }))
+        ),
+        tap((items: T[]) => traceIf(logItems, collection.ref.path, items))
+      );
   }
 }
