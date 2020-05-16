@@ -52,8 +52,8 @@ export class BaseFirestoreService {
       tap(() => trace(document.ref.path)),
       tap((change) => traceIf(logChanges, document.ref.path, change.type)),
       map((change: Action<DocumentSnapshot<T>>) => ({
-        ...(change.payload.data() as T),
         id: change.payload.id,
+        ...(change.payload.data() as T),
       })),
       tap((item: T) => traceIf(logItems, document.ref.path, item))
     );
@@ -98,8 +98,8 @@ export class BaseFirestoreService {
         }),
         map((changes: DocumentChangeAction<T>[]) =>
           changes.map((change: DocumentChangeAction<T>) => ({
-            ...(change.payload.doc.data() as T),
             id: change.payload.doc.id,
+            ...(change.payload.doc.data() as T),
           }))
         ),
         tap((items: T[]) => traceIf(logItems, collection.ref.path, items))
