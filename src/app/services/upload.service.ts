@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
+// TODO: change to @angular/fire/storage
 import * as firebase from 'firebase/app';
-import 'firebase/storage';
+// import { AngularFireUploadTask } from '@angular/fire/storage';
 
 export class Upload {
   public key$: string;
@@ -32,7 +33,6 @@ export class UploadService {
         (snapshot) => {
           upload.progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('progress', upload.progress);
         },
         (error) => console.log(error),
         () => {
