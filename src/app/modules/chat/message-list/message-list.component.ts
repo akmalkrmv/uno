@@ -12,6 +12,7 @@ import { tap, first } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { AuthService } from '@services/auth.service';
 import { untilDestroyed } from 'ngx-take-until-destroy';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-message-list',
@@ -26,11 +27,21 @@ export class MessageListComponent implements OnInit, OnDestroy {
   public messages$: Observable<Message[]>;
   public content: string;
 
-  constructor(private api: ApiService, private auth: AuthService) {}
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnDestroy() {}
 
   ngOnInit(): void {
+    this.route.data
+      .pipe(untilDestroyed(this))
+      .subscribe((data: { roomId: string }) => {
+        this.roomId = data.roomId;
+      });
+
     this.messages$ = this.api.messages
       .roomMessages(this.roomId)
       // Scroll to last message always
