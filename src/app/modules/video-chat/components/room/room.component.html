@@ -5,11 +5,8 @@
       [user]="user"
       [viewState]="viewState$ | async"
     >
-      <!-- <router-outlet></router-outlet> -->
-      <!-- <app-play-cards></app-play-cards> -->
-      <app-message-list *ngIf="user" [roomId]="roomId"></app-message-list>
+      <router-outlet></router-outlet>
       <!-- <app-code-editor
-        class="code-editor"
         [text]="room.code$ | async"
         (type)="sendText($event)"
       ></app-code-editor> -->

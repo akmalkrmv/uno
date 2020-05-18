@@ -18,6 +18,7 @@ import { ChatModule } from '../chat/chat.module';
 import { CreateRoomPageComponent } from './pages/create-room-page/create-room-page.component';
 import { VideoChatRoutingModule } from './video-chat-routing.module';
 import { RoomItemComponent } from './components/room-item/room-item.component';
+import { BuraModule } from '../bura/bura.module';
 
 const dialogs = [
   CallDialogComponent,
@@ -45,6 +46,7 @@ const dialogs = [
     SharedModule,
     SharedComponentsModule,
     ChatModule,
+    BuraModule,
     VideoChatRoutingModule,
   ],
 })
