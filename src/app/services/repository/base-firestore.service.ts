@@ -8,7 +8,7 @@ import {
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 
 interface IChangeOptions {
   events?: Array<DocumentChangeType>;
@@ -18,7 +18,7 @@ interface IChangeOptions {
 
 const trace = (...params: any) => {
   console.log(params);
-  firebase.performance().trace(params[0]);
+  // firebase.performance().trace(params[0]);
 };
 const traceIf = (condition: boolean, ...params: any) => {
   condition && trace(...params);
