@@ -2,16 +2,11 @@
   <app-profile [user]="user" class="profile-panel"> </app-profile>
 
   <mat-nav-list class="nav-list">
-    <a
-      mat-list-item
-      routerLink="/room/create"
-      routerLinkActive="active"
-      (click)="closeSidenav()"
-    >
+    <a mat-list-item (click)="createRoom()">
       <mat-icon>add</mat-icon>
       <span class="menu-item">Создать комнату</span>
     </a>
-    
+
     <!-- <a mat-list-item>
       <mat-icon>group_add</mat-icon>
       <span class="menu-item">Присоединиться</span>

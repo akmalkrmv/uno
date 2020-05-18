@@ -4,6 +4,7 @@ import { Room } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { AuthService } from '@services/auth.service';
 import { switchMap, map } from 'rxjs/operators';
+import { CreateRoomService } from '../../services/create-room.service';
 
 @Component({
   selector: 'app-room-list',
@@ -13,9 +14,15 @@ import { switchMap, map } from 'rxjs/operators';
 export class RoomListComponent implements OnInit {
   public rooms$: Observable<Room[]>;
 
-  constructor(private api: ApiService, private auth: AuthService) {
-    this.rooms$ = auth.authorized$.pipe(
-      switchMap((user) => api.room.userRooms(user.id)),
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private createRoom: CreateRoomService
+  ) {}
+
+  ngOnInit(): void {
+    this.rooms$ = this.auth.authorized$.pipe(
+      switchMap((user) => this.api.room.userRooms(user.id)),
       map((rooms) =>
         rooms.map((room) => ({
           ...room,
@@ -25,5 +32,7 @@ export class RoomListComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {}
+  create() {
+    this.createRoom.create();
+  }
 }
