@@ -131,15 +131,15 @@ export class ResizablePanesComponent implements OnChanges, AfterViewInit {
   }
 
   private clientY(event: MouseEvent | TouchEvent) {
-    return event instanceof TouchEvent
+    return window.TouchEvent && event instanceof TouchEvent
       ? event.changedTouches[0].clientY
-      : event.clientY;
+      : (event as MouseEvent).clientY;
   }
 
   private clientX(event: MouseEvent | TouchEvent) {
-    return event instanceof TouchEvent
+    return window.TouchEvent && event instanceof TouchEvent
       ? event.changedTouches[0].clientX
-      : event.clientX;
+      : (event as MouseEvent).clientX;
   }
 
   private collapseByState(state: collapseType) {
