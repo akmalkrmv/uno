@@ -23,7 +23,15 @@
 
     .card {
       margin-right: -20px;
-      z-index: 1;
+      z-index: 2;
+
+      &:hover,
+      &:active {
+        z-index: 100;
+      }
+      &:not(:hover:active) {
+        z-index: 0;
+      }
     }
   }
 
@@ -91,6 +99,22 @@
     }
   }
 
+  .game-controls {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 10px;
+    min-height: 160px;
+    border: 1px solid orange;
+
+    button {
+      min-width: 200px;
+      margin-bottom: 4px;
+    }
+  }
+
   .game-info {
     padding: 10px;
     display: flex;
@@ -110,6 +134,47 @@
       padding: 10px;
       display: flex;
       align-items: center;
+    }
+  }
+
+  .players-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-around;
+
+    .player-info {
+      flex-grow: 1;
+      height: 42px;
+      // min-width: 200px;
+      min-width: 100%;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      border-top: 1px solid #fff3;
+
+      &.current {
+        color: yellowgreen;
+      }
+
+      &__name,
+      &__hand,
+      &__points {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-grow: 1;
+        flex-basis: 0;
+      }
+      &__name {
+        justify-content: flex-start;
+      }
+
+      .badge {
+        min-width: 24px;
+        margin-right: 4px;
+      }
     }
   }
 }

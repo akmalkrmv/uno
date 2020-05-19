@@ -1,29 +1,21 @@
-<div class="play-container">
+<div class="play-container" *ngIf="game$ | async as game">
   <div class="table-wrapper">
-    <app-deck
-      [deck]="deck$ | async"
-      [trump]="trump$ | async"
-      class="deck"
-    ></app-deck>
+    <app-deck [deck]="game.deck" [trump]="game.trump" class="deck"></app-deck>
 
     <div class="table">
-      <ng-container *ngIf="beatingCards$ | async as table">
-        <ng-container *ngIf="table.length">
-          <app-card
-            *ngFor="let item of table"
-            class="card"
-            [card]="item"
-          ></app-card>
-        </ng-container>
+      <ng-container *ngIf="game.beatingCards">
+        <app-card
+          *ngFor="let item of game.beatingCards"
+          class="card"
+          [card]="item"
+        ></app-card>
       </ng-container>
     </div>
 
-    <div class="table">
-      <ng-container *ngIf="table$ | async as table">
-        <app-card class="card" [card]="table[0]" [visible]="false">
-          <div class="cards-count">
-            {{ table.length }}
-          </div>
+    <div class="table table-all">
+      <ng-container *ngIf="game.table">
+        <app-card class="card" [card]="game.table[0]" [visible]="false">
+          <div class="cards-count">{{ game.table.length }}</div>
         </app-card>
       </ng-container>
     </div>
@@ -41,21 +33,61 @@
     </div>
   </div> -->
 
-  <app-hand
-    [game]="game"
-    [state]="state$ | async"
-    [player]="player$ | async"
-    [current]="current$ | async"
-    [isBeater]="isBeater$ | async"
-    [isCurrent]="isCurrent$ | async"
-    [beatingCards]="beatingCards$ | async"
-    (cardSelect)="selectCard($event)"
-  ></app-hand>
-
-  <div>
-    <button mat-raised-button (click)="start()">start</button>
-    <button mat-raised-button (click)="join()">join</button>
+  <div class="players-info">
+    <ng-container>
+      <div
+        *ngFor="let player of game.players"
+        [class.current]="game.current && game.current.id === player.id"
+        class="player-info"
+      >
+        <div class="player-info__name">
+          <div class="badge">
+            <ng-container *ngIf="game.beater && game.beater.id === player.id">
+              <mat-icon>verified_user</mat-icon>
+            </ng-container>
+          </div>
+          <span>{{ player.name }}</span>
+        </div>
+        <div class="player-info__hand">
+          <mat-icon class="badge">crop_portrait</mat-icon>
+          <span>{{ player.hand?.length || 0 }}</span>
+        </div>
+        <div class="player-info__points">
+          <mat-icon class="badge">local_atm</mat-icon>
+          <span>{{ player.pointCards?.length || 0 }}</span>
+        </div>
+      </div>
+    </ng-container>
   </div>
+
+  <div *ngIf="game.state === 'empty'" class="game-controls">
+    <button mat-raised-button (click)="create()">
+      Создать
+    </button>
+  </div>
+  <div *ngIf="game.state === 'new'" class="game-controls">
+    <ng-container *ngIf="isCreator">
+      <button mat-raised-button (click)="start()" [disabled]="!canStart(game)">
+        Начать
+      </button>
+      <div *ngIf="!canStart(game)">Ждем игроков...</div>
+    </ng-container>
+    <button *ngIf="!hasJoined" mat-raised-button (click)="join()">
+      Присоединиться
+    </button>
+  </div>
+
+  <ng-container *ngIf="game.state !== 'new'">
+    <ng-container *ngIf="player$ | async as player">
+      <app-hand
+        [game]="game"
+        [player]="player"
+        [isBeater]="isBeater$ | async"
+        [isCurrent]="isCurrent$ | async"
+        (cardSelect)="selectCard($event)"
+      ></app-hand>
+    </ng-container>
+  </ng-container>
 
   <!-- <div class="points-info" *ngIf="players[0] as player">
     <div class="points-data">{{ player.name }}</div>

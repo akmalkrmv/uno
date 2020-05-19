@@ -1,15 +1,12 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-
-import { GameService } from '../../services/game.service';
-import { GameStats } from '../../models/game-stats';
-import { Card } from '../../models/card.model';
-import { Player } from '../../models/player';
-import { GameOptions } from '../../models/game-options';
-import { untilDestroyed } from 'ngx-take-until-destroy';
-import { map } from 'rxjs/operators';
-import { AuthService } from '@services/auth.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { untilDestroyed } from 'ngx-take-until-destroy';
+
+import { GameStats, Card, IPlayer, GameOptions, IGame } from '../../models';
+import { AuthService } from '@services/auth.service';
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-play-cards',
@@ -19,100 +16,95 @@ import { Observable } from 'rxjs';
 export class PlayComponent implements OnInit, OnDestroy {
   public stats = new GameStats();
   public roomId: string;
-  public isCreator: boolean;
+  public isCreator = false;
 
-  public player: Player;
-  public player$: Observable<Player>;
-  public isCurrent$: Observable<boolean>;
+  public player: IPlayer;
+  public player$: Observable<IPlayer>;
   public isBeater$: Observable<boolean>;
+  public isCurrent$: Observable<boolean>;
 
-  public players$ = this.game.players$;
-  public current$ = this.game.current$;
-  public beater$ = this.game.beater$;
-
-  public beatingCards$ = this.game.beatingCards$;
-  public trump$ = this.game.trump$;
-  public state$ = this.game.state$;
-  public deck$ = this.game.deck$;
-  public table$ = this.game.table$;
+  public game$ = this.gameService.game$;
 
   constructor(
-    public game: GameService,
     private auth: AuthService,
-    private activeRoute: ActivatedRoute,
-    private changeDetectorRef: ChangeDetectorRef
+    private gameService: GameService,
+    private activeRoute: ActivatedRoute
   ) {}
 
   ngOnDestroy() {}
 
   ngOnInit(): void {
-    this.roomId = this.activeRoute.snapshot.paramMap.get('id');
-    this.isCreator = this.activeRoute.snapshot.fragment === 'init';
-
-    const id = Math.floor(Math.random() * 100000).toString();
-    this.init(id, id);
-    // this.init(this.auth.current.id, this.auth.current.name);
+    this.activeRoute.data
+      .pipe(untilDestroyed(this))
+      .subscribe((data: { roomId: string }) => {
+        if (data.roomId) {
+          this.roomId = data.roomId;
+          this.init(this.auth.current.id, this.auth.current.name);
+        }
+      });
   }
 
-  public init(userId: string, userName: string) {
+  public async init(userId: string, userName: string) {
     const options = new GameOptions();
-    const player = new Player(userId, userName);
+    this.player = {
+      id: userId,
+      name: userName,
+      hand: [],
+      pointCards: [],
+    };
 
-    this.game.init(this.roomId, options, player, this.isCreator);
-    this.player = player;
+    this.isCreator = await this.gameService.init({
+      options,
+      roomId: this.roomId,
+      playerId: this.player.id,
+      isCreator: false,
+    });
 
-    this.player$ = this.players$.pipe(
-      map((players) => players.find((player) => player.id == userId))
+    this.player$ = this.gameService.game$.pipe(
+      untilDestroyed(this),
+      map(
+        (game) =>
+          game.players && game.players.find((player) => player.id == userId)
+      )
     );
 
-    this.game.changed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.sortHands();
-      this.isCurrent$ = this.game.current$.pipe(
-        untilDestroyed(this),
-        map((current) => current && current.id === userId)
-      );
-      this.isBeater$ = this.game.beater$.pipe(
-        untilDestroyed(this),
-        map((beater) => beater && beater.id === userId)
-      );
-      this.changeDetectorRef.detectChanges();
-    });
+    this.isCurrent$ = this.gameService.game$.pipe(
+      untilDestroyed(this),
+      map((game) => game.current && game.current.id === userId)
+    );
+
+    this.isBeater$ = this.gameService.game$.pipe(
+      untilDestroyed(this),
+      map((game) => game.beater && game.beater.id === userId)
+    );
+  }
+
+  public canStart(game: IGame): boolean {
+    return game && game.players && game.players.length >= 2;
+  }
+
+  public get hasJoined() {
+    return this.gameService.hasJoined(this.player);
   }
 
   public join() {
-    this.game.join(this.player);
+    this.gameService.join(this.player);
+  }
+
+  public create() {
+    this.gameService.create();
+    this.gameService.join(this.player);
   }
 
   public start() {
-    this.game.start();
+    this.gameService.start();
   }
 
   public canBeat(current: Card[], target: Card[]) {
-    return this.game.canBeat(current, target);
+    return this.gameService.canBeat(current, target);
   }
 
   public selectCard(card: Card) {
-    this.player.select(card, this.state$.value);
-    this.changeDetectorRef.detectChanges();
-  }
-
-  private sortHands() {
-    this.game.trump$.pipe(untilDestroyed(this)).subscribe((trump) => {
-      const players = this.game.players$.value;
-      if (!trump) return;
-      if (!players) return;
-
-      // when trump changed, for each player
-      players.forEach((player) => {
-        // create sorted hand
-        player.sortedHand$ = player.hand$.pipe(
-          map((items) =>
-            items.sort((a, b) => Card.compareTrump(a, b, trump.suit))
-          )
-        );
-
-        this.changeDetectorRef.detectChanges();
-      });
-    });
+    this.gameService.selectCard(this.player, card);
   }
 }
