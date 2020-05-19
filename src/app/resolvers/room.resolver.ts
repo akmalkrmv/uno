@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
-import {
-  Resolve,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-} from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '@services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoomResolver implements Resolve<string> {
-  constructor(private auth: AuthService) {}
+  resolve(route: ActivatedRouteSnapshot): Observable<any> | Promise<any> | any {
+    while (route) {
+      if (route.paramMap.get('id')) {
+        return route.paramMap.get('id');
+      }
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<any> | Promise<any> | any {
-    return route.parent.paramMap.get('id');
+      route = route.parent;
+    }
+
+    return null;
   }
 }
