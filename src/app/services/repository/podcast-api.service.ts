@@ -32,13 +32,15 @@ export class PodcastApiService extends BaseFirestoreService {
   }
 
   public update(payload: Partial<IPodcastMessage>): Promise<void> {
-    return this.firedb.database
-      .ref(`${path}/${payload.id}`)
-      .transaction((podcast) =>
-        podcast && podcast.created > payload.created ? podcast : payload
-      );
+    // With transaction
+    // return this.firedb.database
+    //   .ref(`${path}/${payload.id}`)
+    //   .transaction((podcast) =>
+    //     podcast && podcast.created > payload.created ? podcast : payload
+    //   );
 
-    // return this.firedb.object(`${path}/${payload.id}`).update(payload);
+    // Without transaction
+    return this.firedb.object(`${path}/${payload.id}`).update(payload);
   }
 
   public remove(id: string): Promise<void> {
