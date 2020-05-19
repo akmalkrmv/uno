@@ -63,6 +63,9 @@ MIT
 @angular/forms
 MIT
 
+@angular/localize
+MIT
+
 @angular/material
 MIT
 The MIT License
@@ -128,6 +131,12 @@ MIT
 
 @angular/service-worker
 MIT
+
+@datorama/akita
+Apache-2.0
+
+@datorama/akita-ng-router-store
+Apache-2.0
 
 @firebase/app
 Apache-2.0
