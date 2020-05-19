@@ -13,13 +13,8 @@ Firebase as backend, data management, push notifications.
 
 ## Preview
 
-![1](preview/photo_2020-04-28_18-40-37.jpg)
-![2](preview/photo_2020-05-12_00-25-20.jpg)
-![3](preview/photo_2020-05-12_00-25-32.jpg)
 ![4](preview/photo_2020-05-12_00-25-36.jpg)
 ![5](preview/photo_2020-05-12_00-25-41.jpg)
-![6](preview/photo_2020-05-12_00-25-44.jpg)
-![7](preview/photo_2020-05-12_00-25-52.jpg)
 
 ## Roadmap
 
