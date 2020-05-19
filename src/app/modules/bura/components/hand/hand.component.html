@@ -3,7 +3,7 @@
     <div *ngIf="isBeater">
       <mat-icon>verified_user</mat-icon>
     </div>
-    <ng-container *ngFor="let item of player.hand$ | async">
+    <ng-container *ngFor="let item of sortedHand">
       <app-card
         class="card"
         [card]="item"
@@ -16,9 +16,5 @@
     class="hand-controls"
     [game]="game"
     [player]="player"
-    [state]="state"
-    [current]="current"
-    [beatingCards]="beatingCards"
-    [selected]="player.selected$ | async"
   ></app-controls>
 </div>

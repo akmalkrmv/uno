@@ -1,22 +1,24 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { Player } from '../../models/player';
-import { Card } from '../../models/card.model';
-import { GameState } from '../../models/game-state';
-import { GameService } from '../../services/game.service';
+import {
+  Component,
+  OnInit,
+  Input,
+  EventEmitter,
+  Output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { IPlayer, Card, IGame } from '../../models/index';
 
 @Component({
   selector: 'app-hand',
   templateUrl: './hand.component.html',
   styleUrls: ['./hand.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HandComponent implements OnInit {
-  @Input() player: Player;
-  @Input() current: Player;
+  @Input() game: IGame;
+  @Input() player: IPlayer;
   @Input() isBeater: boolean;
   @Input() isCurrent: boolean;
-  @Input() beatingCards: Card[];
-  @Input() game: GameService;
-  @Input() state: GameState;
 
   @Output() cardSelect = new EventEmitter<Card>();
 
@@ -25,6 +27,19 @@ export class HandComponent implements OnInit {
   ngOnInit(): void {}
 
   public selectCard(card: Card) {
-    this.cardSelect.emit(card);
+    if (this.isCurrent) {
+      this.cardSelect.emit(card);
+    }
+  }
+
+  public get sortedHand(): Card[] {
+    if (!this.game) return [];
+    if (!this.game.trump) return [];
+    if (!this.player) return [];
+    if (!this.player.hand) return [];
+
+    return this.player.hand.sort((a, b) =>
+      Card.compare(a, b, this.game.trump.suit)
+    );
   }
 }
