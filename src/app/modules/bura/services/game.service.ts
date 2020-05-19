@@ -18,7 +18,7 @@ export class GameService {
   private set game(value: IGame) {
     this.game$.next(value);
     // this.podcast.notifyChanges();
-    console.log({ before: this.game, after: value });
+    // console.log({ before: this.game, after: value });
   }
 
   constructor(

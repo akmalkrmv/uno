@@ -107,7 +107,6 @@
     justify-content: center;
     padding: 20px 10px;
     min-height: 160px;
-    border: 1px solid orange;
 
     button {
       min-width: 200px;
@@ -154,6 +153,10 @@
       justify-content: space-evenly;
       border-top: 1px solid #fff3;
 
+      &:last-child {
+        border-bottom: 1px solid #fff3;
+      }
+      
       &.current {
         color: yellowgreen;
       }
@@ -168,6 +171,7 @@
         flex-basis: 0;
       }
       &__name {
+        flex-grow: 4;
         justify-content: flex-start;
       }
 
