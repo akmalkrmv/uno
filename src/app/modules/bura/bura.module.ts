@@ -7,10 +7,18 @@ import { DeckComponent } from './components/deck/deck.component';
 import { PlayComponent } from './components/play/play.component';
 import { ControlsComponent } from './components/controls/controls.component';
 import { HandComponent } from './components/hand/hand.component';
+import { BuraRoutingModule } from './bura-routing.module';
 
 @NgModule({
-  imports: [SharedModule],
+  imports: [SharedModule, BuraRoutingModule],
   exports: [CardComponent, CardsComponent, DeckComponent, PlayComponent],
-  declarations: [CardComponent, CardsComponent, DeckComponent, PlayComponent, ControlsComponent, HandComponent],
+  declarations: [
+    CardComponent,
+    CardsComponent,
+    DeckComponent,
+    PlayComponent,
+    ControlsComponent,
+    HandComponent,
+  ],
 })
 export class BuraModule {}

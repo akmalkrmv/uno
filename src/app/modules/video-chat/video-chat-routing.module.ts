@@ -5,7 +5,6 @@ import { UserResolver } from 'src/app/resolvers/user.resolver';
 import { RoomResolver } from 'src/app/resolvers/room.resolver';
 
 import { MessageListComponent } from '../chat/message-list/message-list.component';
-import { PlayComponent } from '../bura/components/play/play.component';
 import { RoomListComponent } from './components/room-list/room-list.component';
 import { CreateRoomPageComponent } from './pages/create-room-page/create-room-page.component';
 import { RoomComponent } from './components/room/room.component';
@@ -21,13 +20,13 @@ const routes: Routes = [
       { path: '', redirectTo: 'messages', pathMatch: 'full' },
       {
         path: 'messages',
-        component: MessageListComponent,
-        resolve: { user: UserResolver, roomId: RoomResolver },
+        loadChildren: () =>
+          import('../chat/chat.module').then((m) => m.ChatModule),
       },
       {
-        path: 'game/:type',
-        component: PlayComponent,
-        resolve: { user: UserResolver, roomId: RoomResolver },
+        path: 'game',
+        loadChildren: () =>
+          import('../bura/bura.module').then((m) => m.BuraModule),
       },
     ],
   },
