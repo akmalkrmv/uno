@@ -9,12 +9,7 @@ Video, audio and text based chat application.
 ## Used technolgies
 
 For video audio calls used WebRTC technology, for signalling used Firebase.
-Firebase as backend, data management, push notifications. 
-
-## Preview
-
-![4](preview/photo_2020-05-12_00-25-36.jpg)
-![5](preview/photo_2020-05-12_00-25-41.jpg)
+Firebase as backend, data management, push notifications.
 
 ## Roadmap
 
@@ -27,3 +22,8 @@ Firebase as backend, data management, push notifications.
 - Live editing same code or text by multiple users with or without calls
 - Simple multiplayer games
 - Localization for multiple languages
+
+## Preview
+
+![4](preview/photo_2020-05-12_00-25-36.jpg)
+![5](preview/photo_2020-05-12_00-25-41.jpg)
