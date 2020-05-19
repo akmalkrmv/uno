@@ -14,7 +14,6 @@ import { MembersDialogComponent } from './dialogs/members-dialog/members-dialog.
 import { CreateRoomDialogComponent } from './dialogs/create-room-dialog/create-room-dialog.component';
 import { FriendsPageComponent } from './pages/friends-page/friends-page.component';
 import { RoomsPageComponent } from './pages/rooms-page/rooms-page.component';
-import { ChatModule } from '../chat/chat.module';
 import { CreateRoomPageComponent } from './pages/create-room-page/create-room-page.component';
 import { VideoChatRoutingModule } from './video-chat-routing.module';
 import { RoomItemComponent } from './components/room-item/room-item.component';
@@ -44,7 +43,6 @@ const dialogs = [
   imports: [
     SharedModule,
     SharedComponentsModule,
-    ChatModule,
     VideoChatRoutingModule,
   ],
 })

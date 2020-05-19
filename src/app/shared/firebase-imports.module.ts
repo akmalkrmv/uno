@@ -4,7 +4,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
-import { AngularFirePerformanceModule } from '@angular/fire/performance';
+// import { AngularFirePerformanceModule } from '@angular/fire/performance';
 import { environment } from 'src/environments/environment';
 
 @NgModule({
@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
     AngularFireAuthModule,
     AngularFireStorageModule,
     AngularFireMessagingModule,
-    AngularFirePerformanceModule,
+    // AngularFirePerformanceModule,
     AngularFireModule.initializeApp(environment.firebase),
     // AngularFirestoreModule.enablePersistence()
   ],
@@ -22,7 +22,7 @@ import { environment } from 'src/environments/environment';
     AngularFireAuthModule,
     AngularFireStorageModule,
     AngularFireMessagingModule,
-    AngularFirePerformanceModule,
+    // AngularFirePerformanceModule,
   ],
 })
 export class FirebaseImportsModule {}

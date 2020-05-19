@@ -16,7 +16,7 @@ export class AdminGuard implements CanActivate {
       tap((isAdmin) => {
         if (!isAdmin) {
           localStorage.setItem(LocalStorageKeys.redirectUrl, location.pathname);
-          this.router.navigate(['/login']);
+          this.router.navigate(['/auth/login']);
         }
       })
     );
