@@ -15,6 +15,8 @@ import { MaterialImportsModule } from './shared/material-imports.module';
 import { FirebaseImportsModule } from './shared/firebase-imports.module';
 import { SharedComponentsModule } from './componentes/shared-components.module';
 import { AppRoutingModule } from './app-routing.module';
+import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
+import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, LayoutComponent],
@@ -31,6 +33,8 @@ import { AppRoutingModule } from './app-routing.module';
     SharedComponentsModule,
     // App
     AppRoutingModule,
+    environment.production ? [] : AkitaNgDevtools,
+    AkitaNgRouterStoreModule,
   ],
   providers: [
     // { provide: ApiService, useClass: LocalApiService },
