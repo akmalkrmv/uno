@@ -1,200 +1,121 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-import { Card } from '../models/card.model';
-import { Player } from '../models/player';
-import { GameState } from '../models/game-state';
-import { GameStats } from '../models/game-stats';
-import { GameOptions } from '../models/game-options';
-import { DeckService } from './deck.service';
-import { GameLocalService } from './game-local.service';
+import { GamePodcastService } from './game-podcast.service';
+import { IGame, IPlayer, Card, IGameInitData } from '../models';
+import { GameUtils } from '../utils/game-utils';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
-  public players$ = new BehaviorSubject<Player[]>([]);
-  public current$ = new BehaviorSubject<Player>(null);
-  public beater$ = new BehaviorSubject<Player>(null);
-
-  public deck$ = new BehaviorSubject<Card[]>([]);
-  public table$ = new BehaviorSubject<Card[]>([]);
-  public trump$ = new BehaviorSubject<Card>(null);
-  public beatingCards$ = new BehaviorSubject<Card[]>([]);
-
-  public moves$ = new BehaviorSubject<number>(0);
   public changed$: EventEmitter<any>;
-  public state$ = new BehaviorSubject<GameState>('move');
-  public options = new GameOptions();
-  public stats = new GameStats();
+  public game$ = new BehaviorSubject<IGame>(null);
+  private gameInitData: IGameInitData;
 
-  constructor(private api: GameLocalService, private deck: DeckService) {}
-
-  public stateMove = () => this.state$.next('move');
-  public stateBeat = () => this.state$.next('beat');
-  public stateTake = () => this.state$.next('take');
-  public stateEnd = () => this.state$.next('end');
-
-  public init(
-    roomId: string,
-    options: GameOptions,
-    player: Player,
-    isCreator = false
-  ) {
-    this.options = options;
-    this.api.register(this, player.id, isCreator);
-    this.changed$ = this.api.changed$;
+  private get game(): IGame {
+    return this.game$.value;
   }
 
-  public join(player: Player) {
-    const players = this.players$.value;
-    const hasJoined = players && players.find((item) => item.id === player.id);
-
-    if (hasJoined) return;
-
-    this.players$.next([...this.players$.value, player]);
-    this.api.notifyChanges();
+  private set game(value: IGame) {
+    this.game$.next(value);
+    // this.podcast.notifyChanges();
+    console.log({ before: this.game, after: value });
   }
 
-  public start() {
-    const cards = this.deck.generate();
-    const lastCard = cards[cards.length - 1];
-    const players = this.players$.value;
+  constructor(
+    private gameUtils: GameUtils,
+    private podcast: GamePodcastService
+  ) {}
 
-    this.deck$.next(cards);
-    this.trump$.next(lastCard);
-    this.beater$.next(players[0]);
-    this.current$.next(players[0]);
+  public async init(gameInitData: IGameInitData): Promise<boolean> {
+    this.gameInitData = gameInitData;
+    const existingGame = await this.podcast.register(this, gameInitData);
 
-    this.fillHands();
-    this.stateMove();
-    this.api.notifyChanges();
-  }
-
-  public end(stats: GameStats) {
-    // const stats = this.stats;
-    const players = this.players$.value;
-    const pivots = this.options.pivots;
-
-    const maxPoint = Math.max(...players.map((player) => player.points));
-    const winners = players
-      .filter((player) => player.points == maxPoint)
-      .map((player) => player.name);
-
-    for (const player of players) {
-      Object.keys(pivots).forEach((pivot) => {
-        if (player.points > +pivot) {
-          stats.points[player.name] = pivots[pivot];
-        }
-      });
+    if (existingGame) {
+      this.game = existingGame;
+      this.gameInitData.isCreator =
+        existingGame.creatorId === gameInitData.playerId;
+    } else {
+      this.createEmpty();
     }
 
-    stats.lastWinners = winners;
-    stats.round++;
-    this.api.notifyChanges();
+    return this.gameInitData.isCreator;
   }
 
-  public move(player: Player) {
-    const selected = player.move();
-
-    this.beatingCards$.next(selected);
-    this.beater$.next(player);
-
-    this.putOnTable(selected);
-    this.nextPlayer();
-    this.stateBeat();
-    this.api.notifyChanges();
+  public hasJoined(player: IPlayer): boolean {
+    return this.gameUtils.hasJoined(this.game, player);
   }
 
-  public beat(player: Player) {
-    const selected = player.move();
-    const beatingCards = this.beatingCards$.value;
-
-    if (this.canBeat(selected, beatingCards)) {
-      this.beatingCards$.next(selected);
-      this.beater$.next(player);
-    }
-
-    this.putOnTable(selected);
-    this.nextPlayer();
-    this.api.notifyChanges();
+  public canBeat(current: Card[], target: Card[]): boolean {
+    return this.gameUtils.canBeat(this.game, current, target);
   }
 
-  public give(player: Player) {
-    const selected = player.move();
-
-    this.putOnTable(selected);
-    this.nextPlayer();
-    this.api.notifyChanges();
+  public createEmpty(): void {
+    this.gameInitData = {
+      ...this.gameInitData,
+      state: 'empty',
+      isCreator: true,
+    };
+    this.game = this.gameUtils.create(this.gameInitData);
+    this.podcast.notifyChanges();
   }
 
-  public endCirlce() {
-    console.log('edn circle');
-    const beater = this.beater$.value;
-    const table = this.table$.value;
-
-    beater.collect(table);
-
-    this.current$.next(beater);
-    this.beatingCards$.next([]);
-    this.table$.next([]);
-
-    this.stateMove();
-    this.fillHands();
-
-    if (!this.deck$.value.length && !beater.hand$.value.length) {
-      this.stateEnd();
-      this.end(this.stats);
-    }
-
-    this.api.notifyChanges();
+  public create(): void {
+    this.gameInitData = { ...this.gameInitData, state: 'new', isCreator: true };
+    this.game = this.gameUtils.create(this.gameInitData);
+    this.podcast.notifyChanges();
   }
 
-  public fillHands() {
-    if (!this.deck$.value.length) {
-      return;
-    }
+  public join(player: IPlayer): void {
+    this.game = this.gameUtils.join(this.game, player);
+    this.podcast.notifyChanges();
+  }
 
-    const players = this.players$.value;
+  public start(): void {
+    this.game = this.gameUtils.start(this.game);
+    this.podcast.notifyChanges();
+  }
 
-    for (let index = 0; index < 4; index++) {
-      players.forEach((player) => {
-        if (player.canTake) {
-          const deck = this.deck$.value;
-          const hand = deck.splice(0, 1);
+  public end(): void {
+    this.game = this.gameUtils.end(this.game);
+    this.podcast.notifyChanges();
+  }
 
-          player.take(hand);
-          this.deck$.next(deck);
-        }
-      });
-    }
+  public selectCard(player: IPlayer, card: Card): void {
+    this.game = this.gameUtils.selectCard(this.game, player, card);
+  }
 
-    this.api.notifyChanges();
+  public move(player: IPlayer): void {
+    this.game = this.gameUtils.move(this.game, player);
+    this.podcast.notifyChanges();
+  }
+
+  public beat(player: IPlayer): void {
+    this.game = this.gameUtils.beat(this.game, player);
+    this.podcast.notifyChanges();
+  }
+
+  public give(player: IPlayer): void {
+    this.game = this.gameUtils.give(this.game, player);
+    this.podcast.notifyChanges();
+  }
+
+  public endCirlce(): void {
+    this.game = this.gameUtils.endCirlce(this.game);
+    this.podcast.notifyChanges();
+  }
+
+  public fillHands(): void {
+    this.game = this.gameUtils.fillHands(this.game);
+    this.podcast.notifyChanges();
   }
 
   public nextPlayer(): void {
-    const players = this.players$.value;
-    const current = this.current$.value;
-    const moves = this.moves$.value + 1;
-
-    if (moves === players.length) {
-      this.moves$.next(0);
-      this.endCirlce();
-      return;
-    }
-
-    const index = players.findIndex((player) => player.id === current.id);
-    const nextPlayer = players[(index + 1) % players.length];
-
-    this.current$.next(nextPlayer);
-    this.moves$.next(moves);
-    this.api.notifyChanges();
+    this.game = this.gameUtils.nextPlayer(this.game);
+    this.podcast.notifyChanges();
   }
 
-  public canBeat(current: Card[], target: Card[]) {
-    const trumpsuit = this.trump$.value.suit;
-    return this.deck.canBeat(current, target, trumpsuit);
-  }
-
-  public putOnTable(cards: Card[]) {
-    this.table$.next([...this.table$.value, ...cards]);
+  public putOnTable(cards: Card[]): void {
+    this.game = this.gameUtils.putOnTable(this.game, cards);
+    this.podcast.notifyChanges();
   }
 }
