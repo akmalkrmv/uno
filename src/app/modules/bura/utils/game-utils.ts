@@ -211,8 +211,6 @@ export class GameUtils {
 
     for (let index = 0; index < 4; index++) {
       players = players.map((player) => {
-        if (!player.hand) player.hand = [];
-
         if (this.playerService.canTake(player)) {
           const hand = deck.splice(0, 1);
           player = this.playerService.take(player, hand);
