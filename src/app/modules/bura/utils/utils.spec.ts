@@ -31,7 +31,7 @@ describe('Bura game', () => {
   beforeEach(() => {
     player1 = createPlayer('player1', true);
     player2 = createPlayer('player2', false);
-    player3 = createPlayer('player3', true);
+    player3 = createPlayer('player3', false);
 
     gameInit = {
       roomId,

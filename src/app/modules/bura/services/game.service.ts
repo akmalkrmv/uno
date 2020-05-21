@@ -7,8 +7,8 @@ import { GameUtils } from '../utils/game-utils';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
-  public changed$: EventEmitter<any>;
   public game$ = new BehaviorSubject<IGame>(null);
+  public changed$ = new EventEmitter<any>();
   private gameInitData: IGameInitData;
 
   private get game(): IGame {
@@ -17,8 +17,8 @@ export class GameService {
 
   private set game(value: IGame) {
     this.game$.next(value);
-    // this.podcast.notifyChanges();
-    // console.log({ before: this.game, after: value });
+    this.changed$.emit(value);
+    this.podcast.notifyChanges();
   }
 
   constructor(
@@ -49,6 +49,10 @@ export class GameService {
     return this.gameUtils.canBeat(this.game, current, target);
   }
 
+  public getPlayer(player: IPlayer): IPlayer {
+    return this.gameUtils.getPlayer(this.game, player);
+  }
+
   public createEmpty(): void {
     this.gameInitData = {
       ...this.gameInitData,
@@ -56,28 +60,23 @@ export class GameService {
       isCreator: true,
     };
     this.game = this.gameUtils.create(this.gameInitData);
-    this.podcast.notifyChanges();
   }
 
   public create(): void {
     this.gameInitData = { ...this.gameInitData, state: 'new', isCreator: true };
     this.game = this.gameUtils.create(this.gameInitData);
-    this.podcast.notifyChanges();
   }
 
   public join(player: IPlayer): void {
     this.game = this.gameUtils.join(this.game, player);
-    this.podcast.notifyChanges();
   }
 
   public start(): void {
     this.game = this.gameUtils.start(this.game);
-    this.podcast.notifyChanges();
   }
 
   public end(): void {
     this.game = this.gameUtils.end(this.game);
-    this.podcast.notifyChanges();
   }
 
   public selectCard(player: IPlayer, card: Card): void {
@@ -86,36 +85,29 @@ export class GameService {
 
   public move(player: IPlayer): void {
     this.game = this.gameUtils.move(this.game, player);
-    this.podcast.notifyChanges();
   }
 
   public beat(player: IPlayer): void {
     this.game = this.gameUtils.beat(this.game, player);
-    this.podcast.notifyChanges();
   }
 
   public give(player: IPlayer): void {
     this.game = this.gameUtils.give(this.game, player);
-    this.podcast.notifyChanges();
   }
 
   public endCirlce(): void {
     this.game = this.gameUtils.endCirlce(this.game);
-    this.podcast.notifyChanges();
   }
 
   public fillHands(): void {
     this.game = this.gameUtils.fillHands(this.game);
-    this.podcast.notifyChanges();
   }
 
   public nextPlayer(): void {
     this.game = this.gameUtils.nextPlayer(this.game);
-    this.podcast.notifyChanges();
   }
 
   public putOnTable(cards: Card[]): void {
     this.game = this.gameUtils.putOnTable(this.game, cards);
-    this.podcast.notifyChanges();
   }
 }
