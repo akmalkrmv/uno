@@ -49,6 +49,7 @@ export class RoomService implements OnDestroy {
     private title: TitleService,
     private roomCommands: RoomCommandsService,
     private commands: CommandsService,
+    private messaging: MessagingService,
     private media: MediaService,
     private snackBar: MatSnackBar
   ) {}
@@ -128,8 +129,8 @@ export class RoomService implements OnDestroy {
 
     this.code$ = this.user.messages$.pipe(tap((data) => console.log(data)));
 
-    // this.messaging.requestPermission(this.user.id);
-    // this.messaging.receiveMessage();
+    this.messaging.requestPermission(this.user.id);
+    this.messaging.receiveMessage();
   }
 
   public confirmJoinCall() {
