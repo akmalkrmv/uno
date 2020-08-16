@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1597584076741,
+  "timestamp": 1597584519058,
   "index": "https://akmalkrmv.github.io/uno/index.html",
   "assetGroups": [
     {
@@ -80,7 +80,7 @@
     "https://akmalkrmv.github.io/uno/assets/icons/favicon.ico": "505c85fbbe714e7d45845e3493da39a555b3496c",
     "https://akmalkrmv.github.io/uno/assets/icons/mstile-150x150.png": "e8b771bd2bfaf3861a6a1d01d31a3c933a2bbf2b",
     "https://akmalkrmv.github.io/uno/assets/icons/safari-pinned-tab.svg": "fd1569dfae47d7e60104bcbd8ebbef362d53e4cb",
-    "https://akmalkrmv.github.io/uno/combined-workers.js": "6a2b69c3356fd9658d55884806f222e20dfdf382",
+    "https://akmalkrmv.github.io/uno/combined-workers.js": "d22d7a1c81842f6bc462440d174f664d3d5c3607",
     "https://akmalkrmv.github.io/uno/common-es2015.3a2bb2debab0bdcc2632.js": "811bbba184a8048e99e94b6f8fd74fdd56639045",
     "https://akmalkrmv.github.io/uno/common-es5.3a2bb2debab0bdcc2632.js": "9a8853499ac38cbe9ea80212e774871448a0f33e",
     "https://akmalkrmv.github.io/uno/favicon.ico": "c25d7523cc4b68c5cfd87675080d752ab353ff82",
