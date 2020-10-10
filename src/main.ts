@@ -12,9 +12,7 @@ platformBrowserDynamic()
   .bootstrapModule(AppModule)
   .then(() => {
     if ('serviceWorker' in navigator) {
-      environment.production
-        ? navigator.serviceWorker.register('/uno/combined-workers.js')
-        : navigator.serviceWorker.register('/combined-workers.js');
+      navigator.serviceWorker.register('/combined-workers.js');
     }
   })
   .catch((err) => console.error(err));

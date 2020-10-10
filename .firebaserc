@@ -1,5 +1,11 @@
 {
-  "projects": {
-    "default": "uno-server-3000"
+  "targets": {
+    "uno-server-3000": {
+      "hosting": {
+        "uno-app": [
+          "uno-app"
+        ]
+      }
+    }
   }
 }

@@ -17,7 +17,7 @@ interface IChangeOptions {
 }
 
 const trace = (...params: any) => {
-  console.log(params);
+  // console.log(params);
   // firebase.performance().trace(params[0]);
 };
 const traceIf = (condition: boolean, ...params: any) => {
