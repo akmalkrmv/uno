@@ -1,4 +1,16 @@
 <mat-sidenav-container class="sidenav-container">
+  <!-- <mat-sidenav
+    #drawer
+    mode="over"
+    class="sidenav"
+    fixedInViewport="false"
+    [attr.role]="isHeadset$ ? 'dialog' : 'navigation'"
+    [mode]="(isHeadset$ | async)?.matches ? 'over' : 'side'"
+    [opened]="!(isHeadset$ | async)?.matches"
+  >
+    <app-sidenav [user]="auth.authorized$ | async" (close)="drawer.toggle()"></app-sidenav>
+  </mat-sidenav> -->
+
   <mat-sidenav
     #drawer
     mode="over"
