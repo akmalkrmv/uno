@@ -4,7 +4,7 @@ Video, audio and text based chat application.
 
 ## Demo
 
-[https://akmalkrmv.github.io/uno](https://akmalkrmv.github.io/uno/)
+[https://uno-app.web.app/](https://uno-app.web.app/)
 
 ## Used technolgies
 
