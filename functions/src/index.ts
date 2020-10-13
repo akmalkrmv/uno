@@ -6,7 +6,59 @@ import * as admin from 'firebase-admin';
 
 admin.initializeApp(functions.config().firebase);
 
-export const notifyUser = functions.firestore
+function sentToUser(userId: string, notification: object) {
+  const userRef = admin.firestore().collection('users').doc(userId);
+
+  return userRef
+    .get()
+    .then((snapshot) => snapshot.data())
+    .then((user) => {
+      if (!user) {
+        throw new Error('Can not find user');
+      }
+
+      const tokens = user.fcmTokens ? Object.keys(user.fcmTokens) : [];
+      console.log(`User: ${user.name}, tokens: ${tokens}`);
+
+      if (tokens && tokens.length) {
+        admin.messaging().sendToDevice(tokens, notification);
+      } else {
+        console.log('User does not have tokens');
+      }
+    })
+    .catch((error) => console.log(error));
+}
+
+export const messageNotification = functions.firestore
+  .document('messages/{messageId}')
+  .onCreate((event) => {
+    const message = event.data();
+    const senderId: string = message && message.sender;
+    const roomId: string = message && message.roomId;
+
+    const payload = {
+      notification: {
+        title: 'Новое сообшение',
+        body: `${senderId} прислал сообшение`,
+      },
+    };
+
+    const roomRef = admin.firestore().collection('rooms').doc(roomId);
+
+    return roomRef
+      .get()
+      .then((snapshot) => snapshot.data())
+      .then((room) => {
+        if (!room) {
+          throw new Error('Can not find room');
+        }
+
+        room.members.forEach((userId: string) => sentToUser(userId, payload));
+      })
+      .catch((error) => console.log(error));
+  });
+
+export const callNotification = functions.firestore
   .document('rooms/{roomId}/offers/{offerId}')
   .onCreate((event) => {
     const offer = event.data();
@@ -20,24 +72,5 @@ export const notifyUser = functions.firestore
       },
     };
 
-    const userRef = admin.firestore().collection('users').doc(userToId);
-
-    return userRef
-      .get()
-      .then((snapshot) => snapshot.data())
-      .then((user) => {
-        if (!user) {
-          throw new Error('Can not find user');
-        }
-
-        const tokens = user.fcmTokens ? Object.keys(user.fcmTokens) : [];
-
-        if (!tokens.length) {
-          console.log(`${user.name} tokens: ${user.fcmTokens}`);
-          throw new Error('User does not have tokens');
-        }
-
-        admin.messaging().sendToDevice(tokens, payload);
-      })
-      .catch((error) => console.log(error));
+    return sentToUser(userToId, payload);
   });
