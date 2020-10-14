@@ -8,6 +8,7 @@ import { UserComponent } from './user/user.component';
 import { CommandsMenuComponent } from './commands-menu/commands-menu.component';
 import { ResizablePanesComponent } from './resizable-panes/resizable-panes.component';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
+import { DevicesComponent } from './devices/devices.component';
 
 const copmonents = [
   SidenavComponent,
@@ -16,6 +17,7 @@ const copmonents = [
   ResizablePanesComponent,
   CodeEditorComponent,
   UserComponent,
+  DevicesComponent,
 ];
 
 @NgModule({
