@@ -1,32 +1,60 @@
-<div class="container">
-  <form class="form">
-    <mat-form-field appearance="standard">
-      <input
-        matInput
-        [(ngModel)]="roomId"
-        placeholder="Номер комнаты"
-        autocomplete="off"
-        name="roomId"
-      />
-    </mat-form-field>
-
-    <button
-      mat-raised-button
-      type="button"
-      color="primary"
-      [disabled]="!roomId"
-      (click)="joinRoom()"
-    >
-      Присоединиться
-    </button>
-
-    <button
-      mat-raised-button
-      type="button"
-      color="primary"
-      (click)="createRoom()"
-    >
-      Создать
-    </button>
-  </form>
-</div>
+<header>
+  <mat-toolbar>
+    <h1>Uno</h1>
+    <span class="header-spacer"></span>
+    <nav>
+      <a routerLink="auth/login">Sign in</a>
+    </nav>
+  </mat-toolbar>
+</header>
+<main>
+  <section>
+    <div class="feature">
+      <div class="feature-description">
+        <h2>Main description</h2>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro aut odit totam, molestias, repellat molestiae,
+          eos consequuntur numquam fuga itaque impedit iure fugit quibusdam! Ipsa error minima molestiae id. Excepturi.
+        </p>
+      </div>
+      <figure class="feature-figure">
+        <app-devices>
+          <img pc-content src="assets/images/pc-video-chat.jpg" alt="main pc features" />
+          <img mobile-content src="assets/images/mobile-with-chat.jpg" alt="main mobile features" />
+        </app-devices>
+      </figure>
+    </div>
+  </section>
+  <section>
+    <div class="feature">
+      <figure>
+        <img src="https://www.bobology.com/members/images/354.jpg" alt="Share browse features" />
+      </figure>
+      <div>
+        <h2>Share browse description</h2>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro aut odit totam, molestias, repellat molestiae,
+          eos consequuntur numquam fuga itaque impedit iure fugit quibusdam! Ipsa error minima molestiae id. Excepturi.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="feature">
+      <div>
+        <h2>Games and other</h2>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro aut odit totam, molestias, repellat molestiae,
+          eos consequuntur numquam fuga itaque impedit iure fugit quibusdam! Ipsa error minima molestiae id. Excepturi.
+        </p>
+      </div>
+      <figure>
+        <img src="https://www.bobology.com/members/images/354.jpg" alt="Games and other features" />
+      </figure>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="footer-info"></div>
+  <div class="copyright">&copy; 2020 akmalkrmv</div>
+</footer>

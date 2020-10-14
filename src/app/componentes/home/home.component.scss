@@ -1,28 +1,53 @@
-body {
-  background-image: "url(/back.jpg)";
+header,
+main,
+footer {
+  color: #fff;
 }
 
-.container {
-  width: 200px;
-  margin: 0 auto;
-  padding-top: 100px;
-  
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+footer {
+  padding: 8px 20px;
+}
 
-  .form {
+section,
+footer {
+  border-bottom: 1px solid #fff;
+}
+
+header {
+  h1 {
+    margin: 0;
+  }
+
+  .header-spacer {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 1;
+  }
+}
+
+main section {
+  padding: 40px;
+}
+
+.feature {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+
+  .feature-description,
+  .feature-figure {
+    max-width: 400px;
+    min-width: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
 
-    input {
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    button {
-      margin-bottom: 6px;
-    }
+  .feature-figure {
+    display: flex;
+    align-items: center;
   }
 }

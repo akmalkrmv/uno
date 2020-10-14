@@ -6,8 +6,13 @@ import { AdminGuard } from './guards/admin.guard';
 
 import { LayoutComponent } from './componentes/layout/layout.component';
 import { FriendsPageComponent } from './modules/video-chat/pages/friends-page/friends-page.component';
+import { HomeComponent } from './componentes/home/home.component';
 
 const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+  },
   {
     path: '',
     component: LayoutComponent,
