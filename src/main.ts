@@ -11,8 +11,11 @@ if (environment.production) {
 platformBrowserDynamic()
   .bootstrapModule(AppModule)
   .then(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/combined-workers.js');
+    if (environment.production) {
+      // register serviceWorker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/combined-workers.js');
+      }
     }
   })
   .catch((err) => console.error(err));
