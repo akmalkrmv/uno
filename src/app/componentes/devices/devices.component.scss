@@ -1,10 +1,11 @@
 .devices {
+  margin: 0 60px;
   display: flex;
   align-items: center;
   position: relative;
 
   .device {
-    border: 1px solid #ccc;
+    border: 1px solid #666;
     border-radius: 10px;
     background-color: #222;
     padding: 10px;

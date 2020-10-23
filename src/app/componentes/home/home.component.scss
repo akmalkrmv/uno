@@ -1,16 +1,7 @@
 header,
-main,
-footer {
+footer,
+main {
   color: #fff;
-}
-
-footer {
-  padding: 8px 20px;
-}
-
-section,
-footer {
-  border-bottom: 1px solid #fff;
 }
 
 header {
@@ -25,17 +16,22 @@ header {
   }
 }
 
+footer {
+  padding: 8px 20px;
+}
+
 main section {
-  padding: 40px;
+  padding: 100px 60px;
+  border-bottom: 1px solid #000;
 }
 
 .feature {
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 60px;
 
   .feature-description,
   .feature-figure {
@@ -49,5 +45,14 @@ main section {
   .feature-figure {
     display: flex;
     align-items: center;
+  }
+}
+
+@media all and (max-width: 768px) {
+  .feature-figure {
+    order: 1;
+  }
+  .feature-description {
+    order: 2;
   }
 }
