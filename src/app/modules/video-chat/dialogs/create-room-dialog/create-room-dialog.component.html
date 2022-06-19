@@ -1,31 +1,17 @@
-<!-- <h1 mat-dialog-title>Создать комнату</h1> -->
+<!-- <h1 mat-dialog-title>Create room</h1> -->
 <div mat-dialog-content>
   <form class="form">
     <label for="upload">
       <mat-icon>camera_alt</mat-icon>
-      <input
-        id="upload"
-        type="file"
-        accept="image/*"
-        hidden
-        (change)="uploadImage($event)"
-      />
+      <input id="upload" type="file" accept="image/*" hidden (change)="uploadImage($event)" />
     </label>
 
     <mat-form-field class="name-field">
-      <mat-label>Название комнаты</mat-label>
+      <mat-label>Room name</mat-label>
       <input matInput [formControl]="name" required />
-      <mat-error *ngIf="name.invalid">Имя не может быть путым</mat-error>
+      <mat-error *ngIf="name.invalid">Name can not be empty</mat-error>
     </mat-form-field>
 
-    <button
-      mat-raised-button
-      color="primary"
-      type="button"
-      [disabled]="name.invalid"
-      (click)="create()"
-    >
-      Создать
-    </button>
+    <button mat-raised-button color="primary" type="button" [disabled]="name.invalid" (click)="create()">Create</button>
   </form>
 </div>

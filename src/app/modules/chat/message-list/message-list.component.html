@@ -2,7 +2,7 @@
   <div #messages class="messages-list">
     <ng-container *ngIf="messages$ | async as messages">
       <div *ngIf="!messages.length" class="info-message">
-        Нет сообщений
+        No messages yet
       </div>
 
       <ng-container *ngFor="let message of messages | sort: 'created':'asc'">
@@ -26,7 +26,7 @@
         #input
         matInput
         name="content"
-        placeholder="Сообщение"
+        placeholder="Message"
         autocomplete="off"
         [(ngModel)]="content"
       />

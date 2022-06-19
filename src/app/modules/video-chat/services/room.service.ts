@@ -137,7 +137,7 @@ export class RoomService implements OnDestroy {
     this.onlineUsers$.pipe(first(), untilDestroyed(this)).subscribe((users) => {
       if (users && users.length > 1) {
         // this.call();
-        // if (confirm('Готовы подключиться к звонку?')) {
+        // if (confirm('Ready to join call?')) {
         // }
       }
     });
@@ -168,12 +168,12 @@ export class RoomService implements OnDestroy {
   }
 
   public shareLink() {
-    shareLink('Присоединяйтесь к видео звонку:', location.href);
+    shareLink('Join to the call:', location.href);
   }
 
   public copyLink() {
     copyToClipboard(location.href);
-    this.snackBar.open(`Cсылка скопирована`, '', { duration: 2000 });
+    this.snackBar.open(`Link copied`, '', { duration: 2000 });
   }
 
   public async call() {

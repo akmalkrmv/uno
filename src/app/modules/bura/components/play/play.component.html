@@ -23,13 +23,13 @@
 
   <!-- <div class="game-info">
     <div class="" *ngIf="stats">
-      <div>Раунд: {{ stats.round }}</div>
+      <div>Round: {{ stats.round }}</div>
       {{ stats.points | json }}
       {{ stats.players | json }}
       {{ stats.lastWinners | json }}
     </div>
     <div *ngIf="current">
-      Ходит <span class="moving-player">{{ current.name }}</span>
+      Move: <span class="moving-player">{{ current.name }}</span>
     </div>
   </div> -->
 
@@ -62,18 +62,18 @@
 
   <div *ngIf="game.state === 'empty'" class="game-controls">
     <button mat-raised-button (click)="create()">
-      Создать
+      Create
     </button>
   </div>
   <div *ngIf="game.state === 'new'" class="game-controls">
     <ng-container *ngIf="isCreator">
       <button mat-raised-button (click)="start()" [disabled]="!canStart(game)">
-        Начать
+        Start
       </button>
-      <div *ngIf="!canStart(game)">Ждем игроков...</div>
+      <div *ngIf="!canStart(game)">Waiting for players...</div>
     </ng-container>
     <button *ngIf="!hasJoined" mat-raised-button (click)="join()">
-      Присоединиться
+      Join
     </button>
   </div>
 

@@ -1,4 +1,4 @@
 <ng-container *ngIf="firends$ | async as firends">
   <app-user-list *ngIf="firends.length" [users]="firends"></app-user-list>
-  <div *ngIf="!firends.length">Пока у вас нет друзей</div>
+  <div *ngIf="!firends.length">No freinds yet</div>
 </ng-container>

@@ -38,8 +38,8 @@ export const messageNotification = functions.firestore
 
     const payload = {
       notification: {
-        title: 'Новое сообшение',
-        body: `${senderId} прислал сообшение`,
+        title: 'New Message',
+        body: `${senderId} send a message`,
       },
     };
 
@@ -67,8 +67,8 @@ export const callNotification = functions.firestore
 
     const payload = {
       notification: {
-        title: 'Новый звонок',
-        body: `${userFromId} начал соеденение`,
+        title: 'New call',
+        body: `${userFromId} started a call`,
       },
     };
 
