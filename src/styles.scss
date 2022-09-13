@@ -1,6 +1,10 @@
 @import '~firebaseui/dist/firebaseui.css';
 
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --scrollbar-thumb: #666;
+  --scrollbar-thumb-hover: #888;
+}
+
 * {
   box-sizing: border-box;
   overscroll-behavior: none;
@@ -21,6 +25,31 @@ body {
   a {
     color: #fff;
     text-decoration: none;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  margin-block: 0.5rem;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border: 0.25rem solid transparent;
+  border-radius: 0.5rem;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+@supports (scrollbar-color: red blue) {
+  * {
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    scrollbar-width: thin;
   }
 }
 
@@ -127,4 +156,21 @@ body {
     }
     min-width: 0;
   }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 0.5rem;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  margin-block: 0.5rem;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border: 0.25rem solid transparent;
+  border-radius: 0.5rem;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
 }
