@@ -3,11 +3,7 @@
   "useTabs": false,
   "singleQuote": true,
   "overrides": [
-    {
-      "files": "*.html",
-      "options": {
-        "printWidth": 120
-      }
-    }
+    { "files": "*.html", "options": { "printWidth": 120 } },
+    { "files": "*.ts", "options": { "printWidth": 120 } }
   ]
 }
