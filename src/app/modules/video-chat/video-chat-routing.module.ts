@@ -11,22 +11,25 @@ import { RoomComponent } from './components/room/room.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'rooms', pathMatch: 'full' },
-  { path: 'rooms', component: RoomListComponent },
-  { path: 'room/create', component: CreateRoomPageComponent },
   {
-    path: 'room/:id',
-    component: RoomComponent,
+    path: 'rooms',
+    component: RoomListComponent,
     children: [
-      { path: '', redirectTo: 'messages', pathMatch: 'full' },
+      { path: 'room/create', component: CreateRoomPageComponent },
       {
-        path: 'messages',
-        loadChildren: () =>
-          import('../chat/chat.module').then((m) => m.ChatModule),
-      },
-      {
-        path: 'game',
-        loadChildren: () =>
-          import('../bura/bura.module').then((m) => m.BuraModule),
+        path: 'room/:id',
+        component: RoomComponent,
+        children: [
+          { path: '', redirectTo: 'messages', pathMatch: 'full' },
+          {
+            path: 'messages',
+            loadChildren: () => import('../chat/chat.module').then((m) => m.ChatModule),
+          },
+          {
+            path: 'game',
+            loadChildren: () => import('../bura/bura.module').then((m) => m.BuraModule),
+          },
+        ],
       },
     ],
   },

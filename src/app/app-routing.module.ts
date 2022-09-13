@@ -9,10 +9,8 @@ import { FriendsPageComponent } from './modules/video-chat/pages/friends-page/fr
 import { HomeComponent } from './componentes/home/home.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: HomeComponent,
-  },
+  { path: '', redirectTo: 'rooms', pathMatch: 'full' },
+  { path: 'welcome', component: HomeComponent },
   {
     path: '',
     component: LayoutComponent,
@@ -21,23 +19,18 @@ const routes: Routes = [
       { path: 'friends', component: FriendsPageComponent },
       {
         path: '',
-        loadChildren: () =>
-          import('./modules/video-chat/video-chat.module').then(
-            (m) => m.VideoChatModule
-          ),
+        loadChildren: () => import('./modules/video-chat/video-chat.module').then((m) => m.VideoChatModule),
       },
     ],
   },
   {
     path: 'auth',
-    loadChildren: () =>
-      import('./modules/auth/auth.module').then((m) => m.AuthModule),
+    loadChildren: () => import('./modules/auth/auth.module').then((m) => m.AuthModule),
   },
   {
     path: 'admin',
     canActivate: [AdminGuard],
-    loadChildren: () =>
-      import('./modules/admin/admin.module').then((m) => m.AdminModule),
+    loadChildren: () => import('./modules/admin/admin.module').then((m) => m.AdminModule),
   },
 ];
 

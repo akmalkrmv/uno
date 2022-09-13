@@ -15,10 +15,10 @@ export class HomeComponent implements OnInit {
   ngOnDestroy() {}
 
   public createRoom() {
-    this.router.navigate([`/room/create`]);
+    this.router.navigate([`/rooms/room/create`]);
   }
 
   public joinRoom() {
-    this.router.navigate([`/room/${this.roomId}`]);
+    this.router.navigate([`/rooms/room/${this.roomId}`]);
   }
 }

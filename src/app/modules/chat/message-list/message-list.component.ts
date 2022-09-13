@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  OnDestroy,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Message } from '@models/index';
 import { ApiService } from '@services/repository/api.service';
 import { tap, first } from 'rxjs/operators';
@@ -27,20 +20,14 @@ export class MessageListComponent implements OnInit, OnDestroy {
   public messages$: Observable<Message[]>;
   public content: string;
 
-  constructor(
-    private api: ApiService,
-    private auth: AuthService,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private api: ApiService, private auth: AuthService, private route: ActivatedRoute) {}
 
   ngOnDestroy() {}
 
   ngOnInit(): void {
-    this.route.data
-      .pipe(untilDestroyed(this))
-      .subscribe((data: { roomId: string }) => {
-        this.roomId = data.roomId;
-      });
+    this.route.data.pipe(untilDestroyed(this)).subscribe((data: { roomId: string }) => {
+      this.roomId = data.roomId;
+    });
 
     this.messages$ = this.api.messages
       .roomMessages(this.roomId)

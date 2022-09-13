@@ -1,3 +1,21 @@
+:host {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(400px, 1fr) 5fr;
+  grid-template-areas: 'room-list selected-room';
+
+  .room-list {
+    grid-area: room-list;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    overflow-y: scroll;
+    max-height: 100%;
+  }
+
+  .selected-room {
+    grid-area: selected-room;
+  }
+}
+
 .profile-container {
   display: flex;
   align-items: center;

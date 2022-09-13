@@ -1,24 +1,31 @@
-<mat-nav-list class="room-list wide-list">
-  <a mat-list-item class="profile-container" (click)="create()">
-    <div class="profile-avatar"><mat-icon>group_add</mat-icon></div>
-    <div class="profile-data">
-      <div class="profile-data__primary">+ Create room</div>
-    </div>
-  </a>
-  <mat-divider></mat-divider>
-  <ng-container *ngFor="let room of rooms$ | async">
-    <a mat-list-item routerLink="/room/{{ room.id }}" class="profile-container">
-      <div class="profile-avatar">
-        <img *ngIf="room.photoURL" [src]="room.photoURL" class="profile-img" />
-        <mat-icon *ngIf="!room.photoURL">groups</mat-icon>
-      </div>
+<section class="room-list">
+  <mat-nav-list class="wide-list">
+    <a mat-list-item class="profile-container" (click)="create()">
+      <div class="profile-avatar"><mat-icon>group_add</mat-icon></div>
       <div class="profile-data">
-        <div class="profile-data__primary">{{ room.name }}</div>
-        <div class="profile-data__secondary">
-          <span>{{ room.lastMessage }}</span>
-        </div>
+        <div class="profile-data__primary">+ Create room</div>
       </div>
     </a>
     <mat-divider></mat-divider>
-  </ng-container>
-</mat-nav-list>
+
+    <ng-container *ngFor="let room of rooms$ | async">
+      <a mat-list-item routerLink="/rooms/room/{{ room.id }}" class="profile-container">
+        <div class="profile-avatar">
+          <img *ngIf="room.photoURL" [src]="room.photoURL" class="profile-img" />
+          <mat-icon *ngIf="!room.photoURL">groups</mat-icon>
+        </div>
+        <div class="profile-data">
+          <div class="profile-data__primary">{{ room.name }}</div>
+          <div class="profile-data__secondary">
+            <span>{{ room.lastMessage }}</span>
+          </div>
+        </div>
+      </a>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </mat-nav-list>
+</section>
+
+<section class="selected-room">
+  <router-outlet></router-outlet>
+</section>

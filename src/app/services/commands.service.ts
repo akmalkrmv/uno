@@ -33,5 +33,6 @@ export class CommandsService {
     );
     this.groups$.value.splice(index, 1);
     this.groups$.next(this.groups$.value);
+    this.current$.next(null);
   }
 }

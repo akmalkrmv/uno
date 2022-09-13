@@ -33,10 +33,13 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.roomId = this.room.roomId = this.activeRoute.snapshot.paramMap.get(
-      'id'
-    );
-    this.room.ngOnInit();
+    this.activeRoute.paramMap.pipe(untilDestroyed(this)).subscribe(async (paramsMap) => {
+      await this.room.ngOnDestroy();
+      this.roomId = this.room.roomId = paramsMap.get('id');
+      await this.room.ngOnInit();
+
+      console.log('room', this.roomId)
+    });
 
     this.title.click$.pipe(untilDestroyed(this)).subscribe(() => {
       this.room.onlineUsers$.pipe(first()).subscribe((users) =>
